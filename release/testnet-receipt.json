@@ -1,7 +1,7 @@
 {
   "version": 1,
   "status": "incomplete",
-  "updatedAt": "2026-10-19T16:00:40.725516+00:00",
+  "updatedAt": "2026-10-19T16:11:05.820819+00:00",
   "network": "utexo-testnet",
   "label": "Utexo SDK documented Bitcoin testnet3",
   "fallback": false,
@@ -55,7 +55,7 @@
     }
   ],
   "funding": {
-    "status": "faucet_confirmed_setup_split_broadcast",
+    "status": "setup_utxos_broadcast_waiting_confirmation",
     "humanFaucet": "https://coinfaucet.eu/en/btc-testnet/",
     "tests": [
       {
@@ -105,7 +105,7 @@
       ],
       "blockHeight": 5195536
     },
-    "next": "Wait for fresh B -> A funding split confirmation, then create and confirm colorable UTXOs in both wallets.",
+    "next": "Wait for colorable UTXO setup transactions to confirm; issue test USD and run governed RGB proof.",
     "setupSplit": {
       "network": "utexo-testnet",
       "fallback": false,
@@ -136,7 +136,29 @@
         "https://blockstream.info/testnet/api/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa/status"
       ],
       "lastCheckedAt": "2026-10-19T16:00:40.725516+00:00"
-    }
+    },
+    "colorableUtxoSetup": [
+      {
+        "wallet": "A",
+        "txid": "0a531d17c0240b1fee7b4e3db59014a2c5ef5f0e15f976082b6537d278e03476",
+        "feeSats": 2277,
+        "outputsCreated": 8,
+        "outputSizeSats": 5000,
+        "feeRate": 5,
+        "explorerUrl": "https://mempool.space/testnet/tx/0a531d17c0240b1fee7b4e3db59014a2c5ef5f0e15f976082b6537d278e03476",
+        "confirmed": false
+      },
+      {
+        "wallet": "B",
+        "txid": "5e5d07f25608b5429a8c67f53a23fc0416839cc74b28c27154ed0ca933d7a9c0",
+        "feeSats": 2277,
+        "outputsCreated": 8,
+        "outputSizeSats": 5000,
+        "feeRate": 5,
+        "explorerUrl": "https://mempool.space/testnet/tx/5e5d07f25608b5429a8c67f53a23fc0416839cc74b28c27154ed0ca933d7a9c0",
+        "confirmed": false
+      }
+    ]
   },
   "transactions": {},
   "demonstration": {
@@ -150,9 +172,9 @@
   },
   "privacy": "Seeds, wallet state, invoices, signing authorities and receiver history remain ignored .state; only new public deposit addresses are recorded.",
   "limitations": [
-    "Primary SDK network and proxy verified. Actual public faucet funding is confirmed; the B -> A setup split is independently visible but still awaiting confirmation.",
-    "Governed RGB demonstration awaits setup split and colorable UTXO confirmations. No RGB transaction has been broadcast.",
-    "Built source passed typecheck, 84 standard tests and 15 independent security probes, including 10 native adapter probes. Testnet definition of done remains incomplete."
+    "Primary SDK network and proxy verified; public faucet funding is confirmed. Setup split and both colorable UTXO transactions have been broadcast using only the new wallets and faucet test coins.",
+    "Each UTXO setup fee is2277sats at5sat/vB and spends the unconfirmed setup split, providing bounded CPFP acceleration.",
+    "Governed RGB demonstration still awaits colorable UTXO confirmation. Accepted runtime and independent QA remain unchanged."
   ],
   "qaSourceAcceptance": {
     "status": "pass_for_built_source_not_end_to_end_chain_proof",
