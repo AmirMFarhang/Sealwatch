@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+// Copyright 2026 Amir Mohammad Farhang and contributors; all rights reserved; private.
+import { spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
+const major=Number(process.versions.node.split('.')[0])
+if(major!==22&&major!==24){console.error('Node 22 or 24 is required');process.exit(1)}
+const cli=fileURLToPath(new URL('../src/cli.ts',import.meta.url))
+const tsx=fileURLToPath(new URL('../node_modules/tsx/dist/cli.mjs',import.meta.url))
+const child=spawnSync(process.execPath,[tsx,cli,...process.argv.slice(2)],{stdio:'inherit'})
+if(child.error){console.error(child.error.message);process.exit(1)}
+process.exit(child.status??1)

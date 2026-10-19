@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "network": "utexo-testnet",
+  "walletId": "REPLACE_WITH_RECEIVER_WALLET_ID",
+  "stateDir": "../.state/receiver",
+  "checkerSecretEnv": "TRUST_CHECKER_SECRET",
+  "ownerPk": "REPLACE_WITH_OWNER_XONLY_PUBLIC_KEY",
+  "sanctionsDir": "sanctions",
+  "flagged": {
+    "provider": "local-file",
+    "dir": "flagged",
+    "trustedIssuerKeys": ["REPLACE_WITH_INDEPENDENTLY_TRUSTED_ISSUER_PUBLIC_KEY"]
+  },
+  "http": {"port": 46421, "tokenEnv": "TRUST_HTTP_TOKEN"}
+}
