@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "startedAt": "2026-10-19T15:10:13.871Z",
+  "completedAt": "2026-10-19T15:10:15.337Z",
+  "network": "utexo-testnet",
+  "label": "Utexo SDK documented Bitcoin testnet3",
+  "fallback": false,
+  "config": {
+    "name": "utexo-testnet",
+    "label": "Utexo SDK documented Bitcoin testnet3",
+    "fallback": false,
+    "sdkNetwork": "testnet",
+    "indexerUrl": "ssl://electrum.iriswallet.com:50013",
+    "transportEndpoint": "rpcs://proxy.iriswallet.com/0.2/json-rpc",
+    "genesisHash": "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
+    "esploraUrl": "https://mempool.space/testnet/api",
+    "explorerUrl": "https://mempool.space/testnet/tx",
+    "faucets": [
+      "https://coinfaucet.eu/en/btc-testnet/",
+      "https://bitcoinfaucet.uo1.net/"
+    ]
+  },
+  "chain": {
+    "ok": true,
+    "evidence": {
+      "verified": true,
+      "advertisedGenesis": "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
+      "decodedGenesis": "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
+      "features": {
+        "genesis_hash": "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
+        "hash_function": "sha256",
+        "hosts": {
+          "tcp_port": 50001
+        },
+        "protocol_max": "1.4",
+        "protocol_min": "1.4",
+        "pruning": null,
+        "server_version": "electrs/0.11.0"
+      },
+      "tip": {
+        "height": 5195534,
+        "hex": "0000002081e35fd0f46215e87ce91170f06a8d37042c8fad76a1dc91e4342bd30000000035a38ec0e8118bf0d0ec8de3563f1127243b53084535259f4a38e5f6a69963f8b44bd66affff001d8b6b6129"
+      }
+    }
+  },
+  "proxy": {
+    "ok": true,
+    "evidence": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "protocol_version": "0.2",
+        "version": "0.3.0",
+        "uptime": 38128194
+      }
+    }
+  },
+  "ready": true
+}
