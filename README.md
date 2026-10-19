@@ -11,9 +11,11 @@ It is built on Utexo's RGB SDK; no partnership is claimed.
 ## Current evidence
 
 The local implementation passes **84 tests** (81 core and 3 network tests).
-Independent QA and the live testnet demonstration are pending. The primary
-endpoints answer and identify Bitcoin testnet3. A faucet transfer to a new
-wallet is awaiting confirmation. **No completed RGB testnet demonstration is
+Independent QA also passes **15 security probes and 9 CLI checks**; see
+[the QA report](docs/QA.md). The live testnet demonstration is pending. The primary
+endpoints answer and identify Bitcoin testnet3. A faucet transfer is confirmed;
+the funding split between the two new wallets is awaiting confirmation.
+**No completed RGB testnet demonstration is
 claimed.** Read [the receipt](release/testnet-receipt.json) for the recorded
 network state; a synthetic local run is not a network receipt.
 
@@ -37,6 +39,7 @@ in `package-lock.json`.
 ```sh
 npm ci
 npm run check
+node --import tsx --test qa/*.test.ts
 bin/trust demo-local --state-dir .state/local-demo
 ```
 
