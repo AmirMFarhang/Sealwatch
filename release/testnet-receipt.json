@@ -1,7 +1,7 @@
 {
   "version": 1,
   "status": "incomplete",
-  "updatedAt": "2026-10-19T15:55:37.105320+00:00",
+  "updatedAt": "2026-10-19T16:00:40.725516+00:00",
   "network": "utexo-testnet",
   "label": "Utexo SDK documented Bitcoin testnet3",
   "fallback": false,
@@ -134,7 +134,8 @@
       "independentExplorerChecks": [
         "https://mempool.space/testnet/api/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
         "https://blockstream.info/testnet/api/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa/status"
-      ]
+      ],
+      "lastCheckedAt": "2026-10-19T16:00:40.725516+00:00"
     }
   },
   "transactions": {},
@@ -149,8 +150,23 @@
   },
   "privacy": "Seeds, wallet state, invoices, signing authorities and receiver history remain ignored .state; only new public deposit addresses are recorded.",
   "limitations": [
-    "Primary SDK network and proxy verified. Actual public faucet funding is confirmed and B -> A setup split broadcast is independently visible.",
-    "Governed RGB demonstration awaits setup split and colorable UTXO confirmations, plus independent QA acceptance of signing barrier checks.",
-    "Combined typecheck and 76 tests pass; QA separately found stop, policy replacement and expiry races at the asynchronous signing barrier. Fix in progress; no RGB transaction broadcast."
-  ]
+    "Primary SDK network and proxy verified. Actual public faucet funding is confirmed; the B -> A setup split is independently visible but still awaiting confirmation.",
+    "Governed RGB demonstration awaits setup split and colorable UTXO confirmations. No RGB transaction has been broadcast.",
+    "Built source passed typecheck, 84 standard tests and 15 independent security probes, including 10 native adapter probes. Testnet definition of done remains incomplete."
+  ],
+  "qaSourceAcceptance": {
+    "status": "pass_for_built_source_not_end_to_end_chain_proof",
+    "acceptedRuntimeFixes": [
+      "f83e1be",
+      "6dc050e",
+      "9494e42",
+      "11910f6",
+      "8efb6b9",
+      "96265ce"
+    ],
+    "standardTests": 84,
+    "independentSecurityProbes": 15,
+    "independentNativeProbes": 10,
+    "note": "Parent and independent QA confirmed all known mutable state rollback and asynchronous signing barrier repros pass. This does not replace actual RGB testnet proof."
+  }
 }
