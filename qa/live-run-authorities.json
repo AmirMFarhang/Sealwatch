@@ -1,0 +1,10 @@
+{
+  "network": "utexo-testnet",
+  "assetId": "rgb:6b7igUgX-5c~XkMr-3g4_4Yg-eVj5~7M-dt_okW0-SJR6CI8",
+  "checkerPk": "3e85071f8ffbc438b1767f777d80444861e73c346c7f6d9b4508eae4e38a5124",
+  "flaggedIssuerPk": "53a6d15d2a7e9cca78bb13c056bf648d9768fee46dc8268e97659dfe5685daf6",
+  "gatePk": "53e670e0bcb9ad656d2659c9a77c9ff9f7ed33bb2c32de77518cd12f06a2ead0",
+  "receivedAt": "2026-10-19T16:40:11.153690+00:00",
+  "source": "Parent independently derived public keys from known authority files; pinned before any clear/flagged attestation was supplied to QA. No private values read or exported by QA.",
+  "srcTree": "baa6f2dcbcf7fd87c5c91d806bc72d5cd21c67c8"
+}

@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "independentQa": true,
+  "checkedAt": "2026-10-19T16:44:45.199Z",
+  "scope": "Read only named signed decision logs/checkpoints; no wallet database, seed, key or receiver raw history opened; no log contents exported.",
+  "results": [
+    {
+      "name": "authorization",
+      "status": "pass",
+      "nodePk": "53e670e0bcb9ad656d2659c9a77c9ff9f7ed33bb2c32de77518cd12f06a2ead0",
+      "entryCount": 9,
+      "logSha256": "719b52271e25dfae01fa00a5548d173e542f7b4f006fdd2ca6d4705002c3735d",
+      "checkpointSha256": "417c1f00456929d7a4adb9f251dee0171c540db6011776efe3802c9c845743f9",
+      "kinds": {
+        "state-prepare": 3,
+        "policy-install": 1,
+        "state-commit": 3,
+        "authorization": 1,
+        "signing-token": 1
+      },
+      "bindings": [
+        {
+          "label": "clear",
+          "decisionMatches": true,
+          "tokenConsumptionMatches": true
+        }
+      ],
+      "problems": []
+    },
+    {
+      "name": "receiver",
+      "status": "pending_no_log_yet"
+    }
+  ]
+}

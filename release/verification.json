@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "independentQa": true,
   "reviewer": "Codex /root/qa, not a runtime implementer",
-  "checkedAt": "2026-10-19T15:57:43.092914+00:00",
+  "checkedAt": "2026-10-19T16:45:24.222544+00:00",
   "status": "local_independent_qa_pass; actual_rgb_testnet_demo_incomplete",
   "verdict": "LOCAL_PASS_VETO_MEETING_DONE_PENDING_PUBLIC_RGB_RECEIPT",
   "meetingDefinitionOfDone": false,
@@ -145,10 +145,10 @@
   "liveDemonstration": {
     "network": "utexo-testnet",
     "fallback": false,
-    "clearIncoming": "not independently verified",
+    "clearIncoming": "not yet attested: public witness unconfirmed",
     "flaggedWitnessInput": "not independently verified",
     "quarantine": "not independently verified on chain",
-    "inLimitSend": "not independently verified on chain",
+    "inLimitSend": "actual broadcast independently visible on both explorers, unconfirmed; signed gate authorization and token consumption independently verified",
     "overLimitRefusal": "synthetic/local only",
     "stopRefusal": "synthetic/local only",
     "escrow": "not built"
@@ -211,8 +211,34 @@
     "/tmp/trust-qa-native-all-barriers.log"
   ],
   "remaining": [
-    "Obtain actual RGB testnet receipt with clear/flagged incoming attestations, quarantine, governed in-limit send, over-limit refusal and stop refusal.",
-    "Independently check every demonstration transaction on public explorers and verify signed attestations/logs before meeting done."
+    "Wait for actual RGB clear witness confirmation and receiver attestation; complete flagged/quarantine/over-limit/stop run on the same accepted source.",
+    "Independently verify all public transactions, pinned-authority attestations/list hashes and signed decision-log bindings before meeting done."
   ],
-  "localAcceptance": true
+  "localAcceptance": true,
+  "liveProofCheckpoint": {
+    "asOf": "2026-10-19T16:44:46.749Z",
+    "verdict": "PENDING",
+    "receiptStatus": "running",
+    "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+    "network": "utexo-testnet",
+    "fallback": false,
+    "publicStatus": "unconfirmed on both public explorers",
+    "publicRawTxidsIndependentlyRecomputed": true,
+    "actualRgbDemonstrationTxidsSupplied": 1,
+    "gateDecisionLog": "pass; signed approval, exact plan/policy hashes and token consumption match receipt",
+    "gateLogEntries": 9,
+    "receiverAttestation": "not yet produced",
+    "attestationAuthorities": "checker and issuer public keys independently pinned before attestation arrival",
+    "sourceSrcTreeStillMatches": "baa6f2dcbcf7fd87c5c91d806bc72d5cd21c67c8",
+    "evidence": [
+      "qa/live-run-authorities.json",
+      "qa/live-rgb-explorer-checks.json",
+      "qa/live-receipt-verification.json",
+      "qa/live-decision-log-verification.json"
+    ],
+    "reproducibleChecks": [
+      "node --import tsx qa/verify-live-receipt.ts RECEIPT",
+      "node --import tsx qa/verify-live-logs.ts DEMO_LOG_DIRECTORY RECEIPT"
+    ]
+  }
 }

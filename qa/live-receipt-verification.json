@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "independentQa": true,
+  "checkedAt": "2026-10-19T16:44:46.749Z",
+  "receiptStatus": "running",
+  "receiptUpdatedAt": "2026-10-19T16:14:56.522Z",
+  "receiptSha256": "0fdfb6cf5323a6fc24ed1683f2f527781bae7630624773e0ade705512a57e205",
+  "network": "utexo-testnet",
+  "fallback": false,
+  "verdict": "PENDING",
+  "problems": [],
+  "pending": [
+    "clear: https://mempool.space unconfirmed",
+    "clear: https://blockstream.info unavailable: TypeError: fetch failed",
+    "clear: attestation not recorded",
+    "flagged: transaction not recorded",
+    "overLimit: refusal not recorded",
+    "stopped: refusal not recorded",
+    "native quarantine enforcement not recorded",
+    "receipt status is running"
+  ],
+  "checks": [
+    {
+      "name": "clear",
+      "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+      "attestationValid": false,
+      "exactTestListHashMatches": false,
+      "publicExplorers": [
+        {
+          "host": "https://mempool.space",
+          "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "status": {
+            "confirmed": false
+          },
+          "feeSats": 198,
+          "decodedTxidMatches": true
+        },
+        {
+          "host": "https://blockstream.info",
+          "error": "TypeError: fetch failed"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Receiver SDK provides RGB receive/asset membership; this independently decodes public Bitcoin witnesses and verifies signed attestations, not RGB consignments.",
+    "Authorization refusal records are checked structurally; independent signed decision-log verification is recorded separately."
+  ]
+}

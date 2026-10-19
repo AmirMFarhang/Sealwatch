@@ -1,0 +1,258 @@
+{
+  "version": 1,
+  "independentQa": true,
+  "scope": "Public explorer confirmation only; no receiver RGB consignment or attestation verified yet.",
+  "network": "utexo-testnet",
+  "fallback": false,
+  "observations": [
+    {
+      "checkedAt": "2026-10-19T16:37:19.166776+00:00",
+      "checks": [
+        {
+          "apiUrl": "https://mempool.space/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:37:19.166776+00:00",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "status": {
+            "confirmed": false
+          },
+          "feeSats": 198,
+          "inputCount": 1,
+          "outputCount": 3
+        },
+        {
+          "apiUrl": "https://blockstream.info/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "explorerUrl": "https://blockstream.info/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:37:19.522737+00:00",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "status": {
+            "confirmed": false
+          },
+          "feeSats": 198,
+          "inputCount": 1,
+          "outputCount": 3
+        }
+      ]
+    },
+    {
+      "checkedAt": "2026-10-19T16:37:54.161461+00:00",
+      "receiptStatus": "running",
+      "receiptUpdatedAt": "2026-10-19T16:14:56.522Z",
+      "attestationsPresent": [],
+      "checks": [
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://mempool.space/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:37:53.642825+00:00",
+          "status": {
+            "confirmed": false
+          }
+        },
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://blockstream.info/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://blockstream.info/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:37:54.160877+00:00",
+          "status": {
+            "confirmed": false
+          }
+        }
+      ]
+    },
+    {
+      "checkedAt": "2026-10-19T16:38:34.879841+00:00",
+      "receiptStatus": "running",
+      "receiptUpdatedAt": "2026-10-19T16:14:56.522Z",
+      "attestationsPresent": [],
+      "checks": [
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://mempool.space/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:38:34.528460+00:00",
+          "status": {
+            "confirmed": false
+          }
+        },
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://blockstream.info/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://blockstream.info/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:38:34.879235+00:00",
+          "status": {
+            "confirmed": false
+          }
+        }
+      ]
+    },
+    {
+      "checkedAt": "2026-10-19T16:39:21.305095+00:00",
+      "receiptStatus": "running",
+      "receiptUpdatedAt": "2026-10-19T16:14:56.522Z",
+      "attestationsPresent": [],
+      "checks": [
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://mempool.space/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:39:17.921011+00:00",
+          "status": {
+            "confirmed": false
+          }
+        },
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://blockstream.info/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://blockstream.info/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:39:21.304716+00:00",
+          "status": {
+            "confirmed": false
+          }
+        }
+      ]
+    },
+    {
+      "checkedAt": "2026-10-19T16:40:02.668750+00:00",
+      "receiptStatus": "running",
+      "receiptUpdatedAt": "2026-10-19T16:14:56.522Z",
+      "attestationsPresent": [],
+      "checks": [
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://mempool.space/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:40:02.668153+00:00",
+          "status": {
+            "confirmed": false
+          }
+        },
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://blockstream.info/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://blockstream.info/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:40:02.137293+00:00",
+          "status": {
+            "confirmed": false
+          }
+        }
+      ]
+    },
+    {
+      "checkedAt": "2026-10-19T16:40:43.544616+00:00",
+      "receiptStatus": "running",
+      "receiptUpdatedAt": "2026-10-19T16:14:56.522Z",
+      "attestationsPresent": [],
+      "checks": [
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://mempool.space/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:40:43.263963+00:00",
+          "status": {
+            "confirmed": false
+          }
+        },
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://blockstream.info/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://blockstream.info/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:40:43.544226+00:00",
+          "status": {
+            "confirmed": false
+          }
+        }
+      ]
+    },
+    {
+      "checkedAt": "2026-10-19T16:42:34.518103+00:00",
+      "receiptStatus": "running",
+      "receiptUpdatedAt": "2026-10-19T16:14:56.522Z",
+      "attestationsPresent": [],
+      "checks": [
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://mempool.space/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:42:34.517380+00:00",
+          "status": {
+            "confirmed": false
+          }
+        },
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://blockstream.info/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "error": "<urlopen error [Errno 101] Network is unreachable>"
+        }
+      ]
+    },
+    {
+      "checkedAt": "2026-10-19T16:43:17.657363+00:00",
+      "receiptStatus": "running",
+      "receiptUpdatedAt": "2026-10-19T16:14:56.522Z",
+      "attestationsPresent": [],
+      "checks": [
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://mempool.space/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:43:15.549811+00:00",
+          "status": {
+            "confirmed": false
+          }
+        },
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://blockstream.info/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://blockstream.info/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:43:17.656878+00:00",
+          "status": {
+            "confirmed": false
+          }
+        }
+      ]
+    },
+    {
+      "checkedAt": "2026-10-19T16:43:58.814073+00:00",
+      "receiptStatus": "running",
+      "receiptUpdatedAt": "2026-10-19T16:14:56.522Z",
+      "attestationsPresent": [],
+      "checks": [
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://mempool.space/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:43:58.546123+00:00",
+          "status": {
+            "confirmed": false
+          }
+        },
+        {
+          "name": "clear",
+          "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "apiUrl": "https://blockstream.info/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06/status",
+          "explorerUrl": "https://blockstream.info/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "checkedAt": "2026-10-19T16:43:58.813349+00:00",
+          "status": {
+            "confirmed": false
+          }
+        }
+      ]
+    }
+  ]
+}
