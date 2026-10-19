@@ -222,7 +222,7 @@
     "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
     "network": "utexo-testnet",
     "fallback": false,
-    "publicStatus": "unconfirmed on both public explorers",
+    "publicStatus": "Unconfirmed at latest successful dual-explorer poll, 2026-10-19T16:43:58Z. A later receipt-verification request still saw Mempool unconfirmed while Blockstream was temporarily unavailable.",
     "publicRawTxidsIndependentlyRecomputed": true,
     "actualRgbDemonstrationTxidsSupplied": 1,
     "gateDecisionLog": "pass; signed approval, exact plan/policy hashes and token consumption match receipt",
@@ -239,6 +239,9 @@
     "reproducibleChecks": [
       "node --import tsx qa/verify-live-receipt.ts RECEIPT",
       "node --import tsx qa/verify-live-logs.ts DEMO_LOG_DIRECTORY RECEIPT"
+    ],
+    "currentCheckUnavailableHosts": [
+      "https://blockstream.info"
     ]
   }
 }
