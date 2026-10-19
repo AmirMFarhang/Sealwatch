@@ -1,7 +1,7 @@
 {
   "version": 1,
   "status": "incomplete",
-  "updatedAt": "2026-10-19T16:11:05.820819+00:00",
+  "updatedAt": "2026-10-19T16:12:43.834395+00:00",
   "network": "utexo-testnet",
   "label": "Utexo SDK documented Bitcoin testnet3",
   "fallback": false,
@@ -11,10 +11,15 @@
   },
   "networkProbe": "release/network-probe.json",
   "asset": {
+    "network": "utexo-testnet",
+    "fallback": false,
     "label": "test USD, not USDT",
     "ticker": "TUSD",
-    "status": "not_issued",
-    "reason": "Faucet confirmation and setup funding split pending"
+    "precision": 2,
+    "amount": 1000000,
+    "assetId": "rgb:6b7igUgX-5c~XkMr-3g4_4Yg-eVj5~7M-dt_okW0-SJR6CI8",
+    "issuedAt": "2026-10-19T16:12:20.850Z",
+    "status": "issued_in_new_A_wallet"
   },
   "wallets": [
     {
