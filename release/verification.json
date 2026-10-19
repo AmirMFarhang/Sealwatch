@@ -201,7 +201,7 @@
       ]
     },
     "advisory": "Node API unsigned wrapper references and legacy consentHash are advisory; authoritative references must come from authenticated envelope. No forged evidence/loan acceptance demonstrated.",
-    "publication": "not performed by QA; requires Amir G2 and verified private access"
+    "publication": "Parent reports Amir approved G2, source4258d04 was pushed and private-package workflow39283839589 succeeded; parent is verifying private package visibility separately. No publication or remote write was performed by QA."
   },
   "logs": [
     "/tmp/trust-qa-check-final.log",
