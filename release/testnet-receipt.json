@@ -1,7 +1,7 @@
 {
   "version": 1,
   "status": "incomplete",
-  "updatedAt": "2026-10-19T15:43:59.179068+00:00",
+  "updatedAt": "2026-10-19T15:55:37.105320+00:00",
   "network": "utexo-testnet",
   "label": "Utexo SDK documented Bitcoin testnet3",
   "fallback": false,
@@ -118,7 +118,23 @@
       "receiverAddress": "tb1pxha8nramtc274shnavxshk47qfmx9j8l9spmzr9r2f05c3a6rtuquh5tw5",
       "source": "Public testnet faucet funded newly created B; setup split to newly created A only",
       "status": "broadcast_waiting_confirmation",
-      "explorerUrl": "https://mempool.space/testnet/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa"
+      "explorerUrl": "https://mempool.space/testnet/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
+      "outputs": [
+        {
+          "wallet": "A",
+          "vout": 0,
+          "amountSats": 65000
+        },
+        {
+          "wallet": "B",
+          "vout": 1,
+          "amountSats": 63973
+        }
+      ],
+      "independentExplorerChecks": [
+        "https://mempool.space/testnet/api/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
+        "https://blockstream.info/testnet/api/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa/status"
+      ]
     }
   },
   "transactions": {},
@@ -133,8 +149,8 @@
   },
   "privacy": "Seeds, wallet state, invoices, signing authorities and receiver history remain ignored .state; only new public deposit addresses are recorded.",
   "limitations": [
-    "Primary SDK network and proxy verified. Actual public faucet funding and its B -> A setup split are recorded.",
-    "Governed RGB demonstration still awaits setup split and colorable UTXO confirmations.",
-    "Combined typecheck and 76 tests pass after mutable-state rollback remediation; no RGB txids invented."
+    "Primary SDK network and proxy verified. Actual public faucet funding is confirmed and B -> A setup split broadcast is independently visible.",
+    "Governed RGB demonstration awaits setup split and colorable UTXO confirmations, plus independent QA acceptance of signing barrier checks.",
+    "Combined typecheck and 76 tests pass; QA separately found stop, policy replacement and expiry races at the asynchronous signing barrier. Fix in progress; no RGB transaction broadcast."
   ]
 }
