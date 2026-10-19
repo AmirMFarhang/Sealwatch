@@ -104,7 +104,7 @@
         "https://blockstream.info/testnet/api/tx/655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c/status"
       ]
     },
-    "next": "After confirmation, split65000freshfaucetsats B->A with boundedfee, then waitforconfirmation"
+    "next": "After confirmation, split 65,000 fresh faucet sats B -> A with a bounded fee, then wait for confirmation."
   },
   "transactions": {},
   "demonstration": {
@@ -118,8 +118,8 @@
   },
   "privacy": "Seeds, wallet state, invoices, signing authorities and receiver history remain ignored .state; only new public deposit addresses are recorded.",
   "limitations": [
-    "Primary endpoints and rawgenesis verified. B received a real public-faucet output; both publicexplorers report it unconfirmed.",
-    "Testnet3 newest blocks5195534,5195533,5195532 eachcontaincoinbaseonly and futureheadertimestamps. Waiting minerinclusion; nofeeoverride or earlyfallback.",
-    "Combinedtypecheck and51tests pass. Actual governedRGBdemonstration notyetexecuted; noRGBtxidsinvented."
+    "Primary endpoints and raw genesis verified. B received a real public faucet output; both public explorers report it unconfirmed.",
+    "Testnet3 newest blocks 5195534, 5195533 and 5195532 each contain only the coinbase transaction and future header timestamps. Waiting for miner inclusion; no early fallback.",
+    "Combined typecheck and 62 tests pass. Actual governed RGB demonstration has not yet executed; no RGB txids invented."
   ]
 }

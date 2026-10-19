@@ -9,8 +9,9 @@ import { FileDecisionLog } from '../governance/log.js'
 import { LocalFileFlaggedListProvider, signFlaggedManifest, type FlaggedSnapshot } from '../compliance/flagged.js'
 import { SanctionsScreen } from '../compliance/sanctions.js'
 import { VerifyService, type Attestation } from '../verify/incoming.js'
+import { decodeSendPlan } from '../wallet/plan.js'
 import { networkConfig } from '../network/config.js'
-import { probeNetwork } from '../network/probe.js'
+import { probeNetwork, rawTransaction } from '../network/probe.js'
 import { TestnetWallet } from './wallet.js'
 import { incomingEvidence, publicExplorerEvidence } from './evidence.js'
 
@@ -22,6 +23,7 @@ interface Progress {
   decisions: Record<string, Decision>
   attestations: Record<string, Attestation>
   explorerChecks: Record<string, unknown>
+  signingAttempts?: Record<string, { expectedTxid: string; startedAt: string }>
   quarantine?: { enforced: boolean; reason: string }
 }
 
@@ -89,9 +91,25 @@ export async function runTestnetDemo() {
       throw new Error(`Public chain did not settle transfer within the polling window: ${txid}`)
     }
     const send = async (name: string, amount: number) => {
+      const previousAttempt = progress.signingAttempts?.[name]
+      if (!progress.txids[name] && previousAttempt) {
+        try {
+          const raw = await rawTransaction(config, previousAttempt.expectedTxid)
+          if (Transaction.fromHex(raw).getId() !== previousAttempt.expectedTxid) throw new Error('Recovered transaction id mismatch')
+          progress.txids[name] = previousAttempt.expectedTxid
+          await save('running')
+        } catch {
+          throw new Error(`Previous ${name} signing/broadcast attempt is ambiguous. Inspect ${previousAttempt.expectedTxid} and the private wallet journal; automatic resending is refused.`)
+        }
+      }
       if (!progress.txids[name]) {
         const { plan, preview, decision } = await authorize(name, amount)
         if (!decision.allowed || !decision.token) throw new Error(`Expected in-limit send refused: ${decision.why.join(', ')}`)
+        // The SDK uses witness inputs, so its unsigned transaction id remains stable after signing.
+        // Persist before entering the signer: a transport error must never cause an automatic duplicate send.
+        progress.signingAttempts ??= {}
+        progress.signingAttempts[name] = { expectedTxid: decodeSendPlan(plan).unsignedTxid, startedAt: new Date().toISOString() }
+        await save('running')
         const sent = await sender.sendPrepared(plan, decision.token!, preview)
         progress.txids[name] = sent.txid
         await save('running')
