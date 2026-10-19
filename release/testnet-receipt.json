@@ -1,7 +1,7 @@
 {
   "version": 1,
   "status": "incomplete",
-  "updatedAt": "2026-10-19T15:22:45.816295+00:00",
+  "updatedAt": "2026-10-19T15:43:59.179068+00:00",
   "network": "utexo-testnet",
   "label": "Utexo SDK documented Bitcoin testnet3",
   "fallback": false,
@@ -55,7 +55,7 @@
     }
   ],
   "funding": {
-    "status": "faucet_received_waiting_confirmation",
+    "status": "faucet_confirmed_setup_split_broadcast",
     "humanFaucet": "https://coinfaucet.eu/en/btc-testnet/",
     "tests": [
       {
@@ -98,13 +98,28 @@
       "amountSats": 129128,
       "feeSats": 246,
       "explorerUrl": "https://mempool.space/testnet/tx/655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c",
-      "status": "unconfirmed",
+      "status": "confirmed",
       "independentChecks": [
         "https://mempool.space/testnet/api/tx/655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c/status",
         "https://blockstream.info/testnet/api/tx/655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c/status"
-      ]
+      ],
+      "blockHeight": 5195536
     },
-    "next": "After confirmation, split 65,000 fresh faucet sats B -> A with a bounded fee, then wait for confirmation."
+    "next": "Wait for fresh B -> A funding split confirmation, then create and confirm colorable UTXOs in both wallets.",
+    "setupSplit": {
+      "network": "utexo-testnet",
+      "fallback": false,
+      "sentAt": "2026-10-19T15:43:32.080Z",
+      "txid": "c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
+      "amountSats": 65000,
+      "feeSats": "155",
+      "senderWalletId": "utexo-testnet:B",
+      "receiverWalletId": "utexo-testnet:A",
+      "receiverAddress": "tb1pxha8nramtc274shnavxshk47qfmx9j8l9spmzr9r2f05c3a6rtuquh5tw5",
+      "source": "Public testnet faucet funded newly created B; setup split to newly created A only",
+      "status": "broadcast_waiting_confirmation",
+      "explorerUrl": "https://mempool.space/testnet/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa"
+    }
   },
   "transactions": {},
   "demonstration": {
@@ -118,8 +133,8 @@
   },
   "privacy": "Seeds, wallet state, invoices, signing authorities and receiver history remain ignored .state; only new public deposit addresses are recorded.",
   "limitations": [
-    "Primary endpoints and raw genesis verified. B received a real public faucet output; both public explorers report it unconfirmed.",
-    "Testnet3 newest blocks 5195534, 5195533 and 5195532 each contain only the coinbase transaction and future header timestamps. Waiting for miner inclusion; no early fallback.",
-    "Combined typecheck and 62 tests pass. Actual governed RGB demonstration has not yet executed; no RGB txids invented."
+    "Primary SDK network and proxy verified. Actual public faucet funding and its B -> A setup split are recorded.",
+    "Governed RGB demonstration still awaits setup split and colorable UTXO confirmations.",
+    "Combined typecheck and 76 tests pass after mutable-state rollback remediation; no RGB txids invented."
   ]
 }

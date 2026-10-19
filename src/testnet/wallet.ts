@@ -10,6 +10,11 @@ import { Psbt } from 'bitcoinjs-lib'
 import { networkConfig, type NetworkConfig } from '../network/config.js'
 import type { GateToken, PolicyGate } from '../governance/gate.js'
 import type { WalletPreview } from '../wallet/plan.js'
+import { ReceiverQuarantine } from '../wallet/quarantine.js'
+import { FileDecisionLog } from '../governance/log.js'
+import { hashObject } from '../core/crypto.js'
+import { SignedStore } from '../core/store.js'
+import type { Attestation } from '../verify/incoming.js'
 
 interface DecodedInvoice {
   recipientId: string; assetId?: string; network: string
@@ -35,6 +40,7 @@ interface Account {
   toReadOnlyAccount(): { _wallet?: { dispose(): void } }
   dispose(): void
 }
+interface GateBinding { domain: string; network: string; walletId: string; gatePk: string; ownerPk: string; stateFile: string }
 
 export interface PreparedSend {
   kind: 'rgb-send'
@@ -54,7 +60,8 @@ export class TestnetWallet {
   private readonly prepared = new Map<string, string>()
   private readonly allowedPsbts = new Set<string>()
   private readonly policyViews: { _wallet?: { dispose(): void } }[] = []
-  private readonly quarantinedAssets = new Set<string>()
+  private quarantineStore?: ReceiverQuarantine
+  private gateBindingStore?: SignedStore<{ binding: GateBinding | null }>
   private adapterKey?: import('../core/crypto.js').KeyPair
   private gate?: PolicyGate
   private governed?: Account
@@ -62,6 +69,8 @@ export class TestnetWallet {
 
   static async open(name: 'A' | 'B', config = networkConfig(), stateRoot = '.state'): Promise<TestnetWallet> {
     process.umask(0o077)
+    const expected = networkConfig(config.name)
+    if (config.sdkNetwork !== expected.sdkNetwork || config.indexerUrl !== expected.indexerUrl || config.transportEndpoint !== expected.transportEndpoint || config.genesisHash !== expected.genesisHash) throw new Error('Wallet configuration differs from the selected fixed test-network profile')
     const dataDir = resolve(stateRoot, config.name, name)
     await mkdir(dataDir, { recursive: true, mode: 0o700 })
     let seed: string
@@ -77,8 +86,15 @@ export class TestnetWallet {
     try { depositAddress = (JSON.parse(await readFile(`${dataDir}/public.json`, 'utf8')) as { address?: string }).address }
     catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error }
     const wallet = new TestnetWallet(name, `${config.name}:${name}`, config, dataDir, depositAddress ?? account.getAddress(), account, wdk)
-    try { for (const assetId of JSON.parse(await readFile(`${dataDir}/quarantine.json`, 'utf8')) as string[]) wallet.quarantinedAssets.add(assetId) }
+    try { await readFile(`${dataDir}/quarantine.json`); throw new Error('Legacy unsigned quarantine state requires reviewed migration; refusing wallet reset') }
     catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error }
+    const adapterKey = await wallet.localAdapterKey()
+    const walletLog = new FileDecisionLog(`${dataDir}/wallet-decisions.jsonl`, adapterKey)
+    wallet.quarantineStore = new ReceiverQuarantine(`${dataDir}/quarantine-state.json`, adapterKey, walletLog)
+    wallet.gateBindingStore = new SignedStore(`${dataDir}/wallet-gate-state.json`, adapterKey, () => ({ binding: null }), { log: walletLog, namespace: `wallet-gate:${wallet.walletId}` })
+    try { await readFile(`${dataDir}/gate-binding.json`); throw new Error('Legacy unjournaled gate binding requires reviewed migration') }
+    catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error }
+    wallet.gateBindingStore.read()
     await writeFile(`${dataDir}/public.json`, `${JSON.stringify(wallet.publicState(), null, 2)}\n`, { mode: 0o600 })
     return wallet
   }
@@ -121,7 +137,7 @@ export class TestnetWallet {
 
   /** Prepare exact native PSBT; donation=true is required by the pinned SDK stack. */
   prepareSend(invoice: string, assetId: string, amount: number): PreparedSend {
-    if (this.quarantinedAssets.has(assetId)) throw new Error('ASSET_QUARANTINED: receiver trust check flagged an incoming transfer')
+    this.quarantineStore!.assertSpendable(this.config.name, this.walletId, assetId)
     if (!Number.isSafeInteger(amount) || amount <= 0) throw new Error('Amount must be a positive safe integer in the asset smallest unit')
     const decoded = this.client.decodeRGBInvoice({ invoice })
     if (decoded.assetId && decoded.assetId !== assetId) throw new Error('Invoice asset mismatch')
@@ -159,25 +175,18 @@ export class TestnetWallet {
 
   /** Owner setup pins the actual gate; agents cannot inject a callback or replace its authority. */
   async bindGate(gate: PolicyGate): Promise<void> {
-    const { hashObject, signObject, verifyObject } = await import('../core/crypto.js')
     if (gate.options.network !== this.config.name || gate.options.walletId !== this.walletId) throw new Error('Gate wallet/network mismatch')
     const binding = { domain: 'trust-wallet-gate-binding-v1', network: this.config.name, walletId: this.walletId, gatePk: gate.options.key.pubkey, ownerPk: gate.options.ownerPk, stateFile: resolve(gate.options.stateFile) }
-    const key = await this.localAdapterKey()
-    const file = `${this.dataDir}/gate-binding.json`
-    try {
-      const stored = JSON.parse(await readFile(file, 'utf8')) as { binding: typeof binding; adapterPk: string; sig: string }
-      if (stored.adapterPk !== key.pubkey || !verifyObject(stored, key.pubkey) || hashObject(stored.binding) !== hashObject(binding)) throw new Error('Wallet gate binding changed or was tampered with')
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
-      await writeFile(file, `${JSON.stringify(signObject({ binding, adapterPk: key.pubkey }, key.secretKey))}\n`, { mode: 0o600, flag: 'wx' })
-    }
+    const stored = this.gateBindingStore!.read().binding
+    if (stored && hashObject(stored) !== hashObject(binding)) throw new Error('Wallet gate binding changed or was tampered with')
+    if (!stored) this.gateBindingStore!.transact(state => { state.binding = binding })
     this.gate = gate
   }
 
   /** Coarse local receiver policy: any flagged receive freezes this asset in this wallet. */
-  async quarantine(assetId: string): Promise<void> {
-    this.quarantinedAssets.add(assetId)
-    await writeFile(`${this.dataDir}/quarantine.json`, `${JSON.stringify([...this.quarantinedAssets])}\n`, { mode: 0o600 })
+  async quarantine(assetId: string, attestation: Attestation): Promise<void> {
+    if (attestation.assetId !== assetId || attestation.network !== this.config.name || attestation.overall === 'clear') throw new Error('Quarantine requires a matching flagged/error attestation')
+    this.quarantineStore!.record(this.config.name, this.walletId, assetId, { attestationHash: hashObject(attestation), witnessTxid: attestation.witnessTxid, overall: attestation.overall, at: attestation.time })
   }
 
   private async enrollPolicy(): Promise<void> {
@@ -196,7 +205,7 @@ export class TestnetWallet {
   async sendPrepared(plan: PreparedSend, token: GateToken, preview: WalletPreview) {
     plan = structuredClone(plan)
     if (!this.gate) throw new Error('Wallet has no pinned policy gate')
-    if (this.quarantinedAssets.has(plan.assetId)) throw new Error('ASSET_QUARANTINED')
+    this.quarantineStore!.assertSpendable(this.config.name, this.walletId, plan.assetId)
     const hash = this.psbtHash(plan.unsignedPsbt)
     if (this.prepared.get(hash) !== JSON.stringify(plan)) throw new Error('Prepared send changed or was not generated by this wallet')
     await this.enrollPolicy()
