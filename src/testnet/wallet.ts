@@ -59,6 +59,7 @@ export interface PreparedSend {
 export class TestnetWallet {
   private readonly prepared = new Map<string, string>()
   private readonly allowedPsbts = new Set<string>()
+  private readonly signingAssets = new Map<string, string>()
   private readonly policyViews: { _wallet?: { dispose(): void } }[] = []
   private quarantineStore?: ReceiverQuarantine
   private gateBindingStore?: SignedStore<{ binding: GateBinding | null }>
@@ -192,7 +193,12 @@ export class TestnetWallet {
   private async enrollPolicy(): Promise<void> {
     if (this.governed) return
     this.wdk.registerPolicy({ id: 'trust-layer-send', name: 'Trust layer: one consumed approval per PSBT', scope: 'project', wallet: 'rgb', rules: [
-      { name: 'requires-consumed-approval', reason: 'No consumed trust-layer approval for this exact PSBT', operation: 'signPsbt', action: 'DENY', conditions: [(context: { args: readonly unknown[] }) => !this.allowedPsbts.has(String(context.args[0]))] },
+      { name: 'requires-consumed-approval', reason: 'No consumed trust-layer approval or asset quarantined for this exact PSBT', operation: 'signPsbt', action: 'DENY', conditions: [(context: { args: readonly unknown[] }) => {
+        const psbt = String(context.args[0]); const assetId = this.signingAssets.get(psbt)
+        if (!this.allowedPsbts.has(psbt) || !assetId) return true
+        try { this.quarantineStore!.assertSpendable(this.config.name, this.walletId, assetId); return false }
+        catch { return true }
+      }] },
       { name: 'other-calls', operation: '*', action: 'ALLOW', conditions: [] },
     ] } as never)
     const original = this.account.toReadOnlyAccount
@@ -214,9 +220,10 @@ export class TestnetWallet {
     this.gate.consume(token, structuredClone(plan), structuredClone(preview))
     this.prepared.delete(hash)
     this.allowedPsbts.add(plan.unsignedPsbt)
+    this.signingAssets.set(plan.unsignedPsbt, plan.assetId)
     let signedPsbt: string
     try { signedPsbt = await this.governed!.signPsbt(plan.unsignedPsbt) }
-    finally { this.allowedPsbts.delete(plan.unsignedPsbt) }
+    finally { this.allowedPsbts.delete(plan.unsignedPsbt); this.signingAssets.delete(plan.unsignedPsbt) }
     return this.account.sendEnd({ signedPsbt })
   }
 
