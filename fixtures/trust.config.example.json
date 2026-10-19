@@ -9,7 +9,9 @@
   "flagged": {
     "provider": "local-file",
     "dir": "flagged",
-    "trustedIssuerKeys": ["REPLACE_WITH_INDEPENDENTLY_TRUSTED_ISSUER_PUBLIC_KEY"]
+    "trustedIssuerKeys": [
+      "REPLACE_WITH_INDEPENDENTLY_TRUSTED_ISSUER_PUBLIC_KEY"
+    ]
   },
-  "http": {"port": 46421, "tokenEnv": "TRUST_HTTP_TOKEN"}
+  "http": { "port": 46421, "tokenEnv": "TRUST_HTTP_TOKEN" }
 }
