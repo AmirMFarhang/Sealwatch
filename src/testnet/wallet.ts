@@ -60,6 +60,7 @@ export class TestnetWallet {
   private readonly prepared = new Map<string, string>()
   private readonly allowedPsbts = new Set<string>()
   private readonly signingAssets = new Map<string, string>()
+  private readonly signingApprovals = new Map<string, { token: GateToken; plan: PreparedSend; preview: WalletPreview }>()
   private readonly policyViews: { _wallet?: { dispose(): void } }[] = []
   private quarantineStore?: ReceiverQuarantine
   private gateBindingStore?: SignedStore<{ binding: GateBinding | null }>
@@ -194,9 +195,13 @@ export class TestnetWallet {
     if (this.governed) return
     this.wdk.registerPolicy({ id: 'trust-layer-send', name: 'Trust layer: one consumed approval per PSBT', scope: 'project', wallet: 'rgb', rules: [
       { name: 'requires-consumed-approval', reason: 'No consumed trust-layer approval or asset quarantined for this exact PSBT', operation: 'signPsbt', action: 'DENY', conditions: [(context: { args: readonly unknown[] }) => {
-        const psbt = String(context.args[0]); const assetId = this.signingAssets.get(psbt)
-        if (!this.allowedPsbts.has(psbt) || !assetId) return true
-        try { this.quarantineStore!.assertSpendable(this.config.name, this.walletId, assetId); return false }
+        const psbt = String(context.args[0]); const assetId = this.signingAssets.get(psbt); const approval = this.signingApprovals.get(psbt)
+        if (!this.allowedPsbts.has(psbt) || !assetId || !approval || !this.gate) return true
+        try {
+          this.quarantineStore!.assertSpendable(this.config.name, this.walletId, assetId)
+          this.gate.assertSigningAllowed(approval.token, approval.plan, approval.preview)
+          return false
+        }
         catch { return true }
       }] },
       { name: 'other-calls', operation: '*', action: 'ALLOW', conditions: [] },
@@ -221,9 +226,10 @@ export class TestnetWallet {
     this.prepared.delete(hash)
     this.allowedPsbts.add(plan.unsignedPsbt)
     this.signingAssets.set(plan.unsignedPsbt, plan.assetId)
+    this.signingApprovals.set(plan.unsignedPsbt, { token: structuredClone(token), plan: structuredClone(plan), preview: structuredClone(preview) })
     let signedPsbt: string
     try { signedPsbt = await this.governed!.signPsbt(plan.unsignedPsbt) }
-    finally { this.allowedPsbts.delete(plan.unsignedPsbt); this.signingAssets.delete(plan.unsignedPsbt) }
+    finally { this.allowedPsbts.delete(plan.unsignedPsbt); this.signingAssets.delete(plan.unsignedPsbt); this.signingApprovals.delete(plan.unsignedPsbt) }
     return this.account.sendEnd({ signedPsbt })
   }
 
