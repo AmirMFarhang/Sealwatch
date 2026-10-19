@@ -25,6 +25,14 @@ truncation detectable relative to the checkpoint. An external verifier must
 already trust the checker key and list issuer; a self-supplied key proves no
 identity. The log is local evidence, not a public timestamping service.
 
+Mutable gate and quarantine snapshots carry monotonically increasing revisions
+and signed hashes committed to that journal. Restoring an older signed snapshot
+while retaining the newer log is refused. An interrupted prepare/commit also
+fails closed. Rolling back the snapshot, journal and checkpoint together requires
+an independent external anchor; that is not built. Legacy state formats are
+refused rather than silently migrated. Preserve wallet seeds and evidence when
+creating a fresh governance/log directory for the new format.
+
 RGB consignment ancestry screening is **designed**, pending a reliable history
 interface. The Utexo flagged-list provider is a **stub** awaiting its real API.
 Witness-input screening does not establish a complete asset provenance history.

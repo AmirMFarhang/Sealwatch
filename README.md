@@ -10,7 +10,7 @@ It is built on Utexo's RGB SDK; no partnership is claimed.
 
 ## Current evidence
 
-The local implementation passes **62 tests** (59 core and 3 network tests).
+The local implementation passes **76 tests** (73 core and 3 network tests).
 Independent QA and the live testnet demonstration are pending. The primary
 endpoints answer and identify Bitcoin testnet3. A faucet transfer to a new
 wallet is awaiting confirmation. **No completed RGB testnet demonstration is
@@ -20,7 +20,7 @@ network state; a synthetic local run is not a network receipt.
 | Building block | Status | Evidence and limits |
 | --- | --- | --- |
 | Verify: pinned sanctions snapshots, signed local flagged list, witness-input checks | Built; local tests | Raw witness and previous transactions are decoded; missing evidence errors. SDK receive validation is the native adapter's responsibility. |
-| Signed attestations and chained log | Built; local tests | Independent checker/issuer trust is required. Local checkpoints detect truncation while the trusted checkpoint is retained; external rollback anchoring is not built. |
+| Signed attestations and chained log | Built; local tests | Independent checker/issuer trust is required. Gate/quarantine snapshot revisions bind to the retained signed journal; restoring old state alone refuses. Complete local rollback needs external anchoring, which is not built. |
 | Receiver quarantine | Built; local tests | Flagged/error results can quarantine the whole asset. The native adapter enforces its persisted guard. It cannot undo consensus settlement. |
 | Authorize: signed limits, exact transaction tokens, replay protection, stop, why | Built; local tests | Requires the governed signing adapter. Direct access to wallet keys remains outside the gate's boundary. |
 | CLI and authenticated localhost API | Built; local tests | Same Verify/Authorize libraries; API binds `127.0.0.1`. |
