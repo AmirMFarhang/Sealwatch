@@ -17,6 +17,10 @@ src/core/store.ts and src/governance/log.ts are adapted from its governance
 store/log. src/compliance/sanctions.ts adapts its pinned offline-list pattern.
 src/governance/gate.ts and src/wallet/plan.ts adapt governance policy, gate,
 sessions, why and signer guarding patterns, removing all lending dependencies.
+src/testnet/native-runtime.ts adapts Satstride src/rgb/native-exit.ts to
+contain native worker exits. src/testnet/wallet.ts adapts Satstride RGB-wallet
+SDK donation/createUtxos/string-status handling and the WDK PSBT signing-guard
+pattern. These testnet adapter portions keep the same Apache-2.0 provenance.
 Modified files are marked. Upstream copyright and license remain applicable
 to those portions. No Compex adapter, evidence format, runtime, scoring or
 investigator code is included.
