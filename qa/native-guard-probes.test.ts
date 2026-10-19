@@ -19,6 +19,7 @@ function fixture() {
   f.gate.install(policy);
   const events: string[] = [];
   let enrollHook: undefined | (() => void);
+  let signingPolicyHook: undefined | (() => void);
   let registered: any;
   const unsignedPsbt = f.plan().unsignedPsbt;
   const client = {
@@ -35,6 +36,8 @@ function fixture() {
   };
   const governed = { signPsbt: async (psbt: string) => {
     assert.equal(psbt, unsignedPsbt);
+    signingPolicyHook?.();
+    if (registered.rules[0].conditions[0]({ args: [psbt] })) throw new Error('NATIVE_POLICY_DENIED_QUARANTINED');
     assert.equal(registered.rules[0].conditions[0]({ args: [psbt] }), false, 'temporary exact PSBT permit must be present');
     const records = f.gate.store.read().tokens;
     assert(Object.values(records).some(r => r.used), 'durable token must be burned before signing');
@@ -58,7 +61,7 @@ function fixture() {
     return { plan, preview, token: decision.token };
   };
   const flag = () => quarantine.record('utexo-testnet', f.gateOptions.walletId, policy.assetId, { attestationHash: 'qa-local-flag', witnessTxid: 'ab'.repeat(32), overall: 'flagged', at: AT });
-  return { ...f, wallet, quarantine, log, policy, prepare, flag, events, duringEnrollment: (hook: () => void) => { enrollHook = hook; } };
+  return { ...f, wallet, quarantine, log, policy, prepare, flag, events, duringEnrollment: (hook: () => void) => { enrollHook = hook; }, duringSigningPolicy: (hook: () => void) => { signingPolicyHook = hook; } };
 }
 
 test('QA native: SDK-produced exact plan is certified and token consumed before exact PSBT signing', async () => {
@@ -111,4 +114,18 @@ test('QA native: quarantine arriving during asynchronous enrollment prevents a p
   const f = fixture(); const p = await f.prepare(); f.duringEnrollment(f.flag);
   await assert.rejects(() => f.wallet.sendPrepared(p.plan, p.token, p.preview), /QUARANTINED/);
   assert.deepEqual(f.events, []);
+});
+
+test('QA native: quarantine at the WDK policy barrier refuses signing after durable token consumption', async () => {
+  const f = fixture(); const p = await f.prepare(); f.duringSigningPolicy(f.flag);
+  await assert.rejects(() => f.wallet.sendPrepared(p.plan, p.token, p.preview), /QUARANTINED/);
+  assert.deepEqual(f.events, []);
+  assert.equal(f.gate.store.read().tokens[p.token.id].used, true);
+});
+
+test('QA native: owner stop at the WDK policy barrier refuses signing before signature export', async () => {
+  const f = fixture(); const p = await f.prepare(); f.duringSigningPolicy(() => f.gate.stop(f.stop()));
+  await assert.rejects(() => f.wallet.sendPrepared(p.plan, p.token, p.preview), /STOPPED|DENIED/);
+  assert.deepEqual(f.events, []);
+  assert.equal(f.gate.store.read().tokens[p.token.id].used, true);
 });
