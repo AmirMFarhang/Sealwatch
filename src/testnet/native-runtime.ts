@@ -1,4 +1,5 @@
 // Copyright 2026 Amir Mohammad Farhang and contributors; all rights reserved; private.
+// Adapted from Satstride src/rgb/native-exit.ts (Apache-2.0); see NOTICE.
 import { setFlagsFromString } from 'node:v8'
 import { runInNewContext } from 'node:vm'
 const major = Number(process.versions.node.split('.')[0])

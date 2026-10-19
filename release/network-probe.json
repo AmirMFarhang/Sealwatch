@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "startedAt": "2026-10-19T15:10:13.871Z",
-  "completedAt": "2026-10-19T15:10:15.337Z",
+  "startedAt": "2026-10-19T15:20:44.494Z",
+  "completedAt": "2026-10-19T15:20:49.187Z",
   "network": "utexo-testnet",
   "label": "Utexo SDK documented Bitcoin testnet3",
   "fallback": false,
@@ -51,7 +51,7 @@
       "result": {
         "protocol_version": "0.2",
         "version": "0.3.0",
-        "uptime": 38128194
+        "uptime": 38128828
       }
     }
   },

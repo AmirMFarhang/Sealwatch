@@ -1,7 +1,7 @@
 {
   "version": 1,
   "status": "incomplete",
-  "updatedAt": "2026-10-19T15:17:06.521003+00:00",
+  "updatedAt": "2026-10-19T15:22:45.816295+00:00",
   "network": "utexo-testnet",
   "label": "Utexo SDK documented Bitcoin testnet3",
   "fallback": false,
@@ -14,7 +14,7 @@
     "label": "test USD, not USDT",
     "ticker": "TUSD",
     "status": "not_issued",
-    "reason": "Wallets have not received faucet funds"
+    "reason": "Faucet confirmation and setup funding split pending"
   },
   "wallets": [
     {
@@ -43,8 +43,8 @@
       "btcBalance": {
         "vanilla": {
           "settled": 0,
-          "future": 0,
-          "spendable": 0
+          "future": 129128,
+          "spendable": 129128
         },
         "colored": {
           "settled": 0,
@@ -55,7 +55,7 @@
     }
   ],
   "funding": {
-    "status": "awaiting_public_faucet",
+    "status": "faucet_received_waiting_confirmation",
     "humanFaucet": "https://coinfaucet.eu/en/btc-testnet/",
     "tests": [
       {
@@ -90,7 +90,21 @@
         "url": "https://api.blockcypher.com/v1/btc/test3/faucet",
         "result": "HTTP400: Faucet only works for BCY.test, BETH.test chains"
       }
-    ]
+    ],
+    "sourceTransaction": {
+      "txid": "655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c",
+      "receiver": "B",
+      "vout": 1,
+      "amountSats": 129128,
+      "feeSats": 246,
+      "explorerUrl": "https://mempool.space/testnet/tx/655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c",
+      "status": "unconfirmed",
+      "independentChecks": [
+        "https://mempool.space/testnet/api/tx/655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c/status",
+        "https://blockstream.info/testnet/api/tx/655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c/status"
+      ]
+    },
+    "next": "After confirmation, split65000freshfaucetsats B->A with boundedfee, then waitforconfirmation"
   },
   "transactions": {},
   "demonstration": {
@@ -104,8 +118,8 @@
   },
   "privacy": "Seeds, wallet state, invoices, signing authorities and receiver history remain ignored .state; only new public deposit addresses are recorded.",
   "limitations": [
-    "Primary endpoints and genesis are independently verified; no funded transaction has been broadcast.",
-    "Fallback has not been selected because the four-hour primary time box is still running.",
-    "End-to-end runner is implemented but pending combined source tests, faucet funding and actual chain execution."
+    "Primary endpoints and rawgenesis verified. B received a real public-faucet output; both publicexplorers report it unconfirmed.",
+    "Testnet3 newest blocks5195534,5195533,5195532 eachcontaincoinbaseonly and futureheadertimestamps. Waiting minerinclusion; nofeeoverride or earlyfallback.",
+    "Combinedtypecheck and51tests pass. Actual governedRGBdemonstration notyetexecuted; noRGBtxidsinvented."
   ]
 }

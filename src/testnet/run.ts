@@ -65,6 +65,7 @@ export async function runTestnetDemo() {
     await save('running')
     const log = new FileDecisionLog(`${dir}/decisions.jsonl`, keys.gate)
     const gate = new PolicyGate({ key: keys.gate, ownerPk: keys.owner.pubkey, network: config.name, walletId: sender.walletId, stateFile: `${dir}/gate-state.json`, log })
+    await sender.bindGate(gate)
     const now = () => Math.floor(Date.now() / 1000)
     if (!gate.store.read().policy) gate.install(signPolicy({ v: 1, domain: 'trust-spending-policy-v1', version: 1, prevHash: null, network: config.name, walletId: sender.walletId, gatePk: keys.gate.pubkey, ownerPk: keys.owner.pubkey, walletAdapterPk: await sender.adapterPublicKey(), agentKeys: [keys.agent.pubkey], assetId: asset.assetId, maxPerSend: '1000', maxPerDay: '3000', maxBitcoinFeeSats: '3000', allowedRecipients: Object.values(progress.invoices).map(i => i.recipientId), notBefore: now() - 1, expiresAt: now() + 86_400, tokenTtlSeconds: 120 }, keys.owner))
     const authorize = async (name: string, amount: number) => {
@@ -91,7 +92,7 @@ export async function runTestnetDemo() {
       if (!progress.txids[name]) {
         const { plan, preview, decision } = await authorize(name, amount)
         if (!decision.allowed || !decision.token) throw new Error(`Expected in-limit send refused: ${decision.why.join(', ')}`)
-        const sent = await sender.sendPrepared(plan, p => gate.consume(decision.token!, p, preview))
+        const sent = await sender.sendPrepared(plan, decision.token!, preview)
         progress.txids[name] = sent.txid
         await save('running')
       }
