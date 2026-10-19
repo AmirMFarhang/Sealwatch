@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 1,
+  "independentQa": true,
+  "reviewer": "Codex /root/qa, not a runtime implementer",
+  "checkedAt": "2026-10-19T15:57:43.092914+00:00",
+  "status": "local_independent_qa_pass; actual_rgb_testnet_demo_incomplete",
+  "verdict": "LOCAL_PASS_VETO_MEETING_DONE_PENDING_PUBLIC_RGB_RECEIPT",
+  "meetingDefinitionOfDone": false,
+  "source": {
+    "initialFrozenCommit": "d14a0c3254e55520e2aea20e1edd8d7f5c0dfc7f",
+    "testedQaCommit": "808c7a4f07d4f9aa4818c247dd00aa443e4b2c13",
+    "srcTree": "baa6f2dcbcf7fd87c5c91d806bc72d5cd21c67c8",
+    "coreFix": "f83e1becea05eaeb6e235d36cb0aec525a28d3b3",
+    "nativeFixes": [
+      "9494e42",
+      "11910f6",
+      "8efb6b9",
+      "96265cea8679ab824fc78162603797bbde6972e5"
+    ],
+    "qaProbeCommits": [
+      "72f8b12",
+      "87461f9",
+      "8d257e7",
+      "7cfee0e"
+    ],
+    "testTree": "952083637f67a184c738206546376049cc98d1ab",
+    "signingBarrierCoreFix": "6dc050e25b0460a8a8e53da5825a922f64d39eb3"
+  },
+  "environment": {
+    "node": "22.22.2",
+    "dependencies": "independent npm ci in own worktree",
+    "privateWalletStateTouched": false
+  },
+  "standardTests": {
+    "command": "npm run check",
+    "typecheck": "pass",
+    "total": 84,
+    "passed": 84,
+    "failed": 0,
+    "skipped": 0,
+    "composition": {
+      "core": 81,
+      "network": 3
+    }
+  },
+  "independentProbes": {
+    "retainedLogRollbackAndProcessRestart": {
+      "command": "node --import tsx --test qa/security-probes.test.ts",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "sameProbesInitiallyFailed": 4
+    },
+    "nativeAdapter": {
+      "command": "node --import tsx --test qa/native-guard-probes.test.ts",
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "sdkMode": "injected fake account/client; no actual wallet or chain actions",
+      "coverage": [
+        "SDK-generated exact plan; token consumed before PSBT sign",
+        "changed amount/recipient map/invoice/PSBT refused",
+        "stop after approval before consumption",
+        "quarantine deletion and older signed snapshot rollback",
+        "owner gate replacement/deletion",
+        "quarantine arriving during asynchronous WDK enrollment",
+        "quarantine arriving at actual WDK policy barrier after consumption",
+        "owner stop at actual WDK policy barrier after consumption",
+        "policy replacement at actual WDK policy barrier after consumption",
+        "token expiry at actual WDK policy barrier after consumption"
+      ]
+    },
+    "cli": {
+      "checks": 9,
+      "expectedOutcomesPassed": 9,
+      "evidence": "qa/cli-results.json"
+    },
+    "totalAdditionalTests": 15
+  },
+  "commands": [
+    "npm ci",
+    "npm run check",
+    "node --import tsx --test qa/security-probes.test.ts qa/native-guard-probes.test.ts",
+    "nine isolated CLI invocations with fresh synthetic state"
+  ],
+  "resolvedFindings": [
+    {
+      "id": "QA-STATE-ROLLBACK",
+      "original": "Old signed state bypassed consumed-token replay protection, stop, daily reservations and quarantine while latest signed log/checkpoint were retained.",
+      "fix": "Namespace-specific increasing revisions and exact snapshot hash committed via signed prepare/commit journal; ambiguous crashes and legacy state fail closed.",
+      "independentVerification": "same five probes pass at core f83e1be"
+    },
+    {
+      "id": "QA-NATIVE-QUARANTINE-AWAIT",
+      "original": "Quarantine committed during asynchronous WDK enrollment was bypassed before signing.",
+      "fix": "Recheck after enrollment and at actual WDK signing policy barrier.",
+      "independentVerification": "Both timing probes pass with journaled native9494e42+11910f6+8efb6b9; final combined source also passed."
+    },
+    {
+      "id": "QA-NATIVE-REVOCATION-BARRIER",
+      "original": "Owner stop, policy replacement or token expiry after token consumption but before asynchronous WDK signing policy was evaluated did not prevent signature export.",
+      "fix": "Core6dc050e assertSigningAllowed validates latest retained signed gate state, current policy/hash/version, owner stop, token validity and consumed record, agent, exact plan and pinned preview. Native96265ce synchronously invokes it with private immutable approval copies inside the actual WDK policy callback; quarantine is checked there too.",
+      "independentVerification": "All three original failing timing probes now pass. Ten total native probes pass; failed attempts leave token consumed. No revocation promise after a signature was already exported."
+    }
+  ],
+  "claimAudit": {
+    "README": "audited for local-only and incomplete-network claims; standard test count is now84 superseding the earlier76 documentation checkpoint",
+    "architecture": "audited; current-local-journal and external-anchor limits explicit",
+    "demo": "draft audited; synthetic vectors labelled liveTransfers:false",
+    "knownStatusLabels": {
+      "verifyAuthorize": "built, local tests; network demo pending",
+      "utexoFlaggedListApi": "stub, refuses",
+      "rgbAncestry": "designed, no consignment history screening",
+      "settle": "not started",
+      "remember": "not started"
+    }
+  },
+  "publicExplorerChecks": {
+    "evidence": "qa/public-explorer-checks.json",
+    "providers": [
+      "Mempool",
+      "Blockstream"
+    ],
+    "faucetFunding": {
+      "txid": "655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c",
+      "confirmed": true,
+      "blockHeight": 5195536,
+      "receiver": "B",
+      "vout": 1,
+      "amountSats": 129128
+    },
+    "freshSetupSplit": {
+      "txid": "c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
+      "confirmed": false,
+      "receiver": "A",
+      "vout": 0,
+      "amountSats": 65000,
+      "feeSats": 155
+    },
+    "asOf": "2026-10-19T15:53:16Z",
+    "actualRgbDemonstrationTxidsSupplied": 0
+  },
+  "liveDemonstration": {
+    "network": "utexo-testnet",
+    "fallback": false,
+    "clearIncoming": "not independently verified",
+    "flaggedWitnessInput": "not independently verified",
+    "quarantine": "not independently verified on chain",
+    "inLimitSend": "not independently verified on chain",
+    "overLimitRefusal": "synthetic/local only",
+    "stopRefusal": "synthetic/local only",
+    "escrow": "not built"
+  },
+  "limitations": [
+    "Restoring snapshot,journal and checkpoint together remains undetectable without external anchoring; none built.",
+    "Native RGB receive/asset membership relies on receiver-owned SDK/indexer; core decodes witness and prevouts, not RGB consignments.",
+    "Agent-controlled direct raw wallet keys/SDK methods are outside the governed adapter boundary.",
+    "Ambiguous crash state fails closed and requires reviewed offline recovery; no automatic rollback or legacy migration.",
+    "Daily limits count reservations conservatively, even if sending fails, until UTC day rollover.",
+    "Independent native probes inject SDK/account fakes; actual native send and public RGB receipt remain required."
+  ],
+  "compexExtraction": {
+    "verdict": "PASS_PRIVATE_EXTRACTION_CHECKPOINT",
+    "reportCommit": "d1d5064",
+    "sourceCommit": "62233f0",
+    "runtimeCommit": "80ab5e8",
+    "standardTests": {
+      "total": 51,
+      "passed": 51,
+      "failed": 0,
+      "skipped": 0
+    },
+    "independentAcceptanceProbes": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    "archiveOriginalBlobMatches": 122,
+    "actualTarball": {
+      "files": 51,
+      "bytes": 43339,
+      "offlineInstall": "pass",
+      "browserBundle": "pass"
+    },
+    "fullVerifierSha256": "bf48636dc810a34c107366c7a2335bfb2477b35fbc5bbed113600854dcfd6e91",
+    "workflowReview": {
+      "commit": "4258d04",
+      "verdict": "pass",
+      "finalG2Paths": 185,
+      "pathListMatchesTree": true,
+      "manualOnly": true,
+      "exactReviewedCommitRequired": true,
+      "privateRepositoryCheck": true,
+      "uniqueSelfHostedOnly": true,
+      "permissions": [
+        "contents:read",
+        "packages:write"
+      ]
+    },
+    "advisory": "Node API unsigned wrapper references and legacy consentHash are advisory; authoritative references must come from authenticated envelope. No forged evidence/loan acceptance demonstrated.",
+    "publication": "not performed by QA; requires Amir G2 and verified private access"
+  },
+  "logs": [
+    "/tmp/trust-qa-check-final.log",
+    "/tmp/trust-qa-probes-final.log",
+    "/tmp/trust-qa-security-d14a0c3.log",
+    "/tmp/trust-qa-native-9494e42.log",
+    "/tmp/trust-qa-native-all-barriers.log"
+  ],
+  "remaining": [
+    "Obtain actual RGB testnet receipt with clear/flagged incoming attestations, quarantine, governed in-limit send, over-limit refusal and stop refusal.",
+    "Independently check every demonstration transaction on public explorers and verify signed attestations/logs before meeting done."
+  ],
+  "localAcceptance": true
+}

@@ -1,0 +1,79 @@
+{
+  "purpose": "Independent QA public explorer checks: faucet funding and fresh B-to-A setup split only; no RGB demonstration txids supplied yet.",
+  "checks": [
+    {
+      "apiUrl": "https://mempool.space/testnet/api/tx/655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c",
+      "explorerUrl": "https://mempool.space/testnet/tx/655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c",
+      "fetchedAt": "2026-10-19T15:53:10.868326+00:00",
+      "txid": "655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c",
+      "status": {
+        "confirmed": true,
+        "block_height": 5195536,
+        "block_hash": "000000000000014dd4d91de3e3705ac53ea2c38c1faf96e66db4fcd65f5e6a1c",
+        "block_time": 1792424177
+      },
+      "feeSats": 246,
+      "expectedWalletOutputs": [
+        {
+          "vout": 1,
+          "amountSats": 129128,
+          "address": "tb1ppajmc8vgdnczrhx05659l8ncaala0nagdvlyu4dnycd7535kapsqw3kt7p"
+        }
+      ]
+    },
+    {
+      "apiUrl": "https://blockstream.info/testnet/api/tx/655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c",
+      "explorerUrl": "https://blockstream.info/testnet/tx/655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c",
+      "fetchedAt": "2026-10-19T15:53:16.617861+00:00",
+      "txid": "655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c",
+      "status": {
+        "confirmed": true,
+        "block_height": 5195536,
+        "block_hash": "000000000000014dd4d91de3e3705ac53ea2c38c1faf96e66db4fcd65f5e6a1c",
+        "block_time": 1792424177
+      },
+      "feeSats": 246,
+      "expectedWalletOutputs": [
+        {
+          "vout": 1,
+          "amountSats": 129128,
+          "address": "tb1ppajmc8vgdnczrhx05659l8ncaala0nagdvlyu4dnycd7535kapsqw3kt7p"
+        }
+      ]
+    },
+    {
+      "apiUrl": "https://mempool.space/testnet/api/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
+      "explorerUrl": "https://mempool.space/testnet/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
+      "fetchedAt": "2026-10-19T15:53:10.670557+00:00",
+      "txid": "c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
+      "status": {
+        "confirmed": false
+      },
+      "feeSats": 155,
+      "expectedWalletOutputs": [
+        {
+          "vout": 0,
+          "amountSats": 65000,
+          "address": "tb1pxha8nramtc274shnavxshk47qfmx9j8l9spmzr9r2f05c3a6rtuquh5tw5"
+        }
+      ]
+    },
+    {
+      "apiUrl": "https://blockstream.info/testnet/api/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
+      "explorerUrl": "https://blockstream.info/testnet/tx/c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
+      "fetchedAt": "2026-10-19T15:53:13.369902+00:00",
+      "txid": "c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
+      "status": {
+        "confirmed": false
+      },
+      "feeSats": 155,
+      "expectedWalletOutputs": [
+        {
+          "vout": 0,
+          "amountSats": 65000,
+          "address": "tb1pxha8nramtc274shnavxshk47qfmx9j8l9spmzr9r2f05c3a6rtuquh5tw5"
+        }
+      ]
+    }
+  ]
+}

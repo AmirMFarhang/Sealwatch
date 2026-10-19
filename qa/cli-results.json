@@ -1,0 +1,87 @@
+{
+  "sourceCommit": "87461f90174f9005e61af0f6cceb663604ed58ef",
+  "checkedAt": "2026-10-19T15:53:09.440405+00:00",
+  "stateDir": ".state/qa-cli-fixed-6f88dcd6",
+  "checks": [
+    {
+      "name": "demo-local",
+      "result": {
+        "mode": "synthetic-local-structural-demo",
+        "liveTransfers": false,
+        "clear": "clear",
+        "flagged": "flagged",
+        "withinAllowed": true,
+        "overAllowed": false,
+        "stoppedAllowed": false,
+        "chainProblems": []
+      }
+    },
+    {
+      "name": "verify-clear",
+      "exitCode": 0,
+      "result": {
+        "overall": "clear"
+      }
+    },
+    {
+      "name": "verify-flagged",
+      "exitCode": 0,
+      "result": {
+        "overall": "flagged"
+      }
+    },
+    {
+      "name": "verify-attestation",
+      "exitCode": 0,
+      "result": {
+        "problems": [],
+        "valid": true
+      }
+    },
+    {
+      "name": "tampered-attestation",
+      "exitCode": 1,
+      "result": {
+        "problems": [
+          "attestation signature/checker trust invalid",
+          "attestation check/result semantics invalid"
+        ],
+        "valid": false
+      }
+    },
+    {
+      "name": "verify-log",
+      "exitCode": 0,
+      "result": {
+        "problems": [],
+        "valid": true
+      }
+    },
+    {
+      "name": "why-over-limit",
+      "exitCode": 0,
+      "result": {
+        "chainProblems": [],
+        "reasonsPresent": true
+      }
+    },
+    {
+      "name": "tampered-flagged-list",
+      "exitCode": 1,
+      "result": {
+        "error": "flagged-list file SHA-256 mismatch"
+      }
+    },
+    {
+      "name": "tampered-log",
+      "exitCode": 1,
+      "result": {
+        "problems": [
+          "entry 0: content hash mismatch",
+          "entry 0: node signature invalid"
+        ],
+        "valid": false
+      }
+    }
+  ]
+}
