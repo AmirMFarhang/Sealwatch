@@ -17,6 +17,8 @@ node --import tsx scripts/network-probe.ts
 node --import tsx scripts/testnet-wallets.ts status
 ```
 
+If the public faucet funds only B, `node --import tsx scripts/testnet-fund.ts` splits 65,000 confirmed faucet sats from fresh B to fresh A, recording the actual txid and fee. It refuses after any RGB transaction and waits for sufficient confirmed funding. No existing wallet is involved. Wait for this funding split to confirm before creating UTXOs.
+
 Wallet A and B are generated independently on their first setup. Seeds, SDK databases, signing authorities and receiver history live only under ignored `.state/<profile>/`, with private file/directory permissions. `TRUST_STATE_DIR` selects a separate private state root. Every address printed by the status command belongs to these new wallets. Never import an existing wallet or use real funds.
 
 For the primary, use the public [coinfaucet testnet3 faucet](https://coinfaucet.eu/en/btc-testnet/) or [uo1 testnet faucet](https://bitcoinfaucet.uo1.net/). Check faucet availability first: on 19 October the former required a human hCaptcha, and the latter reported its wallet offline and no coins available. No CAPTCHA bypass or paid funding is used. The fallback's public faucet is [faucet.mutinynet.com](https://faucet.mutinynet.com/). Request enough confirmed faucet coins for at least 45,000 sats per wallet before creating eight 5,000-sat colorable outputs.

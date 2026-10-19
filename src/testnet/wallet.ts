@@ -5,6 +5,7 @@ import { resolve } from 'node:path'
 import { createHash } from 'node:crypto'
 import WDK from '@tetherto/wdk'
 import WalletManagerRgb from '@utexo/wdk-wallet-rgb'
+import { Psbt } from 'bitcoinjs-lib'
 import { networkConfig, type NetworkConfig } from '../network/config.js'
 
 interface DecodedInvoice {
@@ -21,7 +22,7 @@ interface NativeClient {
 }
 interface Account {
   getAddress(): string
-  getRgbWallet(): { client: NativeClient; getBtcBalance(): unknown; getAssetBalance(asset: string): unknown }
+  getRgbWallet(): { client: NativeClient; getBtcBalance(): unknown; getAssetBalance(asset: string): unknown; sendBtcBegin(params: { address: string; amount: number; feeRate: number }): string; sendBtcEnd(params: { signedPsbt: string }): string }
   createUtxos(params: { upTo: boolean; num: number; size: number; feeRate: number }): Promise<number>
   issueAssetNia(params: { ticker: string; name: string; precision: number; amounts: number[] }): { assetId?: string }
   receiveAsset(params: { witness: boolean; amount: number; minConfirmations: number; durationSeconds: number }): { invoice: string; recipientId: string }
@@ -92,6 +93,26 @@ export class TestnetWallet {
   invoice(amount: number) {
     // Leave asset unspecified for a receiver that has not yet learned the contract.
     return this.account.receiveAsset({ witness: true, amount, minConfirmations: 1, durationSeconds: 14_400 })
+  }
+
+  /** Setup only: split public-faucet BTC between these two brand-new wallets before RGB use. */
+  async fundNewPeer(peer: TestnetWallet, amount = 65_000) {
+    if (this.governed || this.config.name !== peer.config.name || this.name !== 'B' || peer.name !== 'A') throw new Error('Faucet split is limited to fresh B -> A setup on the same test network')
+    if (this.transfers().some(t => t.txid)) throw new Error('Faucet split must precede any RGB transaction')
+    const sdk = this.account.getRgbWallet()
+    const unsignedPsbt = sdk.sendBtcBegin({ address: peer.depositAddress, amount, feeRate: 1 })
+    const psbt = /^[a-f0-9]+$/i.test(unsignedPsbt) ? Psbt.fromHex(unsignedPsbt) : Psbt.fromBase64(unsignedPsbt)
+    let inputs = 0n
+    for (const input of psbt.data.inputs) {
+      if (!input.witnessUtxo) throw new Error('Faucet split PSBT lacks input value')
+      inputs += input.witnessUtxo.value
+    }
+    const outputs = psbt.txOutputs.reduce((sum, output) => sum + output.value, 0n)
+    const fee = inputs - outputs
+    if (fee <= 0n || fee > 3000n) throw new Error('Faucet split fee exceeds setup budget')
+    const signedPsbt = await this.account.signPsbt(unsignedPsbt)
+    const txid = sdk.sendBtcEnd({ signedPsbt })
+    return { txid, amountSats: amount, feeSats: String(fee), senderWalletId: this.walletId, receiverWalletId: peer.walletId, receiverAddress: peer.depositAddress, source: 'Public testnet faucet funded newly created B; setup split to newly created A only' }
   }
 
   /** Prepare exact native PSBT; donation=true is required by the pinned SDK stack. */

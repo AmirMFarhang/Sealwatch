@@ -113,6 +113,7 @@ export async function runTestnetDemo() {
     if (!progress.attestations.clear) {
       await writeList('1', [])
       progress.attestations.clear = await verifier.verifyIncoming(await incomingEvidence(config, receiver, asset.assetId, clearTxid))
+      if (progress.attestations.clear.overall !== 'clear') await receiver.quarantine(asset.assetId)
       if (progress.attestations.clear.overall !== 'clear') throw new Error('Actual incoming clear transfer did not receive a clear attestation')
       await save('running')
     }
@@ -122,6 +123,7 @@ export async function runTestnetDemo() {
       const input = Transaction.fromHex(evidence.witnessRawHex).ins[0]
       await writeList('2', [`${Buffer.from(input.hash).reverse().toString('hex')}:${input.index}`])
       progress.attestations.flagged = await verifier.verifyIncoming(evidence)
+      if (progress.attestations.flagged.overall !== 'clear') await receiver.quarantine(asset.assetId)
       if (progress.attestations.flagged.overall !== 'flagged' || progress.attestations.flagged.checks.flaggedL1.status !== 'flagged') throw new Error('Actual matching witness input did not produce a flagged L1 attestation')
       await save('running')
     }

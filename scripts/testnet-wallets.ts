@@ -15,9 +15,9 @@ async function main() {
     for (const wallet of opened) wallet.refresh()
     if (command === 'create-utxos') {
       for (const wallet of opened) {
-        const balance = wallet.publicState().btcBalance as { vanilla: { spendable: number }; colored: { spendable: number } }
+        const balance = wallet.publicState().btcBalance as { vanilla: { spendable: number; settled: number }; colored: { spendable: number; settled: number } }
         if (balance.colored.spendable >= 40_000) continue
-        if (balance.vanilla.spendable < 45_000) throw new Error(`${wallet.name} needs at least 45,000 confirmed faucet sats for eight 5,000-sat colorable outputs and fees`)
+        if (balance.vanilla.spendable < 45_000 || balance.vanilla.settled < 45_000) throw new Error(`${wallet.name} needs at least 45,000 confirmed faucet sats for eight 5,000-sat colorable outputs and fees`)
         console.log(JSON.stringify({ wallet: wallet.name, createdColorableOutputs: await wallet.createUtxos() }))
       }
     }
