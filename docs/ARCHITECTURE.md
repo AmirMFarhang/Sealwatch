@@ -55,8 +55,8 @@ or the explicitly labelled Mutinynet fallback. SDK versions are pinned. Tests
 use isolated local fixtures; only recorded, explorer-checked transactions count
 as a live network demonstration.
 
-**Settle** is designed from the original generic escrow code; **Remember** is
-not started. Neither is part of the required Verify/Authorize proof until its
+**Settle** and **Remember** are not started in this repository. Neither is part
+of the required Verify/Authorize proof until its
 tests and transaction receipt establish otherwise. Consult `release/verification.json`
 and `release/testnet-receipt.json` for acceptance status, rather than treating this
 architecture description as a completed testnet run.
