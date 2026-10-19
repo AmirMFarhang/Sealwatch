@@ -29,7 +29,7 @@ chain settlement. Signed local state and its retained journal detect partial
 rollback; independent protection against rolling back all local evidence is
 not built.
 
-**Evidence now:** 76 local tests pass after the signed-state rollback fix.
+**Evidence now:** 84 local tests pass after the signed-state rollback fix.
 Independent QA is rechecking five probes after its earlier four failures; no
 final acceptance is claimed. Primary Utexo SDK endpoints identify Bitcoin
 testnet3; Mutinynet fallback has not been selected. A new wallet received

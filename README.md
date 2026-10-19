@@ -10,7 +10,7 @@ It is built on Utexo's RGB SDK; no partnership is claimed.
 
 ## Current evidence
 
-The local implementation passes **76 tests** (73 core and 3 network tests).
+The local implementation passes **84 tests** (81 core and 3 network tests).
 Independent QA and the live testnet demonstration are pending. The primary
 endpoints answer and identify Bitcoin testnet3. A faucet transfer to a new
 wallet is awaiting confirmation. **No completed RGB testnet demonstration is
