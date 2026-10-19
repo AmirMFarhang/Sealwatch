@@ -81,8 +81,8 @@ export async function runTestnetDemo() {
     const awaitSettled = async (txid: string) => {
       for (let attempt = 0; attempt < 120; attempt++) {
         receiver.refresh(); sender.refresh()
-        const received = receiver.transfers().find(t => t.txid === txid && t.kind === 'ReceiveWitness')
-        const sent = sender.transfers().find(t => t.txid === txid && t.kind === 'Send')
+        const received = receiver.transfers(asset.assetId).find(t => t.txid === txid && t.kind === 'ReceiveWitness')
+        const sent = sender.transfers(asset.assetId).find(t => t.txid === txid && t.kind === 'Send')
         if (received?.status === 'Failed' || sent?.status === 'Failed') throw new Error(`SDK failed transfer ${txid}`)
         if (received?.status === 'Settled' && sent?.status === 'Settled') return
         console.log(JSON.stringify({ txid, receiverStatus: received?.status, senderStatus: sent?.status, attempt }))
