@@ -343,5 +343,8 @@ test("no installed policy is fail-closed and has a decision log", () => {
   const d = f.gate.authorize(f.request());
   assert(!d.allowed);
   assert(d.why.includes("NO_POLICY"));
-  assert.equal(f.log.entries().length, 1);
+  assert.equal(
+    f.log.entries().filter((e) => e.kind === "authorization").length,
+    1,
+  );
 });

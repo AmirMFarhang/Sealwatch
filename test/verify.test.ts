@@ -27,7 +27,10 @@ test("clear attestation checks decoded witness prevouts, carries signed list, an
   assert.equal(a.checks.rgbAncestry.status, "designed");
   assert.deepEqual(attestationProblems(a, trust(f)), []);
   assert.deepEqual(f.log.verify(), []);
-  assert.equal(f.log.entries().length, 1);
+  assert.equal(
+    f.log.entries().filter((e) => e.kind === "incoming-verification").length,
+    1,
+  );
 });
 test("sanctions hit derives sender address even when caller supplies empty sender list", async () => {
   const f = incomingFixture({ sanctioned: true });

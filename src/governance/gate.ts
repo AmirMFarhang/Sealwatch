@@ -124,29 +124,37 @@ export class PolicyGate {
     network(options.network);
     publicKey(options.ownerPk, "ownerPk");
     text(options.walletId, "walletId");
-    this.store = new SignedStore(options.stateFile, options.key, () => {
-      assert(
-        !options.log
-          .entries()
-          .some((e) =>
-            [
-              "policy-install",
-              "authorization",
-              "kill-switch",
-              "signing-token",
-            ].includes(e.kind),
-          ),
-        "gate state missing but prior signed governance history exists; refusing replay-state reset",
-      );
-      return {
-        policy: null,
-        stopped: null,
-        spentByDay: {},
-        requests: [],
-        tokens: {},
-        commands: [],
-      };
-    });
+    this.store = new SignedStore(
+      options.stateFile,
+      options.key,
+      () => {
+        assert(
+          !options.log
+            .entries()
+            .some((e) =>
+              [
+                "policy-install",
+                "authorization",
+                "kill-switch",
+                "signing-token",
+              ].includes(e.kind),
+            ),
+          "gate state missing but prior signed governance history exists; refusing replay-state reset",
+        );
+        return {
+          policy: null,
+          stopped: null,
+          spentByDay: {},
+          requests: [],
+          tokens: {},
+          commands: [],
+        };
+      },
+      {
+        log: options.log,
+        namespace: `gate:${options.network}:${options.walletId}`,
+      },
+    );
   }
   private now() {
     const at = this.options.now?.() ?? Math.floor(Date.now() / 1000);

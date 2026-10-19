@@ -22,13 +22,18 @@ export class ReceiverQuarantine {
     key: KeyPair,
     log: FileDecisionLog,
   ) {
-    this.store = new SignedStore(file, key, () => {
-      assert(
-        !log.entries().some((e) => e.kind === "incoming-verification"),
-        "receiver quarantine state missing beside prior verification history; refusing reset",
-      );
-      return { receives: {} };
-    });
+    this.store = new SignedStore(
+      file,
+      key,
+      () => {
+        assert(
+          !log.entries().some((e) => e.kind === "incoming-verification"),
+          "receiver quarantine state missing beside prior verification history; refusing reset",
+        );
+        return { receives: {} };
+      },
+      { log, namespace: "receiver-quarantine" },
+    );
   }
   record(
     network: Network,

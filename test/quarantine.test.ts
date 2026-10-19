@@ -125,6 +125,6 @@ test("quarantine deletion alongside signed receive history fails closed", async 
         f.input.receiverWalletId,
         f.input.assetId,
       ),
-    /state missing/,
+    /state file missing/,
   );
 });

@@ -223,6 +223,6 @@ test("deleted replay state cannot silently initialize beside signed governance h
   unlinkSync(f.gateOptions.stateFile);
   assert.throws(
     () => new PolicyGate(f.gateOptions).install(f.policy),
-    /prior signed governance history/,
+    /committed journal history/,
   );
 });

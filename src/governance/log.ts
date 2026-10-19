@@ -101,16 +101,31 @@ export class FileDecisionLog {
       return [`log parse failed: ${(e as Error).message}`];
     }
   }
+  /** A lock-consistent verified snapshot used by mutable-state journals. */
+  verifiedEntries(): LogEntry[] {
+    return withFileLock(this.file, () => {
+      const entries = this.entries();
+      const checkpoint = this.checkpoint();
+      const errors = [
+        ...verifyLog(entries, this.key.pubkey, checkpoint),
+        ...(entries.length && !checkpoint ? ["checkpoint missing"] : []),
+      ];
+      assert(!errors.length, `refusing broken log: ${errors.join("; ")}`);
+      return entries;
+    });
+  }
   append(
     kind: string,
     result: string,
     detail: unknown,
     actionId: string | null = null,
+    beforeAppend?: (entries: LogEntry[]) => void,
   ): LogEntry {
     return withFileLock(this.file, () => {
       const errors = this.verify();
       assert(!errors.length, `refusing broken log: ${errors.join("; ")}`);
       const es = this.entries();
+      beforeAppend?.(es);
       const b = {
         v: 1 as const,
         domain: "trust-decision-log-v1" as const,
