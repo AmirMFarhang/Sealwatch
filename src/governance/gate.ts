@@ -409,6 +409,63 @@ export class PolicyGate {
       );
     });
   }
+  /**
+   * Recheck at the wallet's actual signing barrier after consume(). This is
+   * read-only: the adapter owns one signing attempt and must call this from
+   * its WDK policy condition immediately before releasing the key signature.
+   * A signature already exported cannot be revoked by a subsequent stop.
+   */
+  assertSigningAllowed(
+    token: GateToken,
+    plan: WalletSendPlan,
+    preview: WalletPreview,
+  ): void {
+    const o = this.options;
+    const s = this.store.read(); // Validates the latest retained signed state journal.
+    const at = this.now();
+    const p = s.policy;
+    assert(!s.stopped, "KILL_SWITCH_STOPPED");
+    assert(
+      p && p.notBefore <= at && at < p.expiresAt,
+      "POLICY_EXPIRED_OR_NOT_ACTIVE",
+    );
+    assert(
+      token.v === 1 &&
+        token.domain === "trust-approval-token-v1" &&
+        token.gatePk === o.key.pubkey &&
+        verifyObject(token, o.key.pubkey),
+      "TOKEN_SIGNATURE_INVALID",
+    );
+    assert(
+      token.network === o.network && token.walletId === o.walletId,
+      "TOKEN_NETWORK_OR_WALLET_MISMATCH",
+    );
+    assert(token.issuedAt <= at && at < token.expiresAt, "TOKEN_TIME_INVALID");
+    assert(
+      token.policyHash === hashObject(p) &&
+        token.policyVersion === p.version &&
+        p.agentKeys.includes(token.agentPk),
+      "TOKEN_POLICY_OR_AGENT_CHANGED",
+    );
+    assert(
+      plan.network === o.network &&
+        plan.walletId === o.walletId &&
+        sendPlanHash(plan) === token.planHash,
+      "DECODED_TRANSACTION_MISMATCH",
+    );
+    assert(
+      previewValid(plan, preview, p.walletAdapterPk),
+      "WALLET_PREVIEW_SIGNATURE_INVALID",
+    );
+    const quarantineProblems =
+      o.quarantine?.problems(plan.network, plan.walletId, plan.assetId) ?? [];
+    assert(!quarantineProblems.length, quarantineProblems.join("; "));
+    const record = s.tokens[token.id];
+    assert(
+      record && hashObject(record.token) === hashObject(token) && record.used,
+      "TOKEN_NOT_CONSUMED_OR_UNKNOWN",
+    );
+  }
   stop(command: StopCommand): void {
     const o = this.options;
     const at = this.now();
