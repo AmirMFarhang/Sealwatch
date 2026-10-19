@@ -9,6 +9,7 @@ import { networkConfig } from '../src/network/config.js';
 import { ReceiverQuarantine } from '../src/wallet/quarantine.js';
 import { SignedStore } from '../src/core/store.js';
 import { FileDecisionLog } from '../src/governance/log.js';
+import { hashObject } from '../src/core/crypto.js';
 import { PolicyGate, signPolicy, signRequest } from '../src/governance/gate.js';
 import { AT, gateFixture } from '../test/helpers.js';
 
@@ -128,4 +129,17 @@ test('QA native: owner stop at the WDK policy barrier refuses signing before sig
   await assert.rejects(() => f.wallet.sendPrepared(p.plan, p.token, p.preview), /STOPPED|DENIED/);
   assert.deepEqual(f.events, []);
   assert.equal(f.gate.store.read().tokens[p.token.id].used, true);
+});
+
+test('QA native: policy replacement at the WDK barrier refuses the older approval before signature export', async () => {
+  const f = fixture(); const p = await f.prepare();
+  f.duringSigningPolicy(() => f.gate.install(signPolicy({ ...f.policy, version: 2, prevHash: hashObject(f.policy), maxPerSend: '49' }, f.owner)));
+  await assert.rejects(() => f.wallet.sendPrepared(p.plan, p.token, p.preview), /POLICY|DENIED/);
+  assert.deepEqual(f.events, []);
+});
+
+test('QA native: token expiry at the WDK barrier refuses signing before signature export', async () => {
+  const f = fixture(); const p = await f.prepare(); f.duringSigningPolicy(() => f.setTime(p.token.expiresAt));
+  await assert.rejects(() => f.wallet.sendPrepared(p.plan, p.token, p.preview), /TIME|DENIED/);
+  assert.deepEqual(f.events, []);
 });
