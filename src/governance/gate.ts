@@ -1,6 +1,7 @@
 // Copyright 2026 Amir Mohammad Farhang and contributors; all rights reserved; private.
 // Adapted from Satstride governance/{gate,policy,sessions,store,why}.ts and wallet/signer.ts (Apache-2.0); see NOTICE.
 import {
+  canonicalJson,
   hashObject,
   randomHex,
   signObject,
@@ -25,6 +26,26 @@ import {
   type WalletSendPlan,
 } from "../wallet/plan.js";
 import { FileDecisionLog } from "./log.js";
+import type {
+  AttestedCheckProvider,
+  CheckRequest,
+} from "../provider/protocol.js";
+import {
+  agentReviewRequest,
+  assertTokenReview,
+  needsAgentReview,
+  summarizeAgentReview,
+  validateReviewPolicy,
+  type AgentReviewPolicy,
+  type AgentReviewSummary,
+} from "./review.js";
+interface ReviewAttempt {
+  policyHash: string;
+  request: CheckRequest;
+  summary?: AgentReviewSummary;
+  failure?: string;
+}
+
 export interface SpendingPolicy {
   v: 1;
   domain: "trust-spending-policy-v1";
@@ -44,6 +65,7 @@ export interface SpendingPolicy {
   notBefore: number;
   expiresAt: number;
   tokenTtlSeconds: number;
+  review?: AgentReviewPolicy;
   sig: string;
 }
 export interface SendRequest {
@@ -71,6 +93,7 @@ export interface GateToken {
   policyVersion: number;
   issuedAt: number;
   expiresAt: number;
+  review?: AgentReviewSummary;
   sig: string;
 }
 export interface StopCommand {
@@ -111,6 +134,7 @@ export class PolicyGate {
       walletId: string;
       stateFile: string;
       log: FileDecisionLog;
+      reviewProvider?: AttestedCheckProvider;
       quarantine?: {
         problems: (
           network: Network,
@@ -196,6 +220,7 @@ export class PolicyGate {
         "policy spending limits invalid",
       );
       units(policy.maxBitcoinFeeSats, "max fee");
+      validateReviewPolicy(policy);
       integer(policy.notBefore, "notBefore");
       integer(policy.expiresAt, "expiresAt");
       integer(policy.version, "version");
@@ -229,70 +254,136 @@ export class PolicyGate {
       });
     });
   }
+  private evaluateLocal(request: SendRequest, s: GateState, at: number) {
+    const o = this.options;
+    const why: string[] = [];
+    const p = s.policy;
+    let decoded: ReturnType<typeof decodeSendPlan> | undefined;
+    if (!p) why.push("NO_POLICY");
+    if (s.stopped) why.push("KILL_SWITCH_STOPPED");
+    if (p && (p.notBefore > at || at >= p.expiresAt))
+      why.push("POLICY_EXPIRED_OR_NOT_ACTIVE");
+    if (
+      request.v !== 1 ||
+      request.domain !== "trust-authorize-request-v1" ||
+      !p?.agentKeys.includes(request.agentPk) ||
+      !verifyObject(request, request.agentPk)
+    )
+      why.push("REQUEST_SIGNATURE_OR_AGENT_NOT_TRUSTED");
+    if (
+      !Number.isSafeInteger(request.issuedAt) ||
+      !Number.isSafeInteger(request.expiresAt) ||
+      request.issuedAt > at ||
+      at >= request.expiresAt ||
+      request.expiresAt - request.issuedAt > 600
+    )
+      why.push("REQUEST_TIME_INVALID");
+    if (
+      typeof request.requestId !== "string" ||
+      request.requestId.length < 16 ||
+      s.requests.includes(request.requestId)
+    )
+      why.push("REQUEST_REPLAY_OR_ID_INVALID");
+    try {
+      decoded = decodeSendPlan(request.plan);
+      why.push(
+        ...(o.quarantine?.problems(
+          decoded.network,
+          decoded.walletId,
+          decoded.assetId,
+        ) ?? []),
+      );
+      if (decoded.network !== o.network || decoded.walletId !== o.walletId)
+        why.push("NETWORK_OR_WALLET_MISMATCH");
+      if (p) {
+        if (!previewValid(request.plan, request.preview, p.walletAdapterPk))
+          why.push("WALLET_PREVIEW_SIGNATURE_INVALID");
+        if (decoded.assetId !== p.assetId) why.push("ASSET_NOT_ALLOWED");
+        if (!p.allowedRecipients.includes(decoded.recipientId))
+          why.push("RECIPIENT_NOT_ALLOWED");
+        if (p.review && units(decoded.amount) > units(p.review.humanThreshold))
+          why.push("HUMAN_APPROVAL_REQUIRED");
+        if (units(decoded.amount) > units(p.maxPerSend))
+          why.push("PER_SEND_LIMIT_EXCEEDED");
+        if (units(decoded.bitcoinFeeSats) > units(p.maxBitcoinFeeSats))
+          why.push("BITCOIN_FEE_LIMIT_EXCEEDED");
+        const day = new Date(at * 1000).toISOString().slice(0, 10);
+        if (
+          units(s.spentByDay[day] ?? "0") + units(decoded.amount) >
+          units(p.maxPerDay)
+        )
+          why.push("DAILY_LIMIT_EXCEEDED");
+      }
+    } catch (e) {
+      why.push(`PREVIEW_INVALID: ${(e as Error).message}`);
+    }
+    return { why, policy: p, decoded };
+  }
   authorize(request: SendRequest): Decision {
+    return this.decide(request);
+  }
+
+  /** Review is optional by signed policy, never a replacement for any local rule. */
+  async authorizeReviewed(request: SendRequest): Promise<Decision> {
+    // Hold an immutable copy before crossing provider code or asynchronous boundaries.
+    const frozen = JSON.parse(canonicalJson(request)) as SendRequest;
+    const at = this.now();
+    const evaluated = this.evaluateLocal(frozen, this.store.read(), at);
+    if (evaluated.why.length)
+      return this.decide(frozen, undefined, evaluated.why);
+    const policy = evaluated.policy!;
+    if (!needsAgentReview(policy, evaluated.decoded!.amount))
+      return this.decide(frozen);
+    const provider = this.options.reviewProvider;
+    if (!provider)
+      return this.decide(frozen, undefined, ["PROVIDER_REVIEW_UNAVAILABLE"]);
+    const checkRequest = agentReviewRequest(frozen, policy, at);
+    const attempt: ReviewAttempt = {
+      policyHash: hashObject(policy),
+      request: checkRequest,
+    };
+    try {
+      // A provider receives its own copy; it cannot rewrite the gate's binding.
+      const result = await provider.check(
+        JSON.parse(canonicalJson(checkRequest)),
+      );
+      const checked = JSON.parse(canonicalJson(result));
+      attempt.summary = summarizeAgentReview(
+        checked,
+        checkRequest,
+        policy,
+        this.now(),
+      );
+      if (attempt.summary.recommendation !== "approve")
+        attempt.failure = "PROVIDER_REVIEW_ESCALATED";
+    } catch {
+      attempt.failure = "PROVIDER_REVIEW_FAILED";
+    }
+    return this.decide(frozen, attempt);
+  }
+  private decide(
+    request: SendRequest,
+    review?: ReviewAttempt,
+    additionalWhy: string[] = [],
+  ): Decision {
     const o = this.options;
     const at = this.now();
     const actionId = randomHex(16);
     return this.store.transact((s) => {
-      const why: string[] = [];
-      const p = s.policy;
-      let decoded: ReturnType<typeof decodeSendPlan> | undefined;
-      if (!p) why.push("NO_POLICY");
-      if (s.stopped) why.push("KILL_SWITCH_STOPPED");
-      if (p && (p.notBefore > at || at >= p.expiresAt))
-        why.push("POLICY_EXPIRED_OR_NOT_ACTIVE");
+      const { why, policy: p, decoded } = this.evaluateLocal(request, s, at);
+      why.push(...additionalWhy);
+      if (review && (!p || hashObject(p) !== review.policyHash))
+        why.push("POLICY_CHANGED_DURING_REVIEW");
+      if (review?.failure) why.push(review.failure);
+      if (review?.summary && at >= review.summary.expiresAt)
+        why.push("PROVIDER_REVIEW_EXPIRED");
       if (
-        request.v !== 1 ||
-        request.domain !== "trust-authorize-request-v1" ||
-        !p?.agentKeys.includes(request.agentPk) ||
-        !verifyObject(request, request.agentPk)
+        p &&
+        decoded &&
+        needsAgentReview(p, decoded.amount) &&
+        !review?.summary
       )
-        why.push("REQUEST_SIGNATURE_OR_AGENT_NOT_TRUSTED");
-      if (
-        !Number.isSafeInteger(request.issuedAt) ||
-        !Number.isSafeInteger(request.expiresAt) ||
-        request.issuedAt > at ||
-        at >= request.expiresAt ||
-        request.expiresAt - request.issuedAt > 600
-      )
-        why.push("REQUEST_TIME_INVALID");
-      if (
-        typeof request.requestId !== "string" ||
-        request.requestId.length < 16 ||
-        s.requests.includes(request.requestId)
-      )
-        why.push("REQUEST_REPLAY_OR_ID_INVALID");
-      try {
-        decoded = decodeSendPlan(request.plan);
-        why.push(
-          ...(o.quarantine?.problems(
-            decoded.network,
-            decoded.walletId,
-            decoded.assetId,
-          ) ?? []),
-        );
-        if (decoded.network !== o.network || decoded.walletId !== o.walletId)
-          why.push("NETWORK_OR_WALLET_MISMATCH");
-        if (p) {
-          if (!previewValid(request.plan, request.preview, p.walletAdapterPk))
-            why.push("WALLET_PREVIEW_SIGNATURE_INVALID");
-          if (decoded.assetId !== p.assetId) why.push("ASSET_NOT_ALLOWED");
-          if (!p.allowedRecipients.includes(decoded.recipientId))
-            why.push("RECIPIENT_NOT_ALLOWED");
-          if (units(decoded.amount) > units(p.maxPerSend))
-            why.push("PER_SEND_LIMIT_EXCEEDED");
-          if (units(decoded.bitcoinFeeSats) > units(p.maxBitcoinFeeSats))
-            why.push("BITCOIN_FEE_LIMIT_EXCEEDED");
-          const day = new Date(at * 1000).toISOString().slice(0, 10);
-          if (
-            units(s.spentByDay[day] ?? "0") + units(decoded.amount) >
-            units(p.maxPerDay)
-          )
-            why.push("DAILY_LIMIT_EXCEEDED");
-        }
-      } catch (e) {
-        why.push(`PREVIEW_INVALID: ${(e as Error).message}`);
-      }
+        why.push("PROVIDER_REVIEW_REQUIRED");
       let token: GateToken | null = null;
       if (!why.length && p && decoded) {
         token = signObject(
@@ -313,7 +404,9 @@ export class PolicyGate {
               at + p.tokenTtlSeconds,
               p.expiresAt,
               request.expiresAt,
+              review?.summary?.expiresAt ?? request.expiresAt,
             ),
+            ...(review?.summary ? { review: review.summary } : {}),
           },
           o.key.secretKey,
         );
@@ -340,6 +433,7 @@ export class PolicyGate {
           requestHash: hashObject(request),
           planHash: decoded ? sendPlanHash(request.plan) : null,
           policyHash: p ? hashObject(p) : null,
+          ...(review?.summary ? { providerReview: review.summary } : {}),
         },
         actionId,
       );
@@ -393,6 +487,7 @@ export class PolicyGate {
       const quarantineProblems =
         o.quarantine?.problems(plan.network, plan.walletId, plan.assetId) ?? [];
       assert(!quarantineProblems.length, quarantineProblems.join("; "));
+      assertTokenReview(p, plan, token, at);
       const record = s.tokens[token.id];
       assert(
         record &&
@@ -460,6 +555,7 @@ export class PolicyGate {
     const quarantineProblems =
       o.quarantine?.problems(plan.network, plan.walletId, plan.assetId) ?? [];
     assert(!quarantineProblems.length, quarantineProblems.join("; "));
+    assertTokenReview(p, plan, token, at);
     const record = s.tokens[token.id];
     assert(
       record && hashObject(record.token) === hashObject(token) && record.used,
