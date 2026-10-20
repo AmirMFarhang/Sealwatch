@@ -10,14 +10,20 @@ It is built on Utexo's RGB SDK; no partnership is claimed.
 
 ## Current evidence
 
-The local implementation passes **84 tests** (81 core and 3 network tests).
-Independent QA also passes **15 security probes and 9 CLI checks**; see
-[the QA report](docs/QA.md). The live testnet demonstration is pending. The primary
-endpoints answer and identify Bitcoin testnet3. A faucet transfer is confirmed;
-the funding split between the two new wallets is awaiting confirmation.
-**No completed RGB testnet demonstration is
-claimed.** Read [the receipt](release/testnet-receipt.json) for the recorded
-network state; a synthetic local run is not a network receipt.
+The local implementation passes **88 tests**. Independent QA also passes
+**15 security probes and 9 CLI checks**; see [the QA report](docs/QA.md).
+The live run uses **Utexo's documented Bitcoin testnet3**; Mutinynet fallback
+has not been used. Two fresh wallets are funded with public faucet coins and
+have issued **test USD, not USDT**. The first governed RGB transfer is confirmed
+and has a signed **clear** receiver attestation. A second transfer is broadcast
+and awaits confirmation before the flagged-input check. **The complete live
+proof remains pending.** See [the receipt](release/testnet-receipt.json).
+
+The first receiver attempt recorded a signed error because the address decoder
+could not handle a Taproot prevout without an ECC context. The corrected decoder
+has a regression test against that public script and was independently checked.
+The receipt retains the original signed error. Its asset quarantine remains in
+force; a later clear result does not silently release it.
 
 | Building block | Status | Evidence and limits |
 | --- | --- | --- |

@@ -1,7 +1,7 @@
 # Trust layer — one-page draft for Amir
 
 Private working project · Amir Mohammad Farhang, sole current contributor ·
-Meeting date unconfirmed · Evidence snapshot: 19 October 2026, 17:44 Europe/Rome.
+Meeting date unconfirmed · Evidence snapshot: 20 October 2026, 09:48 Europe/Rome.
 Draft only; Amir presents or sends it.
 
 **The trust layer for dollars on RGB: Verify, Authorize, Settle, Remember.**
@@ -29,16 +29,16 @@ chain settlement. Signed local state and its retained journal detect partial
 rollback; independent protection against rolling back all local evidence is
 not built.
 
-**Evidence now:** 84 local tests pass after the signed-state rollback fix.
-Independent QA is rechecking five probes after its earlier four failures; no
-final acceptance is claimed. Primary Utexo SDK endpoints identify Bitcoin
-testnet3; Mutinynet fallback has not been selected. A new wallet received
-129,128 faucet sats, confirmed at block 5,195,536. A 65,000-sat setup transfer to
-the other new wallet was broadcast and awaits confirmation. These are Bitcoin
-funding steps. The asset **“test USD, not USDT”** is not yet issued, and no RGB
-transfer demonstration is complete. Latest state belongs in
-[the testnet receipt](../release/testnet-receipt.json); the independent verdict
-is still pending in `release/verification.json`.
+**Evidence now:** 88 tests, 15 independent security probes and 9 CLI checks
+pass. The run uses Utexo's documented Bitcoin testnet3; Mutinynet fallback has
+not been used. Both fresh wallets hold only public-faucet test coins. The issued
+asset is **test USD, not USDT**. The first governed RGB transfer is confirmed
+and now has a signed **clear** receiver attestation. The second transfer is
+broadcast and awaits confirmation before its flagged-input check. The original
+signed receiver error is preserved after fixing a Taproot address-decoding bug;
+its asset quarantine remains enforced. **The full live proof is still pending.**
+Use [the receipt](../release/testnet-receipt.json) and the independent verdict
+in `release/verification.json` for the latest evidence.
 
 **Proof required before calling the meeting demonstration complete:** a real
 A-to-B RGB transfer with a clear receiver attestation; a transfer whose witness
