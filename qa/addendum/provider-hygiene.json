@@ -1,12 +1,13 @@
 {
   "schemaVersion": 1,
   "independentQa": true,
-  "checkedAt": "2026-10-20T14:02:00.342786+00:00",
+  "checkedAt": "2026-10-20T16:19:38.850628+00:00",
   "sourceCommit": "803b51b683f5eb39efc823bc75a5167a370eae28",
+  "reviewedDocumentationCommit": "68d43f487067227ccd8eda3d61e2ea79d62b5ab2",
   "sourceTree": "6cab77b1cc7d0b87ba2bd3a77f8a40ef340161f2",
   "testTree": "50c0c52baa0c23c5a55795da0b9f1ac6233b21cd",
-  "ancestorCommitsScanned": 54,
-  "reachableBlobsScanned": 213,
+  "ancestorCommitsScanned": 62,
+  "reachableBlobsScanned": 235,
   "providerNamedCodePaths": [],
   "providerRuntimeOrWireFormatNamesInCodeHistory": [],
   "providerDependenciesInPackageAndLockHistory": [],
@@ -14,13 +15,13 @@
   "tipProviderNameOutsideReadme": [],
   "historyProviderMentionsTextOnly": {
     "pathsAndDistinctBlobs": {
-      "README.md": 8,
       "NOTICE": 2,
+      "README.md": 11,
       "docs/ARCHITECTURE.md": 3,
       "docs/QA.md": 7,
       "release/verification.json": 7
     },
-    "scope": "Historical cross-project QA/attribution prose only; retained without history rewriting. No runtime, format, endpoint, package, dependency or configured operational provider key found."
+    "scope": "Historical cross-project QA/attribution prose only; retained without history rewriting. No runtime, format, operational endpoint, package, dependency or configured operational provider public pin found."
   },
   "fullInstalledDependencyGraph": {
     "command": "npm ls --all --json",
@@ -29,7 +30,8 @@
     "errors": []
   },
   "limitations": [
-    "Frozen integration commit ancestry and own installed dependencies audited; unrelated branches are not represented.",
-    "No operational private key opened. Provider public pins compared only in memory; no endpoint or provider pin exported."
+    "Audited final integration commit ancestry and own installed dependency graph; unrelated private branches are outside this scan.",
+    "No operational private key opened. Public provider pins compared only in memory; no provider endpoint or key exported.",
+    "Historical prose exception remains explicit in the final README; literal provider-name removal from every historical prose blob is not claimed."
   ]
 }

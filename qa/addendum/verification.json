@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "independentQa": true,
   "reviewer": "Codex /root/qa; not a runtime implementer",
-  "checkedAt": "2026-10-20T14:02:00.359073+00:00",
-  "verdict": "P0_LIVE_AUDIT_AND_OPTIONAL_REVIEW_GATE_PASS_PROVIDER_REVIEW_APPLICATION_PENDING",
+  "checkedAt": "2026-10-20T16:20:28.315816+00:00",
+  "verdict": "PASS_ADDENDUM_IMPLEMENTATION_LIVE_AUDIT_AND_OPTIONAL_REVIEW",
   "sourceCommit": "803b51b683f5eb39efc823bc75a5167a370eae28",
   "sourceTree": "6cab77b1cc7d0b87ba2bd3a77f8a40ef340161f2",
   "testTree": "50c0c52baa0c23c5a55795da0b9f1ac6233b21cd",
@@ -45,14 +45,16 @@
       "id": "AUDIT_PROVIDER_DECISION_TIME",
       "original": "Archive provider validation used issuance only, permitting evidence expired before the signed decision.",
       "independentRecheck": "Original-decision validity enforced; expired provider pack refuses; valid complete provider pack verifies."
+    },
+    {
+      "id": "MODEL_RESPONSE_RELEASE_BINDING",
+      "original": "The private application could invent an approval proposal against an allowed but invalid actual model completion.",
+      "independentRecheck": "Actual gateway-accepted completion digest and independently parsed proposal must match the released artifact and acceptance flag. Original invented-approval repro and 10 independent release-response probes pass at the frozen private source."
     }
   ],
   "executionReview": "All new attestation/provider executions remain software. Valid test-vendor fixture returns software/testOnly; real hardware/device claims refuse. Existing15quote standard tests cover pinned root/key/measurement/fresh challenge/result signature and retained-journal replay. No real vendor verifier built.",
   "hygieneReport": "qa/addendum/provider-hygiene.json",
-  "remaining": [
-    "Optional agent-action-review provider application live proof and final source/documentation review if the implementation owner elects to complete it.",
-    "Final README claims must reflect143 standard+30 independent probes, model proposal rejected/software-only execution, live rescreen without new broadcast, archive scope and historical prose exception."
-  ],
+  "remaining": [],
   "noOperationalWalletPrivateKeyDatabaseOrChainTouched": true,
   "commands": [
     "npm ci",
@@ -62,7 +64,8 @@
     "npm ls --all --json",
     "node --import tsx --test qa/addendum/review-probes.test.ts",
     "node --import tsx qa/addendum/verify-provider-live.ts PRIVATE_RECEIVER_DIR PRIVATE_PROVIDER_PINS",
-    "node --import tsx src/cli.ts audit verify PRIVATE_PACK INDEPENDENT_PUBLIC_TRUST_JSON"
+    "node --import tsx src/cli.ts audit verify PRIVATE_PACK INDEPENDENT_PUBLIC_TRUST_JSON",
+    "node --import tsx qa/addendum/verify-review-live.ts PRIVATE_REVIEW_DIR PRIVATE_PROVIDER_PINS"
   ],
   "durableIgnoredLogs": [
     ".state/qa-addendum/npm-ci.log",
@@ -75,7 +78,10 @@
     ".state/qa-addendum/review-probes.log",
     ".state/qa-addendum/live-verification.log",
     ".state/qa-addendum/live-audit-cli.log",
-    ".state/qa-addendum/final-dependency-graph.json"
+    ".state/qa-addendum/final-dependency-graph.json",
+    ".state/qa-addendum/final-provider-live.log",
+    ".state/qa-addendum/final-review-live.log",
+    ".state/qa-addendum/final-live-audit-cli.log"
   ],
   "testedQaIntegrationCommit": "5936e10e9e220f0597f768eb9ec9d9dd874d6053",
   "newIndependentReviewProbes": {
@@ -97,7 +103,7 @@
     "network": "utexo-testnet",
     "newTransactionBroadcast": false,
     "operation": "fresh-provider-rescreen-of-existing-confirmed-receive",
-    "evidenceSha256": "a1ce4af431b1e854e12a87ea411ab84d4b21411c7fdc55b256bbc47ec0af774a",
+    "evidenceSha256": "587a270939abaabc7ae6c7562b2fc8b98a4bd3a0d9e81e520acdfe589e92c366",
     "providerRisk": "review",
     "findingCodes": [
       "SCOPE_INCOMPLETE"
@@ -105,34 +111,144 @@
     "finalOutcome": "flagged",
     "execution": "software",
     "bothPublicExplorersRawWitnessVerified": true,
-    "freshSignedQuarantine": "pass"
+    "freshSignedQuarantine": "pass",
+    "attestationHash": "94f25b7a60635308dc6c0743d7399ddac7d64a13435f77b44c51712114ce9a21",
+    "receiverHeldConsignmentDigest": {
+      "bytes": 5094,
+      "sha256": "f8593b20f30d7a821465fa0fcd4327b285c642e4f4fb4e04233638c2109cddee",
+      "actualCopyDigestMatchesDisclosedDigest": true,
+      "fullBytesDisclosedToProvider": false
+    },
+    "witnessTxid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+    "publicExplorerAgreement": {
+      "confirmed": true,
+      "blockHeight": 5195546,
+      "blockHash": "00000000000003b697ed4c32e59263fb42ef5c996c679a519237c2ab87a88b6e"
+    }
   },
   "privateRuntimeReview": {
     "verdict": "pass",
     "report": "qa/addendum/runtime-verification.json",
-    "fourObservedIsolatedStages": true,
-    "actualLocalModelCall": true,
-    "modelProposalAccepted": false,
-    "detectorSyntheticTests": 12,
+    "frozenSourceCommit": "c202f4af5a011826cd5a4baeb320260c705f898f",
+    "actualApplicationRuns": 2,
+    "observedIsolatedStagesEach": 4,
+    "actualNonStandInModelCallsEach": 1,
+    "modelProposalsAccepted": 0,
+    "affectedExistingTests": {
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0
+    },
+    "independentReleaseResponseProbes": {
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0
+    },
+    "pythonDetectorTests": {
+      "flowRiskPassed": 8,
+      "agentReviewPassed": 12,
+      "failed": 0
+    },
+    "launcherSyntax": "pass",
     "exactFullRecordAndContractHashes": "pass",
-    "boundToolFactsAndModelRequestCommitments": "independently opened",
-    "limits": "Signed software evidence trusts provider host; raw model text not retained, no accepted model decision/hardware claim."
+    "approvedMaterialInputPolicyAndWorkloadBindings": "pass",
+    "releasedArtifactExactBytesAndFixedCodeResultRecomputation": "pass",
+    "brokerFactsAndModelRequestCommitments": "independently opened",
+    "recordedResponseCommitmentsAndAuditedReleaseBinding": "pass",
+    "limits": "Signed software evidence trusts provider host. Raw model text deliberately not retained; offline audit uses recorded commitment/hash and tested release binding. No successful model recommendation or hardware claim."
   },
   "actualAuditPack": {
-    "bytes": 21039,
-    "files": 6,
+    "bytes": 21127,
+    "fileCount": 6,
+    "sha256": "651fbbf97c41e4333e48582815ad55aafb680f0684c191ba60c99ede0dad5580",
+    "manifestAndHashesAndProviderPolicyLogBindingsValid": true,
     "genericVerifier": "pass",
     "actualCliWithIndependentlyDerivedPublicTrust": "pass",
     "pythonStandardZipCrc": "pass",
-    "policyLogProviderManifestAndOriginalDecisionTimeBindings": "pass"
+    "policyLogProviderManifestAndOriginalDecisionTimeBindings": "pass",
+    "fullPackRetainedPrivate": true
   },
   "optionalReviewGate": {
     "localStatus": "pass",
-    "providerApplicationLiveStatus": "pending",
+    "providerApplicationLiveStatus": "pass",
     "localControls": "Hard thresholds/stop/quarantine/limits before provider; immutable request; signed policy hash and current state rechecked after await; evidence/expiry in token; consume/signing barrier checks; no human-approval implementation or provider override.",
     "entryPoints": "CLI and localhost API use awaited authorizeReviewed; config injects optional environment provider.",
-    "noApplicationLiveClaimFromUnitFixtures": true
+    "noApplicationLiveClaimFromUnitFixtures": true,
+    "liveReport": "qa/addendum/review-live-verification.json",
+    "mode": "synthetic-unsigned-send-real-remote-software-runtime-review",
+    "providerEvidenceSha256": "bd8cf4d070f4934c56543d88387b6c6e5a4840a3c6ee3faaa73ae0ed910a3488",
+    "providerRecommendation": "escalate",
+    "reasonCodes": [
+      "MODEL_OUTPUT_INVALID"
+    ],
+    "execution": "software",
+    "modelProposalAccepted": false,
+    "reviewedAmount": "50",
+    "softThreshold": "40",
+    "hardHumanThreshold": "80",
+    "reviewedDecisionAllowed": false,
+    "reviewedDecisionReason": "PROVIDER_REVIEW_ESCALATED",
+    "hardAmount": "81",
+    "hardThresholdDecisionAllowed": false,
+    "hardThresholdDecisionReason": "HUMAN_APPROVAL_REQUIRED",
+    "actualProviderCalls": 1,
+    "signingTokensConsumed": 0,
+    "newTransactionBroadcast": false,
+    "decisionEvidenceLogBindingsAndRetainedJournal": "pass",
+    "testIdentityScope": "Policy/gate/agent are internally verified ephemeral demo identities, not independently pinned operational-wallet identities.",
+    "humanApprovalWorkflowBuilt": false
   },
   "originalV1LiveReceiptSha256": "b378b52403ff485a64accc999eebc9174d11da3faf7dac3adef246939e274c35",
-  "originalV1LiveReceiptUnchanged": true
+  "originalV1LiveReceiptUnchanged": true,
+  "reviewedDocumentationCommit": "68d43f487067227ccd8eda3d61e2ea79d62b5ab2",
+  "privateRuntimeSourceCommit": "c202f4af5a011826cd5a4baeb320260c705f898f",
+  "independentDependencies": "Separate branches/worktrees and isolated installed dependencies for both repositories; no parent-root dependency symlinks.",
+  "scope": "Independent code/security review and replay of signed final live evidence. QA wrote probes/reports only; runtime implementation and actual launcher/application execution were performed by the integration owner.",
+  "documentationReview": {
+    "verdict": "pass",
+    "readmeCounts143And30": "pass",
+    "builtOptionalReviewAndProviderFoldingClaims": "pass",
+    "bothActualModelProposalsRejectedExplicitly": true,
+    "softwareOnlyAndSyntheticReviewLimitsExplicitly": true,
+    "historicalProseExceptionExplicitly": true,
+    "publicScreeningWrapperSignedAttestationUnchanged": true,
+    "publicReceiptStatusChangeOnlyUnsignedWrapperMetadata": true
+  },
+  "hygiene": {
+    "verdict": "pass",
+    "report": "qa/addendum/provider-hygiene.json",
+    "ancestorCommitsScanned": 62,
+    "reachableBlobsScanned": 235,
+    "runtimePackageOperationalEndpointOrConfiguredProviderPublicPinFindings": 0,
+    "forbiddenInstalledDependencyGraphNames": 0,
+    "tipProviderNameOutsideReadme": 0,
+    "historyProviderMentionsTextOnly": "Historical attribution/QA prose retained in 5 file paths; explicit README exception, no history rewrite."
+  },
+  "launcherLifecycle": {
+    "independentlyReviewedSourceBoundaries": "pass",
+    "actualLifecycleExecutedBy": "integration owner",
+    "reportedStartStatusStopResume": "pass",
+    "samePublicPinsAndEvidenceRetained": "pass",
+    "reportedUnauthenticatedHttpStatus": 401,
+    "reportedOwnedServicesAtHandoff": "stopped",
+    "qaStartedServicesOrModels": false
+  },
+  "limitations": [
+    "Every live result is signed software execution under a trusted provider host; no real hardware quote or TEE proof.",
+    "Both actual model proposals were invalid and rejected. Fixed code conservatively returned review/escalate; no accepted live model approval is claimed.",
+    "The incoming proof re-screens the earlier confirmed testnet receive. The actual action-review provider reviewed a synthetic unsigned send. No new transfer, signing token consumption or wallet broadcast occurred.",
+    "Receiver consignment bytes were hashed locally and only their digest disclosed. Full RGB consignment/ancestry verification and pattern completeness are not established.",
+    "Raw model responses are intentionally not retained. Offline QA checks recorded commitments/hashes and audited tested source release binding rather than replaying raw text.",
+    "Operational provider URL/pins, full request/envelope, private contracts/runtime records and commitment openings remain outside Git. Audit ZIP stays private.",
+    "Historical provider-name attribution/QA prose remains in old commits. Current tip confines the named provider to README; the full ancestry/dependency audit found no provider runtime/package/operational endpoint/key.",
+    "Device/provider quorum verification remains designed; flagged-list remote API is a stub; Settle, Remember and a real human approval workflow are not built.",
+    "Audit pack proves specified cryptographic records and bindings, not statutory compliance certification."
+  ],
+  "reports": [
+    "qa/addendum/verification.json",
+    "qa/addendum/provider-hygiene.json",
+    "qa/addendum/live-verification.json",
+    "qa/addendum/review-live-verification.json",
+    "qa/addendum/runtime-verification.json"
+  ]
 }
