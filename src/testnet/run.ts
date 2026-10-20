@@ -67,7 +67,7 @@ export async function runTestnetDemo() {
     for (const [name, amount] of Object.entries({ clear: 1000, flagged: 500, overLimit: 1001, stopped: 100 })) {
       const existing = progress.invoices[name] as { expirationTimestamp?: number } | undefined
       // A completed broadcast keeps its original receive binding forever. Only pending, expired invoices may be replaced.
-      if (!existing || (!progress.txids[name] && existing.expirationTimestamp !== undefined && existing.expirationTimestamp <= Math.floor(Date.now() / 1000))) progress.invoices[name] = receiver.invoice(amount)
+      if (!existing || (!progress.txids[name] && !progress.signingAttempts?.[name] && existing.expirationTimestamp !== undefined && existing.expirationTimestamp <= Math.floor(Date.now() / 1000))) progress.invoices[name] = receiver.invoice(amount)
     }
     await save('running')
     const log = new FileDecisionLog(`${dir}/decisions.jsonl`, keys.gate)
@@ -151,6 +151,12 @@ export async function runTestnetDemo() {
     }
     if (progress.attestations.clear.overall !== 'clear') throw new Error('Clear step requires an actual clear attestation; a prior signed error cannot be treated as success')
     const flaggedTxid = await send('flagged', 500)
+    if (progress.attestations.flagged && (progress.attestations.flagged.overall !== 'flagged' || progress.attestations.flagged.checks.flaggedL1.status !== 'flagged')) {
+      progress.priorAttestations ??= []
+      progress.priorAttestations.push({ step: 'flagged', reason: 'Original signed verification did not prove a flagged witness input; retained before retry. Existing asset quarantine remains enforced.', attestation: progress.attestations.flagged })
+      delete progress.attestations.flagged
+      await save('running')
+    }
     if (!progress.attestations.flagged) {
       const evidence = await incomingEvidence(config, receiver, asset.assetId, flaggedTxid)
       const input = Transaction.fromHex(evidence.witnessRawHex).ins[0]
@@ -160,6 +166,7 @@ export async function runTestnetDemo() {
       if (progress.attestations.flagged.overall !== 'flagged' || progress.attestations.flagged.checks.flaggedL1.status !== 'flagged') throw new Error('Actual matching witness input did not produce a flagged L1 attestation')
       await save('running')
     }
+    if (progress.attestations.flagged.overall !== 'flagged' || progress.attestations.flagged.checks.flaggedL1.status !== 'flagged') throw new Error('Flagged step requires an actual flagged L1 attestation; a prior error cannot be treated as success')
     await receiver.quarantine(asset.assetId, progress.attestations.flagged)
     try { receiver.prepareSend(progress.invoices.clear.invoice, asset.assetId, 1); throw new Error('Receiver allowed a quarantined asset send') }
     catch (error) {
