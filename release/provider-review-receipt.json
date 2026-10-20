@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "IMPLEMENTATION_PASS_PENDING_FINAL_INDEPENDENT_QA",
+  "status": "PASS_INDEPENDENT_QA",
   "mode": "synthetic-unsigned-send-real-remote-software-runtime-review",
   "network": "utexo-testnet",
   "syntheticSend": true,

@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "status": "PASS",
+  "preparedBy": "Integration owner; aggregates the independent QA reports below",
+  "checkedAt": "2026-10-20T16:18:00.558498+00:00",
+  "trustSourceCommit": "803b51b683f5eb39efc823bc75a5167a370eae28",
+  "trustSourceTree": "6cab77b1cc7d0b87ba2bd3a77f8a40ef340161f2",
+  "trustTestTree": "50c0c52baa0c23c5a55795da0b9f1ac6233b21cd",
+  "providerRuntimeSourceCommit": "c202f4af5a011826cd5a4baeb320260c705f898f",
+  "standardTests": {
+    "passed": 143,
+    "failed": 0,
+    "skipped": 0,
+    "typecheck": "pass"
+  },
+  "independentTrustProbes": {
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0
+  },
+  "affectedPrivateRuntimeTests": {
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0
+  },
+  "independentPrivateReleaseResponseProbes": {
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+  },
+  "privateWorkloadTests": {
+    "flowRisk": 8,
+    "agentReview": 12,
+    "failed": 0
+  },
+  "network": "Utexo SDK Bitcoin testnet3",
+  "fallbackUsed": false,
+  "assetLabel": "test USD, not USDT",
+  "newTransactionsBroadcast": 0,
+  "witnessTxid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+  "incomingProof": {
+    "operation": "fresh-provider-rescreen-of-existing-confirmed-receive",
+    "evidenceSha256": "587a270939abaabc7ae6c7562b2fc8b98a4bd3a0d9e81e520acdfe589e92c366",
+    "execution": "software",
+    "modelProposalAccepted": false,
+    "outcome": "flagged",
+    "reason": "SCOPE_INCOMPLETE review; does not allege illicit activity",
+    "receiverHeldConsignmentDigestIncluded": true,
+    "fullConsignmentDisclosed": false
+  },
+  "agentReviewProof": {
+    "mode": "synthetic-unsigned-send-real-remote-software-runtime-review",
+    "evidenceSha256": "bd8cf4d070f4934c56543d88387b6c6e5a4840a3c6ee3faaa73ae0ed910a3488",
+    "syntheticUnsignedSend": true,
+    "execution": "software",
+    "modelProposalAccepted": false,
+    "recommendation": "escalate",
+    "reason": "MODEL_OUTPUT_INVALID",
+    "gateAllowed": false,
+    "aboveHumanThresholdAllowed": false,
+    "humanApprovalWorkflowBuilt": false
+  },
+  "actualAuditPack": {
+    "sha256": "651fbbf97c41e4333e48582815ad55aafb680f0684c191ba60c99ede0dad5580",
+    "bytes": 21127,
+    "files": 6,
+    "privacy": "Full request, envelope, log and pack retained only in ignored private state. Operational provider URL and pins are not committed."
+  },
+  "launcher": {
+    "start": "pass",
+    "status": "pass",
+    "stop": "pass",
+    "resume": "pass",
+    "unauthenticatedRequestStatus": 401,
+    "servicesAtHandoff": "owned providers and models stopped; private state retained"
+  },
+  "independentReports": [
+    "qa/addendum/verification.json",
+    "qa/addendum/provider-hygiene.json",
+    "qa/addendum/live-verification.json",
+    "qa/addendum/review-live-verification.json",
+    "qa/addendum/runtime-verification.json"
+  ],
+  "hygiene": {
+    "providerRuntimePackageEndpointKeyFindings": 0,
+    "fullInstalledDependencyGraphForbiddenProviders": 0,
+    "namedProviderOutsideReadmeAtTip": 0,
+    "historicalProseOnlyException": "Earlier cross-project QA and exclusion prose remains in history; no runtime/package/operational endpoint/key found."
+  },
+  "originalV1ReceiptSha256": "b378b52403ff485a64accc999eebc9174d11da3faf7dac3adef246939e274c35",
+  "limitations": [
+    "Every result is software execution; test-vendor quotes do not establish a real TEE.",
+    "Both actual model proposals were invalid and safely rejected; no accepted live model approval is claimed.",
+    "The screening reuses an existing confirmed RGB receive; agent review uses a synthetic unsigned send. No new transfer or wallet broadcast occurred.",
+    "Full RGB ancestry and device/provider quorum checks remain designed; live flagged-list API remains a stub; Settle and Remember are not started.",
+    "The audit pack supports record keeping and cryptographic verification, not statutory compliance certification.",
+    "Historical provider-name prose remains in old commits; the current tree confines the named provider to README."
+  ]
+}

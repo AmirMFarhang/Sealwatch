@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "IMPLEMENTATION_PASS_PENDING_FINAL_INDEPENDENT_QA",
+  "status": "PASS_INDEPENDENT_QA",
   "network": "Utexo SDK Bitcoin testnet3",
   "fallbackUsed": false,
   "assetLabel": "test USD, not USDT",
