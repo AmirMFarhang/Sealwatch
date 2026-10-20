@@ -13,6 +13,15 @@ export interface DecodedWitness {
   senderAddresses: string[];
   outputAddresses: string[];
 }
+function outputAddress(script: Uint8Array): string {
+  // Address encoding needs the witness program, not an ECC signing context.
+  // bitcoinjs-lib's P2TR payment matcher requires ECC initialization even when
+  // only decoding an address. Both supported chains use the testnet HRP.
+  if (script.length === 34 && script[0] === 0x51 && script[1] === 0x20) {
+    return address.toBech32(script.slice(2), 1, networks.testnet.bech32);
+  }
+  return address.fromOutputScript(script, networks.testnet);
+}
 export function decodeWitness(e: WitnessEvidence, n: Network): DecodedWitness {
   network(n);
   assert(
@@ -49,9 +58,7 @@ export function decodeWitness(e: WitnessEvidence, n: Network): DecodedWitness {
     const output = parent.outs[input.index];
     assert(output, "witness input prevout does not exist");
     try {
-      senderAddresses.push(
-        address.fromOutputScript(output.script, networks.testnet),
-      );
+      senderAddresses.push(outputAddress(output.script));
     } catch {
       throw new Error(
         "sender script has no supported Bitcoin address; sanctions screening incomplete",
@@ -65,9 +72,7 @@ export function decodeWitness(e: WitnessEvidence, n: Network): DecodedWitness {
   const outputAddresses: string[] = [];
   for (const out of tx.outs) {
     try {
-      outputAddresses.push(
-        address.fromOutputScript(out.script, networks.testnet),
-      );
+      outputAddresses.push(outputAddress(out.script));
     } catch {
       /* OP_RETURN commitments have no address */
     }
