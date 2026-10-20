@@ -8,8 +8,9 @@ separate lending application; this project never lends or holds funds.
 
 ## 2. Status and evidence
 
-The addendum implementation passes **143 standard tests** locally. Independent
-addendum QA is underway; its acceptance report is `release/addendum-verification.json`.
+The addendum implementation passes **143 standard tests** locally. Independent QA passed **30 security/protocol/review probes** and checked the
+actual testnet-backed screening and private audit pack. Final runtime validation
+is recorded separately in [addendum verification](release/addendum-verification.json).
 The earlier accepted baseline passed **88 standard tests, 15 independent security
 probes and nine CLI checks**, plus the required live Verify/Authorize demonstration;
 see [baseline verification](release/verification.json) and [QA scope](docs/QA.md).
@@ -26,10 +27,10 @@ That earlier pass does not certify the new provider/audit behavior.
 | RGB consignment ancestry screening | **Designed** | No reliable ancestry interface demonstrated with the pinned SDK. |
 | Settle: generic escrow | **Not started** | No trust-layer escrow implementation or testnet claim. |
 | Remember: portable history | **Not started** | No portable-history implementation. |
-| Generic attested provider interface, remote client and DSSE verifier | **Built; addendum QA pending** | Optional configured remote checks, pinned Ed25519 DSSE evidence and strictest-result folding. |
-| Transfer flow-risk application | **Built; one actual testnet-backed rescreen; addendum QA pending** | Existing confirmed witness rescreened; bounded scope returned `review`. Model call ran but invalid JSON was rejected; fixed code decided. |
-| Audit evidence pack and verifier | **Built; local tests; addendum QA pending** | Private ZIP with signed manifest, attestation, signed log/checkpoint, policy binding and optional provider evidence. |
-| Agent-action second-line review | **Built local gate; provider application integration pending** | Signed soft thresholds require review; hard human thresholds always refuse automatically. No human approval UI. |
+| Generic attested provider interface, remote client and DSSE verifier | **Built; independent QA passed** | Optional configured remote checks, pinned Ed25519 DSSE evidence and strictest-result folding. |
+| Transfer flow-risk application | **Built; actual testnet-backed rescreen; independent QA passed** | Existing confirmed witness rescreened; bounded scope returned `review`. Model call ran but invalid JSON was rejected; fixed code decided. |
+| Audit evidence pack and verifier | **Built; independent local and live QA passed** | Private ZIP with signed manifest, attestation, signed log/checkpoint, policy binding and optional provider evidence. |
+| Agent-action second-line review | **Built; real remote review of a synthetic unsigned send** | Signed soft thresholds require review; hard human thresholds always refuse automatically. No human approval UI. |
 | Travel Rule payload check | **Designed** | Documented direction only. |
 | Explicit execution labels and QuoteVerifier | **Built; software only** | New v2 attestations sign `execution: software`; test-vendor root/measurement/replay checks pass. Real hardware verification is not built. |
 
@@ -137,7 +138,7 @@ stateDiagram-v2
     ProviderReview --> Approval: Verified approve and current local policy passes
     ProviderReview --> Escalated: Escalate / invalid evidence / timeout
     note right of ProviderReview
-      Built optional gate path; provider application integration pending.
+      Built optional gate and remote software review.
       Hard limits cannot be overridden by a recommendation.
     end note
     Approval --> TokenConsumed: Exact plan, valid unused token
@@ -152,7 +153,8 @@ stateDiagram-v2
 ```
 
 The optional review gate is built. Above the signed human threshold, the gate
-refuses with `HUMAN_APPROVAL_REQUIRED`; a human approval workflow is not built. A signature already
+refuses with `HUMAN_APPROVAL_REQUIRED`; a human approval workflow is not built.
+A signature already
 exported cannot be revoked by a later stop. Failed signing attempts keep their
 token consumed and their spending reservation conservative.
 
@@ -304,7 +306,7 @@ if any retained record is flagged or error: refuse asset send with reasons
 This is local spending enforcement. It cannot reverse a confirmed transfer or
 freeze coins held by a different wallet.
 
-### Provider result folding — built; addendum QA pending
+### Provider result folding — built
 
 An outside provider may tighten the receiver's outcome and never clear a local
 flag. Unavailable or untrusted evidence must not silently produce a clear result.
@@ -398,9 +400,9 @@ Local fixed rules remain local and always take precedence over a recommendation.
 
 | Priority | Application | Intended input and output | Current status |
 | --- | --- | --- | --- |
-| P0 | Transfer flow-risk screening | Bounded public chain data and receiver context; evidence-linked pattern findings and `low/review/high`. | **Built; actual confirmed-testnet rescreen; addendum QA pending.** `review` for incomplete scope; no accepted model decision. |
-| P1 | Audit evidence pack | One decision's attestation, log/checkpoint, optional provider record and version-bound policy; signed manifest, ZIP and verifier. | **Built; local tests; addendum QA pending.** Record-keeping support, not statutory compliance certification. |
-| P1 | Agent-action review | Soft-threshold request context; signed `approve/escalate` recommendation. Hard-threshold review requires a human design, never an AI override. | **Built local gate; provider application integration pending.** |
+| P0 | Transfer flow-risk screening | Bounded public chain data and receiver context; evidence-linked pattern findings and `low/review/high`. | **Built; confirmed-testnet rescreen; independent runtime QA passed.** `review` for incomplete scope; no accepted model decision. |
+| P1 | Audit evidence pack | One decision's attestation, log/checkpoint, optional provider record and version-bound policy; signed manifest, ZIP and verifier. | **Built; actual private audit pack verified.** Record-keeping support, not statutory compliance certification. |
+| P1 | Agent-action review | Soft-threshold request context; signed `approve/escalate` recommendation. Hard-threshold review requires a human design, never an AI override. | **Built; real remote review of a synthetic unsigned send.** |
 | P2 | Travel Rule payload check | Originator and beneficiary payload validation between service providers. | **Designed**, documentation only. |
 
 The rule is “AI investigates, code decides”: findings refer to authorized
@@ -423,7 +425,7 @@ of this repository. Provider-specific implementation lives separately.
 | Tier | Trust model | Current status |
 | --- | --- | --- |
 | 1 | Local fixed rules, pinned lists and receiver-owned signing. | **Built**, with the boundaries below. |
-| 2 | Named outside provider with signed software evidence; a trusted host remains in the trust boundary. | **Built; actual testnet-backed rescreen; addendum QA pending.** The model proposal in that run was rejected. |
+| 2 | Named outside provider with signed software evidence; a trusted host remains in the trust boundary. | **Built; confirmed-testnet rescreen; independent runtime QA passed.** The model proposal in that run was rejected. |
 | 3 | Hardware-attested execution; AWS Nitro first, with vendor-root and approved-measurement verification. | **Designed**; no real hardware quote verified. |
 | 4 | Device-attested checks on the receiver's phone. | **Designed**. |
 | 5 | Two or more independent providers must agree under an explicit policy. | **Designed**; no quorum implementation. |
@@ -462,7 +464,7 @@ behavior, not real hardware execution, and belong to the new 143-test suite.
 - Daily spending reservations remain counted after failed sends until UTC day
   rollover. There is no rolling-window spending cap.
 - Settle and Remember are not started. A human approval workflow is not built. New provider
-  checks and audit exports await independent addendum acceptance. Hardware
+  checks and audit exports have separate addendum evidence. Hardware
   execution remains unverified; a passing test-vendor quote cannot enable it.
 - Provider checks disclose bounded authorized evidence to a configured remote
   service. Full requests/envelopes and audit ZIPs are private evidence, not
@@ -498,12 +500,12 @@ baseline; the provider addendum has separate evidence.
 The provider addendum **rescreened that same confirmed clear witness** on the
 same network. It used fresh governance state, sent no new transaction and
 required no new funds. Its signed software evidence hash is
-`a1ce4af431b1e854e12a87ea411ab84d4b21411c7fdc55b256bbc47ec0af774a`.
+`587a270939abaabc7ae6c7562b2fc8b98a4bd3a0d9e81e520acdfe589e92c366`.
 The result was `review` with `SCOPE_INCOMPLETE`, folded into a new signed v2
 flagged attestation and quarantine. The full envelope remains ignored private
 evidence. Public-safe receipt: `release/provider-testnet-receipt.json`;
 independent addendum acceptance: `release/addendum-verification.json`.
-Those reports distinguish the completed run from its pending independent QA.
+Those reports state the exact source, execution evidence and independent QA scope.
 This rescreen does not amend the original signed clear/error records or certify
 TEE, full ancestry, escrow or the history product.
 
@@ -591,3 +593,11 @@ All meeting material is a draft for Amir; Amir alone sends it externally.
 The current tree keeps the named provider only in this README. Earlier commits
 retain cross-project QA prose and an exclusion notice mentioning it; the history
 audit found no provider runtime, package, operational endpoint or key.
+
+The agent-action application also ran through the real remote software runtime
+using a **synthetic unsigned send**, without a wallet broadcast. Its malformed
+model output produced signed `MODEL_OUTPUT_INVALID` escalation; the local gate
+refused the send. An amount above the human threshold was refused locally. See
+[the review receipt](release/provider-review-receipt.json). Real human approval
+is not implemented. The two live application runs both bind the released
+recommendation to the gateway response; no accepted model approval is claimed.

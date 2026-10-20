@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "IMPLEMENTATION_PASS_PENDING_INDEPENDENT_QA",
+  "status": "IMPLEMENTATION_PASS_PENDING_FINAL_INDEPENDENT_QA",
   "network": "Utexo SDK Bitcoin testnet3",
   "fallbackUsed": false,
   "assetLabel": "test USD, not USDT",
@@ -10,7 +10,7 @@
   "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
   "attestation": {
     "assetId": "rgb:6b7igUgX-5c~XkMr-3g4_4Yg-eVj5~7M-dt_okW0-SJR6CI8",
-    "checkerPk": "767e42dec52697cecf7fe35d3fa47213a1123484f9656992ba4185c043dc67c2",
+    "checkerPk": "6b450b7a6b07d33358f27591fc6ec67d9155298f0655738e500f94b0199aacf3",
     "checks": {
       "flaggedL1": {
         "code": "NO_FLAGGED_WITNESS_INPUT",
@@ -37,14 +37,14 @@
     "execution": "software",
     "flaggedManifest": {
       "domain": "trust-flagged-manifest-v1",
-      "expiresAt": 1792507866,
+      "expiresAt": 1792516257,
       "file": "flagged-outpoints.json",
-      "issuedAt": 1792504256,
-      "issuerPk": "6219accdb0b0377b84a841359aa30024c2d5348c409873baa5eaa75818005f88",
+      "issuedAt": 1792512647,
+      "issuerPk": "0fbf7b29b538de1944de85e5a56ac3a5e9336d53acc8f35848ddd6cfe2cdca49",
       "listId": "provider-testnet-local-empty",
       "network": "utexo-testnet",
       "sha256": "6942c003f1b79055cc6a2474d0ab3e80fa3bd5f5fa307e7e523be753cc4534d3",
-      "sig": "ab6aca1d8c4e9116ad61e13c8c8ebda866470bc5a0fa3cddffa013500a627e6b7cd94cd18811c2d403b761fd1fa33c3166ce31670528a443f960da59159f7ba7",
+      "sig": "cd3a199cd0d209c28f02f79157c533c1d4bac68f97bbbeac5fb739ffbf56e77c82b5d4da3ea73086fc70b2d9098ae25c28ae44bc10ec06f87c4e965f723515c0",
       "testOnly": true,
       "v": 1,
       "version": "1"
@@ -72,7 +72,7 @@
     "network": "utexo-testnet",
     "overall": "flagged",
     "provider": {
-      "evidence_sha256": "a1ce4af431b1e854e12a87ea411ab84d4b21411c7fdc55b256bbc47ec0af774a",
+      "evidence_sha256": "587a270939abaabc7ae6c7562b2fc8b98a4bd3a0d9e81e520acdfe589e92c366",
       "execution": "software",
       "provider_id": "governed-checks-local",
       "provider_result": {
@@ -88,8 +88,8 @@
         "risk_band": "review"
       }
     },
-    "sig": "663f772a282bb2233103e9298eaa692d495041e6576e1d536ffb7e1861b5bc50e4fabcc1b95a6ec6447f796c383e3771ec47cf15c28b38babcc1587987880b20",
-    "time": 1792504273,
+    "sig": "34e50a0cdc9d1416f1565aeae822dcff2cc32c89957e6f4f3a7c09a179b50d40dd19c9323226115a4c06ab6d45557c9b920809a9d99f37a24865fc575073644e",
+    "time": 1792512666,
     "v": 2,
     "verificationPolicy": {
       "id": "receiver-verification",
@@ -98,21 +98,26 @@
     },
     "witnessTxid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06"
   },
-  "providerEvidenceSha256": "a1ce4af431b1e854e12a87ea411ab84d4b21411c7fdc55b256bbc47ec0af774a",
+  "providerEvidenceSha256": "587a270939abaabc7ae6c7562b2fc8b98a4bd3a0d9e81e520acdfe589e92c366",
   "execution": "software",
   "modelProposalAccepted": false,
   "reason": "Bounded neighborhood coverage is incomplete; review is a conservative scope result, not evidence of illicit activity.",
+  "receiverHeldConsignmentDigestIncluded": true,
+  "fullConsignmentDisclosed": false,
   "runtime": {
-    "contractSha256": "53ee897826d014b2785a9936e652f6e4837dcc8748513ff7acb4fe1b4dd068d7",
-    "runRecordSha256": "8c91de9a8ce5f6eaeaf83dabf5e6dc67f6facaa61cb59f86964e2e1b2dc1c515",
+    "sourceCommit": "c202f4af5a011826cd5a4baeb320260c705f898f",
+    "contractSha256": "601f34f0a87e5f3ef402b8ea89cd099ec8e34504c50787528f5fdd50f083163a",
+    "runRecordSha256": "bc3555b6409980b55aa781f6dbe37d0a3404f4aaffa3d912ab45de2fe152522f",
     "containersRemoved": true,
-    "workspaceRemoved": true
+    "workspaceRemoved": true,
+    "modelResponseBoundAtRelease": true
   },
   "auditPack": {
-    "sha256": "bb177429a97e598866d2791c3a16fa6b2cf4cbaca1cd86897339ba38f1fd48a4",
-    "bytes": 21039,
+    "sha256": "651fbbf97c41e4333e48582815ad55aafb680f0684c191ba60c99ede0dad5580",
+    "bytes": 21127,
     "files": 6,
     "privacy": "Full request, envelope, log and pack retained only in ignored private state. Operational provider URL and pins are not committed."
   },
+  "priorAcceptedEvidenceSha256": "a1ce4af431b1e854e12a87ea411ab84d4b21411c7fdc55b256bbc47ec0af774a",
   "priorProofReceiptSha256": "b378b52403ff485a64accc999eebc9174d11da3faf7dac3adef246939e274c35"
 }

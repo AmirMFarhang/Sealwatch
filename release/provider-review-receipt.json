@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "status": "IMPLEMENTATION_PASS_PENDING_FINAL_INDEPENDENT_QA",
+  "mode": "synthetic-unsigned-send-real-remote-software-runtime-review",
+  "network": "utexo-testnet",
+  "syntheticSend": true,
+  "newTransactionBroadcast": false,
+  "execution": "software",
+  "providerResult": {
+    "findings": [
+      {
+        "code": "MODEL_OUTPUT_INVALID",
+        "evidence_ids": [
+          "send-plan",
+          "spending-policy"
+        ]
+      }
+    ],
+    "kind": "agent-action-review",
+    "recommendation": "escalate"
+  },
+  "providerEvidenceSha256": "bd8cf4d070f4934c56543d88387b6c6e5a4840a3c6ee3faaa73ae0ed910a3488",
+  "modelProposalAccepted": false,
+  "reviewedDecision": {
+    "allowed": false,
+    "why": [
+      "PROVIDER_REVIEW_ESCALATED"
+    ],
+    "signedLogEntry": {
+      "v": 1,
+      "domain": "trust-decision-log-v1",
+      "seq": 4,
+      "prevHash": "2f1df3d528b270229aa618af0417fa1f0c3b57e2d0c2b4d115fce70a4c119123",
+      "at": 1792512673,
+      "kind": "authorization",
+      "actionId": "7e88604127d5261937cfda5b4abdf3ef",
+      "result": "refused",
+      "detail": {
+        "why": [
+          "PROVIDER_REVIEW_ESCALATED"
+        ],
+        "requestHash": "3e3b3798164e2a03d8fc6f80cdef435c4443adc7ee9c9ed9a8125465c32a0e1f",
+        "planHash": "114512c0e785801cdeda72ba4bf020563fb4d13c3fd5375ee34dadfdf30ddbb6",
+        "policyHash": "f23a617b355e6020a5bc013b0af1a04e3b2f94bb1efaa3b70a82f107b3533333",
+        "providerReview": {
+          "providerId": "governed-checks-local",
+          "evidenceSha256": "bd8cf4d070f4934c56543d88387b6c6e5a4840a3c6ee3faaa73ae0ed910a3488",
+          "resultRecordHash": "7744ee1780f71ed5dcb6e90d4671e584fc5243d72acc91a4ad45ffd3922478f7",
+          "requestHash": "7f1b70bc7df51ccdc0959503ff580f6dc9cb7f73138f774e02b5b3225ee35d4c",
+          "planHash": "114512c0e785801cdeda72ba4bf020563fb4d13c3fd5375ee34dadfdf30ddbb6",
+          "policyHash": "f23a617b355e6020a5bc013b0af1a04e3b2f94bb1efaa3b70a82f107b3533333",
+          "recommendation": "escalate",
+          "reasonCodes": [
+            "MODEL_OUTPUT_INVALID"
+          ],
+          "execution": "software",
+          "expiresAt": 1792512786
+        }
+      },
+      "nodePk": "c08b4419583f36c552a74df17bcbada156df8009a80822858183f9ed201e5db2",
+      "hash": "dc9db8e35c88a23eb35abf3e11ce3b4949d000eff3e4fae5d167f0f4511730c2",
+      "sig": "f6d9e2f1ae93917f80c5c5c36dadd6d89a003406d0d415829871a4243aac2db0e9bdb81166f8d879c231b614c567ab6b5c7035ef541911dc81abfe639b41818f"
+    }
+  },
+  "humanThresholdDecision": {
+    "allowed": false,
+    "why": [
+      "HUMAN_APPROVAL_REQUIRED",
+      "HUMAN_APPROVAL_REQUIRED",
+      "PROVIDER_REVIEW_REQUIRED"
+    ],
+    "signedLogEntry": {
+      "v": 1,
+      "domain": "trust-decision-log-v1",
+      "seq": 7,
+      "prevHash": "9208756c1afd3b31ae37fac5a357ae1135634302a7bf098af63a5d92717be718",
+      "at": 1792512673,
+      "kind": "authorization",
+      "actionId": "973003187343b6ebe67dffa4b4dc149c",
+      "result": "refused",
+      "detail": {
+        "why": [
+          "HUMAN_APPROVAL_REQUIRED",
+          "HUMAN_APPROVAL_REQUIRED",
+          "PROVIDER_REVIEW_REQUIRED"
+        ],
+        "requestHash": "639f5d07188c106c4db6a8283199c817ecb68eb73699be3489f2ba2f63016218",
+        "planHash": "684bd22eed689c0fe51cfd202e0dc8f20b3a47022815e3dd792a3e24ea389d8c",
+        "policyHash": "f23a617b355e6020a5bc013b0af1a04e3b2f94bb1efaa3b70a82f107b3533333"
+      },
+      "nodePk": "c08b4419583f36c552a74df17bcbada156df8009a80822858183f9ed201e5db2",
+      "hash": "03ed46b72d816a394117e32ab72b1573276491216f9e0896603b7a725600cbfd",
+      "sig": "1bf1b32271ed773ae6415ccb96b14d17a0891f2d310f7cb84e24e2df55d8cc6b08db2fee69338f87bac2f50ceea295ceb78fb4564163cacb27b127ed62876978"
+    }
+  },
+  "runtime": {
+    "sourceCommit": "c202f4af5a011826cd5a4baeb320260c705f898f",
+    "contractSha256": "3d3be1eb409b13aab304455e2bedc593eaa9aea4c1bc2d5e9c1ed845267f8890",
+    "runRecordSha256": "7e9c1de10549c9c65099f592723e8c804a31b21d57de7e1b18e087a11a257283",
+    "cleanup": {
+      "containersRemoved": true,
+      "workspaceRemoved": true
+    },
+    "modelResponseBoundAtRelease": true
+  },
+  "logProblems": [],
+  "limits": "Real remote software runtime and signed reasons over a synthetic unsigned send; no actual send, human approval UI, native wallet or hardware claim."
+}
