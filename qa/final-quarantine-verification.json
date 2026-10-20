@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "independentQa": true,
+  "checkedAt": "2026-10-20T09:22:13.734Z",
+  "verdict": "PASS_PERSISTENT_QUARANTINE_AND_NATIVE_REFUSAL",
+  "network": "utexo-testnet",
+  "assetId": "rgb:6b7igUgX-5c~XkMr-3g4_4Yg-eVj5~7M-dt_okW0-SJR6CI8",
+  "originalErrorHash": "3fe84d0109915493794efdd2ff8e5b8b05faefc09bd95a776777422cb8d6b0fd",
+  "originalErrorRetainedInReceiptAndSignedLog": true,
+  "originalClearWitnessUnchanged": true,
+  "reports": [
+    {
+      "name": "receiver",
+      "publicKey": "3e85071f8ffbc438b1767f777d80444861e73c346c7f6d9b4508eae4e38a5124",
+      "logEntries": 9,
+      "snapshotRevision": 3,
+      "signedSnapshotAndRetainedJournalMatch": true,
+      "originalErrorAndFlaggedRecordsRetained": true,
+      "exactAssetRefusalReasons": [
+        "RECEIVER_ASSET_QUARANTINED_ERROR",
+        "RECEIVER_ASSET_QUARANTINED_FLAGGED"
+      ],
+      "snapshotSha256": "da57b5a47beaac9b262951d5e7f469d25b50008d0e517f5f4763f97a6f2dc286"
+    },
+    {
+      "name": "native-wallet-B",
+      "publicKey": "38e1b635c8ce7dcd30a7931b5a7d631c15da509ac1858f9c51c303a8ff4f09d1",
+      "logEntries": 6,
+      "snapshotRevision": 3,
+      "signedSnapshotAndRetainedJournalMatch": true,
+      "originalErrorAndFlaggedRecordsRetained": true,
+      "exactAssetRefusalReasons": [
+        "RECEIVER_ASSET_QUARANTINED_ERROR",
+        "RECEIVER_ASSET_QUARANTINED_FLAGGED"
+      ],
+      "snapshotSha256": "0d7d4c6fa810e4a3a1e1615f9db91f42232f37ea50561a71c7b64026a05ab6e2"
+    }
+  ],
+  "nativePrepareSendOnCopiedActualState": "refused exact actual asset before SDK call",
+  "sdkCalls": 0,
+  "operationalFilesUnchanged": true,
+  "noOperationalWalletOrPrivateKeyOpened": true,
+  "limitation": "Native refusal replay uses actual signed state and production guard with dummy SDK; the original live refusal is separately recorded by the frozen runner."
+}

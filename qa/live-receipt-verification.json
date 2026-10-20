@@ -1,23 +1,15 @@
 {
   "version": 1,
   "independentQa": true,
-  "checkedAt": "2026-10-20T07:47:49.909Z",
-  "receiptStatus": "running",
-  "receiptUpdatedAt": "2026-10-20T07:46:38.009Z",
-  "receiptSha256": "2bbc89aafc3d78b2ef24ba03867e7315ef8deb1c917fe6273ef2e6acb6c28129",
+  "checkedAt": "2026-10-20T09:19:45.454Z",
+  "receiptStatus": "complete",
+  "receiptUpdatedAt": "2026-10-20T08:10:55.002Z",
+  "receiptSha256": "b378b52403ff485a64accc999eebc9174d11da3faf7dac3adef246939e274c35",
   "network": "utexo-testnet",
   "fallback": false,
-  "verdict": "PENDING",
+  "verdict": "PASS_PUBLIC_TRANSACTIONS_AND_ATTESTATIONS",
   "problems": [],
-  "pending": [
-    "flagged: https://mempool.space unconfirmed",
-    "flagged: https://blockstream.info unconfirmed",
-    "flagged: attestation not recorded",
-    "overLimit: refusal not recorded",
-    "stopped: refusal not recorded",
-    "native quarantine enforcement not recorded",
-    "receipt status is running"
-  ],
+  "pending": [],
   "checks": [
     {
       "name": "clear",
@@ -54,14 +46,17 @@
     {
       "name": "flagged",
       "txid": "8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b",
-      "attestationValid": false,
-      "exactTestListHashMatches": false,
+      "attestationValid": true,
+      "exactTestListHashMatches": true,
       "publicExplorers": [
         {
           "host": "https://mempool.space",
           "explorerUrl": "https://mempool.space/testnet/tx/8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b",
           "status": {
-            "confirmed": false
+            "confirmed": true,
+            "block_height": 5195834,
+            "block_hash": "00000000000003f64c64dc0c5a3d994ac8fb965155ffffc66a20363b0a90a5cf",
+            "block_time": 1792483835
           },
           "feeSats": 198,
           "decodedTxidMatches": true
@@ -70,7 +65,10 @@
           "host": "https://blockstream.info",
           "explorerUrl": "https://blockstream.info/testnet/tx/8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b",
           "status": {
-            "confirmed": false
+            "confirmed": true,
+            "block_height": 5195834,
+            "block_hash": "00000000000003f64c64dc0c5a3d994ac8fb965155ffffc66a20363b0a90a5cf",
+            "block_time": 1792483835
           },
           "feeSats": 198,
           "decodedTxidMatches": true

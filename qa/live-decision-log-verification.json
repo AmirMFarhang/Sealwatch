@@ -1,22 +1,23 @@
 {
   "version": 1,
   "independentQa": true,
-  "checkedAt": "2026-10-20T07:47:50.070Z",
+  "checkedAt": "2026-10-20T09:19:45.662Z",
   "scope": "Read only named signed decision logs/checkpoints; no wallet database, seed, key or receiver raw history opened; no log contents exported.",
   "results": [
     {
       "name": "authorization",
       "status": "pass",
       "nodePk": "53e670e0bcb9ad656d2659c9a77c9ff9f7ed33bb2c32de77518cd12f06a2ead0",
-      "entryCount": 18,
-      "logSha256": "2f027e28b028e0871d425e375280c8eda29a852f0a6e40cdedb89176bb869090",
-      "checkpointSha256": "5087ac845a13b57bf59598a61b0577e059c33cfbc31a7b5313bcc2c31ca15eaf",
+      "entryCount": 27,
+      "logSha256": "3157510a5b06f2285c2c3d97cbf7814a53442ac4239d6c2431643bdb3353a7ce",
+      "checkpointSha256": "ba199e712be808aa53185cb921cd1e6bcaab9a1a3d8c65f5b5ece9f249a9079b",
       "kinds": {
-        "state-prepare": 6,
+        "state-prepare": 9,
         "policy-install": 2,
-        "state-commit": 6,
-        "authorization": 2,
-        "signing-token": 2
+        "state-commit": 9,
+        "authorization": 4,
+        "signing-token": 2,
+        "kill-switch": 1
       },
       "bindings": [
         {
@@ -28,6 +29,16 @@
           "label": "flagged",
           "decisionMatches": true,
           "tokenConsumptionMatches": true
+        },
+        {
+          "label": "overLimit",
+          "decisionMatches": true,
+          "tokenConsumptionMatches": null
+        },
+        {
+          "label": "stopped",
+          "decisionMatches": true,
+          "tokenConsumptionMatches": null
         }
       ],
       "problems": []
@@ -36,17 +47,21 @@
       "name": "receiver",
       "status": "pass",
       "nodePk": "3e85071f8ffbc438b1767f777d80444861e73c346c7f6d9b4508eae4e38a5124",
-      "entryCount": 6,
-      "logSha256": "237d72f61d14508376de11525aca7fa48ea45e8e26bf0d40e499671365fedb72",
-      "checkpointSha256": "a9d4c9db65aac226b75a20c419d159c340b41fde937d5a356b08a177034bb33e",
+      "entryCount": 9,
+      "logSha256": "8f8922827651a0a065123a6cb6fff24f65cd1da39bb8cb13f0447f0b06f3dff6",
+      "checkpointSha256": "01d5c7218989b346a87dbeb27d1d73dbe37f4a0a37132fbc5f758a017319e23b",
       "kinds": {
-        "state-prepare": 2,
-        "state-commit": 2,
-        "incoming-verification": 2
+        "state-prepare": 3,
+        "state-commit": 3,
+        "incoming-verification": 3
       },
       "bindings": [
         {
           "label": "clear",
+          "attestationLogMatches": true
+        },
+        {
+          "label": "flagged",
           "attestationLogMatches": true
         }
       ],

@@ -1,14 +1,15 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "independentQa": true,
-  "reviewer": "Codex /root/qa, not a runtime implementer",
-  "checkedAt": "2026-10-20T07:48:40.390788+00:00",
-  "status": "local_fix_qa_pass; corrected_live_clear_verified; flagged_confirmation_and_remaining_proof_pending",
-  "verdict": "LOCAL_AND_CLEAR_PASS_VETO_MEETING_DONE_PENDING_FLAGGED_AND_REFUSALS",
-  "meetingDefinitionOfDone": false,
+  "reviewer": "Codex /root/qa; did not implement runtime",
+  "checkedAt": "2026-10-20T09:24:45.265934+00:00",
+  "status": "complete_for_required_verify_authorize_testnet_demonstration",
+  "verdict": "PASS_LOCAL_SECURITY_AND_REQUIRED_LIVE_PROOF",
+  "meetingDefinitionOfDone": true,
+  "scope": "Brief \u00a75.5 required Verify/Authorize testnet proof; escrow P1 not built; this is not acceptance of every extraction/publication workstream.",
   "source": {
     "initialFrozenCommit": "d14a0c3254e55520e2aea20e1edd8d7f5c0dfc7f",
-    "testedQaCommit": "e090de8",
+    "testedQaCommit": "8f7fa8fa6d116297d2f034c36d9dafed113e3cdf",
     "srcTree": "e92746d4cd3ffb67c58f2aee6f22227cef139fab",
     "coreFix": "f83e1becea05eaeb6e235d36cb0aec525a28d3b3",
     "nativeFixes": [
@@ -30,7 +31,9 @@
       "d966374d0012ba8be187a2f070a34e0c6428ecd7",
       "18392fa720599689eccbcdd0df906c1b32127b90",
       "212bdf60ae2145d71b170b825e92db7385a8d57c"
-    ]
+    ],
+    "matchingParentIntegrationCommit": "538108875c5210ab53becbf6d858c2e8a2ca02e4",
+    "runtimeTreeMatchesParent": true
   },
   "environment": {
     "node": "22.22.2",
@@ -85,12 +88,125 @@
     },
     "totalAdditionalTests": 15
   },
-  "commands": [
+  "reproducibleCommands": [
     "npm ci",
     "npm run check",
     "node --import tsx --test qa/security-probes.test.ts qa/native-guard-probes.test.ts",
-    "nine isolated CLI invocations with fresh synthetic state"
+    "node --import tsx qa/verify-live-receipt.ts RECEIPT",
+    "node --import tsx qa/verify-live-logs.ts DEMO_LOG_DIRECTORY RECEIPT",
+    "node --import tsx qa/verify-final-quarantine.ts NETWORK_STATE RECEIPT",
+    "node --import tsx qa/verify-public-transactions.ts"
   ],
+  "localVerification": {
+    "freshStandardAndSecurityRerunAt": "2026-10-20T09:24:45.265934+00:00",
+    "standard": {
+      "passed": 88,
+      "failed": 0,
+      "skipped": 0,
+      "typecheck": "pass"
+    },
+    "additionalSecurity": {
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    "priorCli": {
+      "checks": 9,
+      "expectedOutcomesPassed": 9,
+      "evidence": "qa/cli-results.json",
+      "scope": "Earlier isolated CLI acceptance; retained after narrow native decoder/recovery changes."
+    }
+  },
+  "liveDemonstration": {
+    "receipt": "release/testnet-receipt.json",
+    "receiptSha256": "b378b52403ff485a64accc999eebc9174d11da3faf7dac3adef246939e274c35",
+    "receiptStatus": "complete",
+    "receiptUpdatedAt": "2026-10-20T08:10:55.002Z",
+    "network": "utexo-testnet",
+    "underlyingBitcoinNetwork": "testnet3",
+    "fallback": false,
+    "wallets": "Two new wallets A and B; public faucet funding only; governed A sends to receiver B.",
+    "asset": {
+      "assetId": "rgb:6b7igUgX-5c~XkMr-3g4_4Yg-eVj5~7M-dt_okW0-SJR6CI8",
+      "label": "test USD, not USDT",
+      "ticker": "TUSD",
+      "precision": 2
+    },
+    "clearIncoming": {
+      "status": "pass",
+      "amountSmallestUnits": 1000,
+      "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+      "blockHeight": 5195546,
+      "signatureAndSemanticChecks": "pass",
+      "exactSignedTestListReconstructed": true
+    },
+    "flaggedWitnessInput": {
+      "status": "pass",
+      "amountSmallestUnits": 500,
+      "txid": "8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b",
+      "blockHeight": 5195834,
+      "signatureAndSemanticChecks": "pass",
+      "flaggedL1": "flagged",
+      "exactSignedTestListReconstructedFromActualInput": true
+    },
+    "quarantine": {
+      "status": "pass",
+      "persistentCoreAndNativeStateVerified": true,
+      "actualAssetRefusalReasons": [
+        "RECEIVER_ASSET_QUARANTINED_ERROR",
+        "RECEIVER_ASSET_QUARANTINED_FLAGGED"
+      ],
+      "nativeGuardReplay": "Production prepareSend with actual copied signed state refuses before dummy SDK call; zero SDK calls. Original live refusal retained in receipt.",
+      "originalErrorPermanentlyRetained": true,
+      "operationalEvidenceUnchangedDuringQa": true
+    },
+    "inLimitSend": "Both actual sends confirmed; signed approval, exact plan/policy hashes and token consumption match receipt and journal.",
+    "overLimitRefusal": {
+      "status": "pass",
+      "requestedSmallestUnits": 1001,
+      "why": "PER_SEND_LIMIT_EXCEEDED",
+      "noSigningToken": true,
+      "signedDecisionLogBound": true
+    },
+    "stopRefusal": {
+      "status": "pass",
+      "requestedSmallestUnits": 100,
+      "why": "KILL_SWITCH_STOPPED",
+      "noSigningToken": true,
+      "signedStopAndDecisionLogBound": true
+    },
+    "signedLogEntries": {
+      "gate": 27,
+      "receiver": 9,
+      "nativeReceiverWallet": 6
+    },
+    "escrow": "not built; P1 outside required proof"
+  },
+  "publicExplorerChecks": {
+    "verdict": "PASS_ALL_SIX_CONFIRMED_ON_BOTH_EXPLORERS",
+    "transactionCount": 6,
+    "explorerChecks": 12,
+    "providers": [
+      "Mempool",
+      "Blockstream"
+    ],
+    "allConfirmed": true,
+    "rawTxidsIndependentlyRecomputed": true,
+    "publicValuesScriptsAndFeesMatchRaw": true,
+    "evidence": "qa/public-explorer-checks.json"
+  },
+  "authorities": {
+    "checkerAndIssuerAndGate": "qa/live-run-authorities.json; pinned before receiver attestations arrived",
+    "nativeReceiverAdapterPk": "38e1b635c8ce7dcd30a7931b5a7d631c15da509ac1858f9c51c303a8ff4f09d1",
+    "nativeReceiverAdapterPinSource": "Parent independently derived public value from known B adapter authority file; no private value read or exported by QA."
+  },
+  "recoveryHistory": {
+    "originalSignedErrorHash": "3fe84d0109915493794efdd2ff8e5b8b05faefc09bd95a776777422cb8d6b0fd",
+    "originalSignedError": "WITNESS_EVIDENCE_INVALID from valid Taproot prevout; authentic error preserved, never represented as clear.",
+    "originalWitnessUnchanged": true,
+    "priorErrorRetainedInReceiptLogAndBothQuarantines": true,
+    "resume": "No resend/reset/unfreeze; expired unattempted invoices only renewed with signed next policy version and previous hash."
+  },
   "resolvedFindings": [
     {
       "id": "QA-STATE-ROLLBACK",
@@ -124,62 +240,44 @@
     }
   ],
   "claimAudit": {
-    "README": "audited for local-only and incomplete-network claims; standard test count is now84 superseding the earlier76 documentation checkpoint",
-    "architecture": "audited; current-local-journal and external-anchor limits explicit",
-    "demo": "draft audited; synthetic vectors labelled liveTransfers:false",
-    "knownStatusLabels": {
-      "verifyAuthorize": "built, local tests; network demo pending",
+    "architecture": "Claims match verified boundaries.",
+    "demo": "Draft covers actual receipt when complete, labels synthetic fallback, states no RGB ancestry/escrow claim.",
+    "README": "Parent5381088 test counts/boundaries match; its pending-live paragraph must be updated to final proof status by integration owner.",
+    "statusLabels": {
+      "verifyAuthorize": "built; required actual testnet proof passed",
       "utexoFlaggedListApi": "stub, refuses",
-      "rgbAncestry": "designed, no consignment history screening",
+      "rgbAncestry": "designed; no consignment verification",
       "settle": "not started",
       "remember": "not started"
     }
   },
-  "publicExplorerChecks": {
-    "evidence": "qa/public-explorer-checks.json",
-    "providers": [
-      "Mempool",
-      "Blockstream"
-    ],
-    "faucetFunding": {
-      "txid": "655090b2862de7bf6bd92ec0566c0643a017513dbc4bdb151569396055306b0c",
-      "confirmed": true,
-      "blockHeight": 5195536,
-      "receiver": "B",
-      "vout": 1,
-      "amountSats": 129128
-    },
-    "freshSetupSplit": {
-      "txid": "c92c1d073eb8aaba75f3c72e45d3f5618556890e60fde8b79d07911d38105ffa",
-      "confirmed": false,
-      "receiver": "A",
-      "vout": 0,
-      "amountSats": 65000,
-      "feeSats": 155
-    },
-    "asOf": "2026-10-19T15:53:16Z",
-    "actualRgbDemonstrationTxidsSupplied": 0
-  },
-  "liveDemonstration": {
-    "network": "utexo-testnet",
-    "fallback": false,
-    "clearIncoming": "PASS: corrected signed clear attestation, exact witness confirmed5195546, original signed error retained; no clear rebroadcast.",
-    "flaggedWitnessInput": "Actual flagged-test transfer broadcast independently visible on both explorers; confirmation and signed flagged attestation pending.",
-    "quarantine": "not independently verified on chain",
-    "inLimitSend": "Actual governed transaction independently confirmed by both explorers at5195546; signed gate approval and consumed token match receipt.",
-    "overLimitRefusal": "synthetic/local only",
-    "stopRefusal": "synthetic/local only",
-    "escrow": "not built"
-  },
   "limitations": [
-    "Restoring snapshot,journal and checkpoint together remains undetectable without external anchoring; none built.",
-    "Native RGB receive/asset membership relies on receiver-owned SDK/indexer; core decodes witness and prevouts, not RGB consignments.",
-    "Agent-controlled direct raw wallet keys/SDK methods are outside the governed adapter boundary.",
-    "Ambiguous crash state fails closed and requires reviewed offline recovery; no automatic rollback or legacy migration.",
-    "Daily limits count reservations conservatively, even if sending fails, until UTC day rollover.",
-    "Independent native probes inject SDK/account fakes; actual native send and public RGB receipt remain required."
+    "Public Bitcoin witness/input verification and signed checker evidence do not independently verify RGB consignments; receiver-owned SDK/indexer supplies asset/receive membership.",
+    "Public test-only flagged list is synthetic policy data; this proves exact actual witness-input matching, not Utexo production flagged-list integration.",
+    "Snapshot rollback detection assumes a current trusted retained local journal/checkpoint. Rolling back snapshot, journal and checkpoint together needs an external anchor, which is not built.",
+    "Direct raw wallet keys/SDK signing calls lie outside the governed adapter boundary; signatures already exported cannot be revoked.",
+    "Ambiguous crash state fails closed and requires reviewed offline recovery. Daily limits conservatively retain failed-send reservations until UTC-day rollover.",
+    "Signed logs bind receipt action/token/plan/policy hashes. The compact public receipt does not disclose a full prepared PSBT; native exact-transaction handling is covered by source audit and independent probes."
   ],
-  "compexExtraction": {
+  "evidence": [
+    "qa/live-receipt-verification.json",
+    "qa/live-decision-log-verification.json",
+    "qa/final-quarantine-verification.json",
+    "qa/public-explorer-checks.json",
+    "qa/live-run-authorities.json",
+    "qa/preserved-live-receiver-error.json",
+    "qa/taproot-live-regression.json",
+    "qa/cli-results.json"
+  ],
+  "durableIgnoredLogs": [
+    ".state/qa/final-standard-check.log",
+    ".state/qa/final-security-check.log",
+    ".state/qa/final-live-receipt.log",
+    ".state/qa/final-live-logs.log",
+    ".state/qa/final-quarantine-check.log",
+    ".state/qa/final-public-transactions.log"
+  ],
+  "separateCompexCheckpoint": {
     "verdict": "PASS_PRIVATE_EXTRACTION_CHECKPOINT",
     "reportCommit": "d1d5064",
     "sourceCommit": "62233f0",
@@ -219,60 +317,9 @@
       ]
     },
     "advisory": "Node API unsigned wrapper references and legacy consentHash are advisory; authoritative references must come from authenticated envelope. No forged evidence/loan acceptance demonstrated.",
-    "publication": "Parent reports Amir approved G2, source4258d04 was pushed and private-package workflow39283839589 succeeded; parent is verifying private package visibility separately. No publication or remote write was performed by QA."
+    "publication": "Parent verified0.1.0 private via workflow39388161168; package repository association is null, so inherited repository access is not claimed. No QA remote writes.",
+    "pending": "New optional host bridge0.1.1 is a separate independent QA review; this prior51-test checkpoint is not its acceptance."
   },
-  "logs": [
-    "/tmp/trust-qa-check-final.log",
-    "/tmp/trust-qa-probes-final.log",
-    "/tmp/trust-qa-security-d14a0c3.log",
-    "/tmp/trust-qa-native-9494e42.log",
-    "/tmp/trust-qa-native-all-barriers.log",
-    "/tmp/trust-qa-check-taproot-resume.log",
-    "/tmp/trust-qa-probes-taproot-resume.log"
-  ],
-  "remaining": [
-    "Independently verify confirmed flagged witness, exact signed test-list/attestation, retained quarantine, real over-limit/stop decisions and final signed log bindings.",
-    "Retain meeting completion veto until every required actual demonstration item and explorer check passes."
-  ],
-  "localAcceptance": true,
-  "liveProofCheckpoint": {
-    "asOf": "2026-10-20T07:48:40.390788+00:00",
-    "verdict": "CORRECTED_CLEAR_PASS; FLAGGED_BROADCAST_UNCONFIRMED",
-    "receiptStatus": "running",
-    "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
-    "network": "utexo-testnet",
-    "fallback": false,
-    "publicStatus": "Both public explorers confirm exact witness in block5195546; decoded sending/output addresses independently match both explorers.",
-    "publicRawTxidsIndependentlyRecomputed": true,
-    "actualRgbDemonstrationTxidsSupplied": 2,
-    "gateDecisionLog": "pass; signed approval, exact plan/policy hashes and token consumption match receipt",
-    "gateLogEntries": 18,
-    "receiverAttestation": "Corrected canonical signed clear verified against yesterday pinned checker/issuer keys and reconstructed test-list hash; original authentic signed error preserved.",
-    "attestationAuthorities": "checker and issuer public keys independently pinned before attestation arrival",
-    "sourceSrcTreeStillMatches": "e92746d4cd3ffb67c58f2aee6f22227cef139fab",
-    "evidence": [
-      "qa/live-run-authorities.json",
-      "qa/live-rgb-explorer-checks.json",
-      "qa/live-receipt-verification.json",
-      "qa/live-decision-log-verification.json",
-      "qa/preserved-live-receiver-error.json",
-      "qa/taproot-live-regression.json",
-      "qa/live-recovery-preservation.json"
-    ],
-    "reproducibleChecks": [
-      "node --import tsx qa/verify-live-receipt.ts RECEIPT",
-      "node --import tsx qa/verify-live-logs.ts DEMO_LOG_DIRECTORY RECEIPT"
-    ],
-    "currentCheckUnavailableHosts": [],
-    "resumeSignoff": {
-      "approved": true,
-      "scope": "Resume frozen corrected runner; preserve original errors/logs/quarantine, reverify same confirmed witnesses without rebroadcast; refresh only expired unsent/unattempted invoices under hash-chained owner policy versions.",
-      "meetingAcceptance": false
-    },
-    "receiverLogEntries": 6,
-    "flaggedTestTxid": "8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b",
-    "flaggedTestPublicStatus": "Both explorers expose exact raw transaction, unconfirmed at2026-10-20T07:47:49Z, fee198sats.",
-    "originalErrorRetained": true,
-    "originalClearWitnessUnchanged": true
-  }
+  "remainingForRequiredLiveProof": [],
+  "localAcceptance": true
 }
