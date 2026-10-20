@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "independentQa": true,
-  "checkedAt": "2026-10-20T13:54:51.937Z",
+  "checkedAt": "2026-10-20T16:12:37.281Z",
   "verdict": "PASS_GENERIC_PROVIDER_LIVE_EVIDENCE_AND_AUDIT_PACK",
   "network": "utexo-testnet",
   "witnessTxid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
@@ -9,10 +9,10 @@
   "operation": "fresh-provider-rescreen-of-existing-confirmed-receive",
   "newTransactionBroadcast": false,
   "execution": "software",
-  "attestationHash": "f62b9481ebddddbc1bf984f6bff40236ceecd27d9cfa83d955f486d902ab8b1a",
-  "evidenceSha256": "a1ce4af431b1e854e12a87ea411ab84d4b21411c7fdc55b256bbc47ec0af774a",
-  "checkerTrustFileSha256": "3f017e829793bf6bec2fda0f260711a17faec871692479f8c1ff54d43a01bb38",
-  "configuredProviderPinsFileSha256": "4235fb07de89ed5c9da093b4c3848fbb98464c72d023c97755626db1a9f56dfe",
+  "attestationHash": "94f25b7a60635308dc6c0743d7399ddac7d64a13435f77b44c51712114ce9a21",
+  "evidenceSha256": "587a270939abaabc7ae6c7562b2fc8b98a4bd3a0d9e81e520acdfe589e92c366",
+  "checkerTrustFileSha256": "e573984bb1e9ed0acb8d4b0bea8f6f23f81f7e0d99e3dba69688aca8a9817ddd",
+  "configuredProviderPinsFileSha256": "2c56a6d789616dae14b44c9c7580ec560e2017daa9465337a00cde847b4959fa",
   "providerSignatureRequestHashScopeAndOriginalDecisionTimeValid": true,
   "portableSummaryMatchesVerifiedEvidence": true,
   "publicEvidenceScope": "Receiver context plus bounded public chain; no full consignment or wallet keys disclosed.",
@@ -25,9 +25,9 @@
   "exactAttestationBoundToSignedLog": true,
   "freshReceiverQuarantineSnapshotMatchesRetainedJournal": true,
   "auditPack": {
-    "bytes": 21039,
+    "bytes": 21127,
     "fileCount": 6,
-    "sha256": "bb177429a97e598866d2791c3a16fa6b2cf4cbaca1cd86897339ba38f1fd48a4",
+    "sha256": "651fbbf97c41e4333e48582815ad55aafb680f0684c191ba60c99ede0dad5580",
     "manifestAndHashesAndProviderPolicyLogBindingsValid": true
   },
   "publicExplorers": [

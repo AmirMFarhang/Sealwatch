@@ -1,101 +1,190 @@
 {
   "schemaVersion": 1,
   "independentQa": true,
-  "checkedAt": "2026-10-20T13:57:17.051929+00:00",
-  "verdict": "PASS_ACTUAL_SOFTWARE_RUNTIME_BINDINGS_AND_BOUNDED_WORKLOAD",
-  "evidenceSha256": "a1ce4af431b1e854e12a87ea411ab84d4b21411c7fdc55b256bbc47ec0af774a",
-  "requestSha256": "d01ea242a2d82713534249f6fdb297b10fcc28ef6f6485532875171f8284a3f8",
-  "fullRuntimeRecordSha256": "8c91de9a8ce5f6eaeaf83dabf5e6dc67f6facaa61cb59f86964e2e1b2dc1c515",
-  "contractSha256": "53ee897826d014b2785a9936e652f6e4837dcc8748513ff7acb4fe1b4dd068d7",
-  "contractMaterialHashAndApprovalMatch": true,
-  "exactRequestDatasetSelectorPolicyMaterialsAndWorkloadHashesMatch": true,
-  "releasedArtifactSha256": "cb243833309332e3d09e5e81898471ad93d39cbde0d020593ef313b59fb7d564",
-  "signedResultMatchesFixedCodeRecomputedFromDisclosedRequest": true,
-  "stageCount": 4,
-  "profiles": [
+  "checkedAt": "2026-10-20T16:14:46.632515+00:00",
+  "verdict": "PASS_BOTH_ACTUAL_SOFTWARE_APPLICATION_RUNS_AND_RELEASE_BINDINGS",
+  "frozenPrivateRuntimeCommit": "c202f4af5a011826cd5a4baeb320260c705f898f",
+  "applications": [
     {
-      "role": "BUILD",
-      "status": "COMPLETED",
-      "network": "none",
-      "readOnlyRoot": true,
-      "capabilitiesDropped": true,
-      "noNewPrivileges": true,
-      "unprivilegedUid": 65532,
-      "observedImageMatchesPin": true,
-      "containerRemoved": true
+      "application": "transfer-flow-risk",
+      "providerEvidenceSha256": "587a270939abaabc7ae6c7562b2fc8b98a4bd3a0d9e81e520acdfe589e92c366",
+      "fullRuntimeRecordSha256": "bc3555b6409980b55aa781f6dbe37d0a3404f4aaffa3d912ab45de2fe152522f",
+      "contractSha256": "601f34f0a87e5f3ef402b8ea89cd099ec8e34504c50787528f5fdd50f083163a",
+      "contractMaterialAndApprovalHashMatch": true,
+      "requestDatasetSelectorPolicyAndWorkloadHashesMatch": true,
+      "releasedArtifactSha256": "fb9b2a7e3fa501779bfa5fcc2d814875784a9fb6210f6d73d0dd9ea88145d92a",
+      "releasedResultMatchesFixedCodeRecomputation": true,
+      "stageCount": 4,
+      "profiles": [
+        {
+          "role": "BUILD",
+          "status": "COMPLETED",
+          "network": "none",
+          "readOnlyRoot": true,
+          "allCapabilitiesDropped": true,
+          "noNewPrivileges": true,
+          "uid": 65532,
+          "observedImageMatchesPin": true,
+          "containerRemoved": true
+        },
+        {
+          "role": "TOOL_SERVICE",
+          "status": "STOPPED",
+          "network": "none",
+          "readOnlyRoot": true,
+          "allCapabilitiesDropped": true,
+          "noNewPrivileges": true,
+          "uid": 65532,
+          "observedImageMatchesPin": true,
+          "containerRemoved": true
+        },
+        {
+          "role": "AGENT",
+          "status": "COMPLETED",
+          "network": "none",
+          "readOnlyRoot": true,
+          "allCapabilitiesDropped": true,
+          "noNewPrivileges": true,
+          "uid": 65532,
+          "observedImageMatchesPin": true,
+          "containerRemoved": true
+        },
+        {
+          "role": "RELEASE_CHECK",
+          "status": "COMPLETED",
+          "network": "none",
+          "readOnlyRoot": true,
+          "allCapabilitiesDropped": true,
+          "noNewPrivileges": true,
+          "uid": 65532,
+          "observedImageMatchesPin": true,
+          "containerRemoved": true
+        }
+      ],
+      "cleanupComplete": true,
+      "actualModel": {
+        "allowedCalls": 1,
+        "sentToModel": true,
+        "standIn": false,
+        "costMicros": 0,
+        "proposalAccepted": false,
+        "modelRequestCommitmentIndependentlyOpened": true,
+        "responseCommitmentPresent": true
+      },
+      "brokerFactsCommitmentIndependentlyOpened": true,
+      "result": {
+        "findings": [
+          {
+            "code": "SCOPE_INCOMPLETE",
+            "evidence_ids": [
+              "public-neighborhood"
+            ]
+          }
+        ],
+        "kind": "transfer-flow-risk",
+        "risk_band": "review"
+      },
+      "execution": "software"
     },
     {
-      "role": "TOOL_SERVICE",
-      "status": "STOPPED",
-      "network": "none",
-      "readOnlyRoot": true,
-      "capabilitiesDropped": true,
-      "noNewPrivileges": true,
-      "unprivilegedUid": 65532,
-      "observedImageMatchesPin": true,
-      "containerRemoved": true
-    },
-    {
-      "role": "AGENT",
-      "status": "COMPLETED",
-      "network": "none",
-      "readOnlyRoot": true,
-      "capabilitiesDropped": true,
-      "noNewPrivileges": true,
-      "unprivilegedUid": 65532,
-      "observedImageMatchesPin": true,
-      "containerRemoved": true
-    },
-    {
-      "role": "RELEASE_CHECK",
-      "status": "COMPLETED",
-      "network": "none",
-      "readOnlyRoot": true,
-      "capabilitiesDropped": true,
-      "noNewPrivileges": true,
-      "unprivilegedUid": 65532,
-      "observedImageMatchesPin": true,
-      "containerRemoved": true
+      "application": "agent-action-review",
+      "providerEvidenceSha256": "bd8cf4d070f4934c56543d88387b6c6e5a4840a3c6ee3faaa73ae0ed910a3488",
+      "fullRuntimeRecordSha256": "7e9c1de10549c9c65099f592723e8c804a31b21d57de7e1b18e087a11a257283",
+      "contractSha256": "3d3be1eb409b13aab304455e2bedc593eaa9aea4c1bc2d5e9c1ed845267f8890",
+      "contractMaterialAndApprovalHashMatch": true,
+      "requestDatasetSelectorPolicyAndWorkloadHashesMatch": true,
+      "releasedArtifactSha256": "bbbbf102eb93f8b3d3a3d990ee10067037a98a7fc36678bc3a73a57923681020",
+      "releasedResultMatchesFixedCodeRecomputation": true,
+      "stageCount": 4,
+      "profiles": [
+        {
+          "role": "BUILD",
+          "status": "COMPLETED",
+          "network": "none",
+          "readOnlyRoot": true,
+          "allCapabilitiesDropped": true,
+          "noNewPrivileges": true,
+          "uid": 65532,
+          "observedImageMatchesPin": true,
+          "containerRemoved": true
+        },
+        {
+          "role": "TOOL_SERVICE",
+          "status": "STOPPED",
+          "network": "none",
+          "readOnlyRoot": true,
+          "allCapabilitiesDropped": true,
+          "noNewPrivileges": true,
+          "uid": 65532,
+          "observedImageMatchesPin": true,
+          "containerRemoved": true
+        },
+        {
+          "role": "AGENT",
+          "status": "COMPLETED",
+          "network": "none",
+          "readOnlyRoot": true,
+          "allCapabilitiesDropped": true,
+          "noNewPrivileges": true,
+          "uid": 65532,
+          "observedImageMatchesPin": true,
+          "containerRemoved": true
+        },
+        {
+          "role": "RELEASE_CHECK",
+          "status": "COMPLETED",
+          "network": "none",
+          "readOnlyRoot": true,
+          "allCapabilitiesDropped": true,
+          "noNewPrivileges": true,
+          "uid": 65532,
+          "observedImageMatchesPin": true,
+          "containerRemoved": true
+        }
+      ],
+      "cleanupComplete": true,
+      "actualModel": {
+        "allowedCalls": 1,
+        "sentToModel": true,
+        "standIn": false,
+        "costMicros": 0,
+        "proposalAccepted": false,
+        "modelRequestCommitmentIndependentlyOpened": true,
+        "responseCommitmentPresent": true
+      },
+      "brokerFactsCommitmentIndependentlyOpened": true,
+      "result": {
+        "findings": [
+          {
+            "code": "MODEL_OUTPUT_INVALID",
+            "evidence_ids": [
+              "send-plan",
+              "spending-policy"
+            ]
+          }
+        ],
+        "kind": "agent-action-review",
+        "recommendation": "escalate"
+      },
+      "execution": "software"
     }
   ],
-  "cleanupComplete": true,
-  "actualModel": {
-    "allowedGatewayCalls": 1,
-    "sentToModel": true,
-    "standIn": false,
-    "costMicros": 0,
-    "modelVersion": "gguf-sha256:c876f159707a4e4f70e045106c69db15bfc935a4981706fd4f65c6e7ea1e81c5",
-    "requestCommitmentIndependentlyOpened": true,
-    "responseCommitmentPresent": true,
-    "proposalAccepted": false,
-    "claim": "A real pinned local model call ran. Its proposed response was rejected; fixed code retained conservative review. This is not a successful model reasoning claim."
+  "receiverHeldConsignment": {
+    "bytes": 5094,
+    "sha256": "f8593b20f30d7a821465fa0fcd4327b285c642e4f4fb4e04233638c2109cddee",
+    "actualCopyDigestMatchesDisclosedDigest": true,
+    "fullBytesDisclosedToProvider": false
   },
-  "toolFactsCommitmentIndependentlyOpened": true,
-  "syntheticDetectorChecks": {
-    "passed": 12,
-    "failed": 0,
-    "cases": [
-      "incomplete_bounded_scope_always_review",
-      "exact_witness_spent_output_pass_through",
-      "unrelated_same_value_not_pass_through",
-      "out_of_window_spend_not_quick_pass_through",
-      "four_recent_small_payers_fan_in",
-      "three_payers_below_threshold_not_fan_in",
-      "prior_reverse_flow_prefunding",
-      "bounded_two_hop_cycle",
-      "model_omission_never_discards_confirmed_risk",
-      "hallucinated_code_refused",
-      "wrong_evidence_ids_refused",
-      "agent_metrics_omit_chain_identifiers"
-    ]
+  "modelResponseReleaseBindingFix": {
+    "originalInventedApprovalProbeNowRefused": true,
+    "independentRegressionTests": 10,
+    "privateAcceptedCompletionComparedByDigestAndParsedAtRelease": true,
+    "rawCompletionExportedOrRetainedInPublicRecords": false
   },
-  "execution": "software",
-  "providerSourceFilesImmutableDuringRead": true,
-  "privateEndpointKeysEnvelopesRuntimeRecordOrOpeningsExported": false,
   "limits": [
-    "The trusted provider host signs software evidence; no real vendor quote or hardware isolation is established.",
-    "The model response bytes are not part of the retained public record; the gateway call commitment/ref and released parser-rejection flag are checked, rather than independently replaying raw model text.",
-    "Bounded address-graph candidates indicate possible flow patterns and cannot establish legal ownership, criminality or complete asset history.",
-    "Only aggregate counts, digests and generic stage properties are exported. Full private run/contract/request/openings remain outside Git."
+    "All results are signed software evidence with a trusted provider host; no hardware quote verified.",
+    "Raw model response bytes are intentionally not retained. Offline QA checks their recorded commitment/hash and audited tested release binding rather than replaying raw text.",
+    "Both actual model proposals were rejected. No successful model recommendation or native wallet approval/broadcast is claimed for the synthetic action-review request.",
+    "Raw provider pins/endpoints, request data, contracts, runtime records and commitment openings remain private."
   ]
 }
