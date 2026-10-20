@@ -65,7 +65,7 @@ flowchart LR
     W -.-> E["Settle<br/>not started"]
     W -.-> H["Remember<br/>not started"]
     V -. "optional, built" .-> I["AttestedCheckProvider<br/>generic provider protocol"]
-    A -. "designed review" .-> I
+    A -. "optional review, built" .-> I
     I --> P["Compex governed checks<br/>(via provider protocol)<br/>signed software evidence"]
     subgraph T["Trust tiers"]
       T1["1. Local fixed rules — built"]
@@ -327,8 +327,9 @@ else: final = local
 The transfer mapping is fixed: `review` and `high` quarantine, while `low` cannot
 loosen a local flag or error. The client accepts only request-bound signed
 software records; full evidence stays in ignored private state. The current
-flow does not request `agent-action-review`; gate integration remains not
-started. See [the provider protocol](docs/PROVIDER-PROTOCOL.md).
+receiver flow requests `transfer-flow-risk`. The authorization gate requests
+`agent-action-review` when a signed soft threshold requires it; it rechecks all
+local rules after the response and refuses automatic approval above the human threshold. See [the provider protocol](docs/PROVIDER-PROTOCOL.md).
 
 ## 8. Attestation format
 
