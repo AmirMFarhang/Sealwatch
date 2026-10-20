@@ -116,7 +116,7 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
       output({ installed: true });
       break;
     case "authorize":
-      output(services.gate.authorize(json(args[1] ?? inputPath)));
+      output(await services.gate.authorizeReviewed(json(args[1] ?? inputPath)));
       break;
     case "stop":
       services.gate.stop(json(args[1] ?? inputPath));

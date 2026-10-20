@@ -17,4 +17,6 @@ export * from "./provider/protocol.js";
 export * from "./provider/dsse.js";
 export * from "./provider/remote.js";
 export * from "./provider/transfer.js";
+export * from "./governance/review.js";
+export * from "./audit/pack.js";
 export * from "./execution/quote.js";

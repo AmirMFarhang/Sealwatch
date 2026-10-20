@@ -149,7 +149,7 @@ export function summarizeAgentReview(
     Number.isFinite(issued) &&
       Number.isFinite(expires) &&
       issued >= Date.parse(expected.issued_at) &&
-      issued <= at * 1000 &&
+      Math.floor(issued / 1000) <= at &&
       at * 1000 < expires &&
       expires <= Date.parse(expected.expires_at),
     "review response expired or outside request validity",

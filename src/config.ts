@@ -63,6 +63,7 @@ export function loadConfig(file: string): {
           config.flagged.trustedIssuerKeys,
         )
       : new UtexoApiFlaggedListProvider();
+  const provider = providerFromEnvironment(join(stateDir, "provider-evidence"));
   const verify = new VerifyService({
     key,
     network: config.network,
@@ -71,7 +72,7 @@ export function loadConfig(file: string): {
     flagged,
     log,
     historyDir: join(stateDir, "receiver-history"),
-    provider: providerFromEnvironment(join(stateDir, "provider-evidence")),
+    provider,
   });
   const gate = new PolicyGate({
     key,
@@ -81,6 +82,7 @@ export function loadConfig(file: string): {
     stateFile: join(stateDir, "gate-state.json"),
     log,
     quarantine: verify.quarantine,
+    reviewProvider: provider,
   });
   return { config, key, verify, gate, log, sanctions };
 }

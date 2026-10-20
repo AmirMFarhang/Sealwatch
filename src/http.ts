@@ -91,7 +91,7 @@ export function createTrustServer(
           respond(200, { installed: true });
           break;
         case "/v1/authorize":
-          respond(200, services.gate.authorize(body));
+          respond(200, await services.gate.authorizeReviewed(body));
           break;
         case "/v1/stop":
           services.gate.stop(body);

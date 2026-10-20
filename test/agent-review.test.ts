@@ -145,6 +145,10 @@ test("hard human threshold is always a local refusal and provider is never calle
   assert.equal(f.calls.length, 0);
   assert.deepEqual(f.gate.store.read().spentByDay, {});
 });
+test("a verified provider timestamp within the gate clock's current second is accepted", async () => {
+  const f = reviewedFixture(async request => record(request, { issued_at: new Date(AT * 1000 + 500).toISOString() }));
+  assert((await f.gate.authorizeReviewed(f.request())).allowed);
+});
 test("amount exactly at hard human threshold can be reviewed but cannot exceed local per-send cap", async () => {
   const f = reviewedFixture();
   assert((await f.gate.authorizeReviewed(f.request(f.plan("80")))).allowed);
