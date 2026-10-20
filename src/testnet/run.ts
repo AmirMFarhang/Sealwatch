@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { setTimeout as delay } from 'node:timers/promises'
 import { Transaction } from 'bitcoinjs-lib'
-import { bytesToHex, keyPairFromSecret, randomKeyPair, randomHex, canonicalJson, type KeyPair } from '../core/crypto.js'
+import { bytesToHex, keyPairFromSecret, randomKeyPair, randomHex, canonicalJson, hashObject, type KeyPair } from '../core/crypto.js'
 import { PolicyGate, signPolicy, signRequest, signStop, type Decision } from '../governance/gate.js'
 import { FileDecisionLog } from '../governance/log.js'
 import { LocalFileFlaggedListProvider, signFlaggedManifest, type FlaggedSnapshot } from '../compliance/flagged.js'
@@ -22,6 +22,7 @@ interface Progress {
   txids: Record<string, string>
   decisions: Record<string, Decision>
   attestations: Record<string, Attestation>
+  priorAttestations?: { step: string; reason: string; attestation: Attestation }[]
   explorerChecks: Record<string, unknown>
   signingAttempts?: Record<string, { expectedTxid: string; startedAt: string }>
   quarantine?: { enforced: boolean; reason: string }
@@ -57,19 +58,25 @@ export async function runTestnetDemo() {
   const save = async (status: string, error?: string) => {
     await writeFile(`${dir}/progress.json`, `${JSON.stringify(progress, null, 2)}\n`, { mode: 0o600 })
     await mkdir('release', { recursive: true })
-    const receipt = { version: 1, status, updatedAt: new Date().toISOString(), network: config.name, label: config.label, fallback: config.fallback, networkTimeBox: { startedAt: STARTED_AT, primaryDeadline: PRIMARY_DEADLINE }, asset, wallets: wallets.map(w => w.publicState()), transactions: progress.txids, explorerChecks: progress.explorerChecks, attestations: progress.attestations, authorization: progress.decisions, quarantine: progress.quarantine ?? { enforced: false, reason: 'not_run' }, privacy: 'Raw witness/prevout transactions, SDK state, test flagged list and all private keys remain only in ignored receiver-local .state.', ...(error ? { error } : {}) }
+    const receipt = { version: 1, status, updatedAt: new Date().toISOString(), network: config.name, label: config.label, fallback: config.fallback, networkTimeBox: { startedAt: STARTED_AT, primaryDeadline: PRIMARY_DEADLINE }, asset, wallets: wallets.map(w => w.publicState()), transactions: progress.txids, explorerChecks: progress.explorerChecks, attestations: progress.attestations, priorAttestations: progress.priorAttestations ?? [], authorization: progress.decisions, quarantine: progress.quarantine ?? { enforced: false, reason: 'not_run' }, privacy: 'Raw witness/prevout transactions, SDK state, test flagged list and all private keys remain only in ignored receiver-local .state.', ...(error ? { error } : {}) }
     await writeFile('release/testnet-receipt.json', `${JSON.stringify(receipt, null, 2)}\n`)
   }
   try {
     const sender = await TestnetWallet.open('A', config, stateRoot); wallets.push(sender)
     const receiver = await TestnetWallet.open('B', config, stateRoot); wallets.push(receiver)
-    for (const [name, amount] of Object.entries({ clear: 1000, flagged: 500, overLimit: 1001, stopped: 100 })) if (!progress.invoices[name]) progress.invoices[name] = receiver.invoice(amount)
+    for (const [name, amount] of Object.entries({ clear: 1000, flagged: 500, overLimit: 1001, stopped: 100 })) {
+      const existing = progress.invoices[name] as { expirationTimestamp?: number } | undefined
+      // A completed broadcast keeps its original receive binding forever. Only pending, expired invoices may be replaced.
+      if (!existing || (!progress.txids[name] && existing.expirationTimestamp !== undefined && existing.expirationTimestamp <= Math.floor(Date.now() / 1000))) progress.invoices[name] = receiver.invoice(amount)
+    }
     await save('running')
     const log = new FileDecisionLog(`${dir}/decisions.jsonl`, keys.gate)
     const gate = new PolicyGate({ key: keys.gate, ownerPk: keys.owner.pubkey, network: config.name, walletId: sender.walletId, stateFile: `${dir}/gate-state.json`, log })
     await sender.bindGate(gate)
     const now = () => Math.floor(Date.now() / 1000)
-    if (!gate.store.read().policy) gate.install(signPolicy({ v: 1, domain: 'trust-spending-policy-v1', version: 1, prevHash: null, network: config.name, walletId: sender.walletId, gatePk: keys.gate.pubkey, ownerPk: keys.owner.pubkey, walletAdapterPk: await sender.adapterPublicKey(), agentKeys: [keys.agent.pubkey], assetId: asset.assetId, maxPerSend: '1000', maxPerDay: '3000', maxBitcoinFeeSats: '3000', allowedRecipients: Object.values(progress.invoices).map(i => i.recipientId), notBefore: now() - 1, expiresAt: now() + 86_400, tokenTtlSeconds: 120 }, keys.owner))
+    const oldPolicy = gate.store.read().policy
+    const recipients = Object.values(progress.invoices).map(i => i.recipientId)
+    if (!oldPolicy || hashObject(oldPolicy.allowedRecipients) !== hashObject(recipients) || oldPolicy.expiresAt <= now()) gate.install(signPolicy({ v: 1, domain: 'trust-spending-policy-v1', version: (oldPolicy?.version ?? 0) + 1, prevHash: oldPolicy ? hashObject(oldPolicy) : null, network: config.name, walletId: sender.walletId, gatePk: keys.gate.pubkey, ownerPk: keys.owner.pubkey, walletAdapterPk: await sender.adapterPublicKey(), agentKeys: [keys.agent.pubkey], assetId: asset.assetId, maxPerSend: '1000', maxPerDay: '3000', maxBitcoinFeeSats: '3000', allowedRecipients: recipients, notBefore: now() - 1, expiresAt: now() + 86_400, tokenTtlSeconds: 120 }, keys.owner))
     const authorize = async (name: string, amount: number) => {
       const plan = sender.prepareSend(progress.invoices[name].invoice, asset.assetId, amount)
       const preview = await sender.certifyPreview(plan)
@@ -129,6 +136,12 @@ export async function runTestnetDemo() {
     }
     const verifier = new VerifyService({ key: keys.checker, network: config.name, sanctions: new SanctionsScreen(resolve('fixtures/sanctions'), undefined, { id: 'test-demo-sanctions', version: '1', addresses: [] }), flagged: new LocalFileFlaggedListProvider(lists, [keys.issuer.pubkey]), log: new FileDecisionLog(`${dir}/receiver-decisions.jsonl`, keys.checker), historyDir: `${dir}/receiver-history` })
     const clearTxid = await send('clear', 1000)
+    if (progress.attestations.clear && progress.attestations.clear.overall !== 'clear') {
+      progress.priorAttestations ??= []
+      progress.priorAttestations.push({ step: 'clear', reason: 'Original signed verification failed; retained permanently before corrected decoding retry. Existing asset quarantine remains enforced.', attestation: progress.attestations.clear })
+      delete progress.attestations.clear
+      await save('running')
+    }
     if (!progress.attestations.clear) {
       await writeList('1', [])
       progress.attestations.clear = await verifier.verifyIncoming(await incomingEvidence(config, receiver, asset.assetId, clearTxid))
@@ -136,6 +149,7 @@ export async function runTestnetDemo() {
       if (progress.attestations.clear.overall !== 'clear') throw new Error('Actual incoming clear transfer did not receive a clear attestation')
       await save('running')
     }
+    if (progress.attestations.clear.overall !== 'clear') throw new Error('Clear step requires an actual clear attestation; a prior signed error cannot be treated as success')
     const flaggedTxid = await send('flagged', 500)
     if (!progress.attestations.flagged) {
       const evidence = await incomingEvidence(config, receiver, asset.assetId, flaggedTxid)
