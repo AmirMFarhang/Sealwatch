@@ -13,8 +13,8 @@ funds. PassBook is a separate lending application. The implementation is
 
 | Building block | Current status | What the evidence supports |
 | --- | --- | --- |
-| **Verify** | **Built; live runner complete; final live QA pending** | Pinned sanctions snapshots and signed local flagged lists; actual clear and flagged witness-input results, signed attestations and local quarantine. Demo lists are labelled test-only. |
-| **Authorize** | **Built; live runner complete; final live QA pending** | Signed limits and one-use transaction-bound approvals; an allowed send, an explained over-limit refusal and a refusal after stop. Requires the governed signing adapter. |
+| **Verify** | **Built; testnet demonstration independently verified** | Pinned sanctions snapshots and signed local flagged lists; actual clear and flagged witness-input results, signed attestations and local quarantine. Demo lists are labelled test-only. |
+| **Authorize** | **Built; testnet demonstration independently verified** | Signed limits and one-use transaction-bound approvals; an allowed send, an explained over-limit refusal and a refusal after stop. Requires the governed signing adapter. |
 | RGB ancestry screening | **Designed** | A reliable consignment-history interface has not been demonstrated. Witness-input checks alone are not complete asset provenance. |
 | Utexo flagged-list API | **Stub** | Refuses pending its real API and issuer trust. The signed local-file provider is built. |
 | **Settle**: escrow | **Not started** | No trust-layer escrow claim. |
@@ -32,12 +32,13 @@ outbound use locally. The policy records an allowed send, then refusals for
 
 The first clear check produced a signed Taproot-decoding error. The reviewed
 fix rechecked that same witness successfully while retaining the original
-error, history and quarantine. Independent local QA passes **88 standard
-tests, 15 security probes and nine CLI checks**. **Final independent live QA
-is pending** at this draft's checkpoint. The
+error, history and quarantine. Independent QA reran **88 standard tests and
+15 security probes**, all passing; nine earlier CLI checks also passed. **Final
+independent live QA passes** the required Verify/Authorize demonstration,
+including public witnesses, pinned signed results/lists, logs, actual quarantine
+and policy refusals. Its meeting-completion veto is lifted. The
 [testnet receipt](../release/testnet-receipt.json) and
-[verification report](../release/verification.json) carry the current evidence;
-runner completion alone does not establish final independent acceptance.
+[verification report](../release/verification.json) record the evidence and scope.
 
 The [five-minute walkthrough](DEMO.md) checks portable results using public keys
 pinned before the results arrived. It reads evidence without reopening wallets.

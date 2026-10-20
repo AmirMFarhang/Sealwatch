@@ -6,9 +6,9 @@ recorded proof; it does not restart the operational wallets or send funds.
 
 The runner completed on **20 October 2026 at 10:10:55 Europe/Rome** using the
 SDK's documented **Bitcoin testnet3** setup (`utexo-testnet`, `fallback: false`).
-The asset is **“test USD, not USDT.”** Final independent live QA is pending at
-this draft's checkpoint; the latest verdict is in `release/verification.json`.
-A complete runner receipt alone does not establish final independent acceptance.
+The asset is **“test USD, not USDT.”** Final independent live QA **passes** the
+required Verify/Authorize demonstration. Its latest verdict and scope are in
+`release/verification.json`; ancestry screening and escrow are outside that pass.
 
 ## Prepare before the meeting
 
@@ -64,8 +64,8 @@ list contents and signed decision-log bindings are covered separately by QA.
 ## Minute 0–1: the receiver's problem
 
 Open the README feature table and `release/verification.json`. Read its current
-`verdict` and `meetingDefinitionOfDone` exactly. At this draft's checkpoint,
-final live acceptance remains pending despite passing local QA.
+`verdict` and `meetingDefinitionOfDone` exactly. Independent QA has verified
+the required live Verify/Authorize proof and lifted its meeting-completion veto.
 
 Say: “A wallet can receive test dollars and still need rules for accepting them
 and for what an agent may send. We keep those checks on the receiver's machine.
@@ -137,10 +137,12 @@ witness to be checked again, producing the signed clear result. The original
 error, receiver history and quarantine were retained; the transfer was not
 rebroadcast to obtain that corrected result.
 
-Local independent QA reports **88 standard tests, 15 security probes and nine
-CLI checks passing** after the fixes. Show the latest final live verdict from
-`release/verification.json`; this draft does not promote the pending check to a
-pass. The Utexo list API is a **stub**; RGB ancestry screening is **designed**;
+Independent QA reran **88 standard tests and 15 security probes**, all passing;
+nine earlier CLI checks also passed. Final live QA independently checked both
+confirmed RGB witnesses, pinned signatures and list contents, the signed logs,
+actual quarantine and policy refusals. Show its **pass** and scope from
+`release/verification.json`. The Utexo list API is a **stub**; RGB ancestry
+screening is **designed**;
 Settle and Remember are **not started**. The governed adapter controls its own
 signing path; direct possession of raw wallet keys is outside that boundary.
 

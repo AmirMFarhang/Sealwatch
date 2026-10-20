@@ -31,18 +31,20 @@ fallback), completed **20 October 2026 at 10:10:55 Europe/Rome**. It uses our ow
 
 The first receiver check produced a signed Taproot-decoding error. The reviewed
 fix rechecked the same clear witness successfully; the original error, history
-and quarantine remain retained. Local independent QA passes **88 standard
-tests, 15 security probes and nine CLI checks**. Final independent live QA of
-the completed receipt is **pending** at this draft's checkpoint. Read the
-current verdict in `release/verification.json` before describing acceptance.
+and quarantine remain retained. Independent QA reran **88 standard tests and 15
+security probes**, all passing; nine earlier CLI checks also passed. **Final
+independent live QA passes** the required Verify/Authorize proof: confirmed
+public transactions, pinned signed results/lists, signed logs, actual quarantine
+and policy refusals. Its meeting-completion veto is lifted. Read the verdict
+and scope in `release/verification.json`.
 
 ## Feature labels and limits
 
 **Built:** receiver sanctions and witness-input checks, signed local flagged
 lists, signed attestations, local quarantine, signed spending policies,
 transaction-bound one-use approvals, stop, reasons, CLI and authenticated
-localhost API. Verify/Authorize have a completed runner receipt; final live QA
-is pending.
+localhost API. The required Verify/Authorize testnet demonstration is
+independently verified; its receipt and QA report establish the scope of that pass.
 
 **Stub:** the Utexo flagged-list API, which refuses until its API and issuer are
 specified. **Designed:** screening RGB consignment ancestry. **Not started:**
