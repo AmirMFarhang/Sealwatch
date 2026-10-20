@@ -74,7 +74,14 @@ only a consignment digest when supplied, never the full consignment or wallet ke
 
 `agent-action-review` uses the same envelope with `result.kind` set to that check
 and `recommendation: approve | escalate`, plus grounded `findings`. It can only
-tighten local authorization. Integrating it into the policy gate is a separate feature.
+tighten local authorization. The optional signed policy `review` section enables it in the gate, CLI and API.
+All fixed rules run first and again after the response; the synchronous gate
+refuses to bypass a required review. Requests above the signed human threshold
+refuse automatically because no human approval workflow is implemented.
+The decoded send plan and spending limits are the only review evidence; exact
+plan, policy and signed-request hashes bind the context. Full private envelopes
+remain local, and only signed digest/recommendation/code summaries enter the log
+and one-use token. Provider approval expiry bounds the token lifetime.
 
 ENVELOPE follows the [DSSE protocol](https://github.com/secure-systems-lab/dsse/blob/master/protocol.md):
 `payloadType` is `application/vnd.attested-check.v1+json`, `payload` is base64

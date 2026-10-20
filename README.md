@@ -8,7 +8,7 @@ separate lending application; this project never lends or holds funds.
 
 ## 2. Status and evidence
 
-The addendum implementation passes **121 standard tests** locally. Independent
+The addendum implementation passes **143 standard tests** locally. Independent
 addendum QA is underway; its acceptance report is `release/addendum-verification.json`.
 The earlier accepted baseline passed **88 standard tests, 15 independent security
 probes and nine CLI checks**, plus the required live Verify/Authorize demonstration;
@@ -29,7 +29,7 @@ That earlier pass does not certify the new provider/audit behavior.
 | Generic attested provider interface, remote client and DSSE verifier | **Built; addendum QA pending** | Optional configured remote checks, pinned Ed25519 DSSE evidence and strictest-result folding. |
 | Transfer flow-risk application | **Built; one actual testnet-backed rescreen; addendum QA pending** | Existing confirmed witness rescreened; bounded scope returned `review`. Model call ran but invalid JSON was rejected; fixed code decided. |
 | Audit evidence pack and verifier | **Built; local tests; addendum QA pending** | Private ZIP with signed manifest, attestation, signed log/checkpoint, policy binding and optional provider evidence. |
-| Agent-action second-line review | **Not started** | Current hard limits refuse; no provider recommendation or human review workflow. |
+| Agent-action second-line review | **Built local gate; provider application integration pending** | Signed soft thresholds require review; hard human thresholds always refuse automatically. No human approval UI. |
 | Travel Rule payload check | **Designed** | Documented direction only. |
 | Explicit execution labels and QuoteVerifier | **Built; software only** | New v2 attestations sign `execution: software`; test-vendor root/measurement/replay checks pass. Real hardware verification is not built. |
 
@@ -132,12 +132,12 @@ stateDiagram-v2
     [*] --> Request
     Request --> PolicyEvaluation
     PolicyEvaluation --> Refused: Any failing rule
-    PolicyEvaluation --> Approval: All local rules pass
-    PolicyEvaluation --> ProviderReview: Designed optional route
-    ProviderReview --> Approval: Designed approve recommendation
-    ProviderReview --> Escalated: Designed escalation
+    PolicyEvaluation --> Approval: Local pass and no review required
+    PolicyEvaluation --> ProviderReview: Signed soft threshold exceeded
+    ProviderReview --> Approval: Verified approve and current local policy passes
+    ProviderReview --> Escalated: Escalate / invalid evidence / timeout
     note right of ProviderReview
-      Not implemented; current gate uses local rules.
+      Built optional gate path; provider application integration pending.
       Hard limits cannot be overridden by a recommendation.
     end note
     Approval --> TokenConsumed: Exact plan, valid unused token
@@ -151,7 +151,8 @@ stateDiagram-v2
     Broadcast --> [*]
 ```
 
-The optional review and escalation states are designed. A signature already
+The optional review gate is built. Above the signed human threshold, the gate
+refuses with `HUMAN_APPROVAL_REQUIRED`; a human approval workflow is not built. A signature already
 exported cannot be revoked by a later stop. Failed signing attempts keep their
 token consumed and their spending reservation conservative.
 
@@ -399,7 +400,7 @@ Local fixed rules remain local and always take precedence over a recommendation.
 | --- | --- | --- | --- |
 | P0 | Transfer flow-risk screening | Bounded public chain data and receiver context; evidence-linked pattern findings and `low/review/high`. | **Built; actual confirmed-testnet rescreen; addendum QA pending.** `review` for incomplete scope; no accepted model decision. |
 | P1 | Audit evidence pack | One decision's attestation, log/checkpoint, optional provider record and version-bound policy; signed manifest, ZIP and verifier. | **Built; local tests; addendum QA pending.** Record-keeping support, not statutory compliance certification. |
-| P1 | Agent-action review | Soft-threshold request context; signed `approve/escalate` recommendation. Hard-threshold review requires a human design, never an AI override. | **Not started**. |
+| P1 | Agent-action review | Soft-threshold request context; signed `approve/escalate` recommendation. Hard-threshold review requires a human design, never an AI override. | **Built local gate; provider application integration pending.** |
 | P2 | Travel Rule payload check | Originator and beneficiary payload validation between service providers. | **Designed**, documentation only. |
 
 The rule is “AI investigates, code decides”: findings refer to authorized
@@ -441,7 +442,7 @@ and freshness, and matches an approved release measurement. A test vendor
 exercises valid, wrong-root, wrong-measurement and durable replay cases, with
 request/result-key/commitment binding. Successful fixtures remain
 `execution: software`, `testOnly: true`. Those tests establish interface
-behavior, not real hardware execution, and belong to the new 121-test suite.
+behavior, not real hardware execution, and belong to the new 143-test suite.
 
 ## 11. Limits and threat model
 
@@ -460,7 +461,7 @@ behavior, not real hardware execution, and belong to the new 121-test suite.
   offline recovery is not implemented.
 - Daily spending reservations remain counted after failed sends until UTC day
   rollover. There is no rolling-window spending cap.
-- Settle, Remember and agent-action gate review are not started. New provider
+- Settle and Remember are not started. A human approval workflow is not built. New provider
   checks and audit exports await independent addendum acceptance. Hardware
   execution remains unverified; a passing test-vendor quote cannot enable it.
 - Provider checks disclose bounded authorized evidence to a configured remote
@@ -497,7 +498,7 @@ baseline; the provider addendum has separate evidence.
 The provider addendum **rescreened that same confirmed clear witness** on the
 same network. It used fresh governance state, sent no new transaction and
 required no new funds. Its signed software evidence hash is
-`b17838512b8696566a056e8836fa9cda591b6d2d383389efbe83a3568f83626b`.
+`a1ce4af431b1e854e12a87ea411ab84d4b21411c7fdc55b256bbc47ec0af774a`.
 The result was `review` with `SCOPE_INCOMPLETE`, folded into a new signed v2
 flagged attestation and quarantine. The full envelope remains ignored private
 evidence. Public-safe receipt: `release/provider-testnet-receipt.json`;
@@ -586,3 +587,7 @@ privacy and archive verification scope.
 
 No provider URL, signing key or private runtime dependency should be committed.
 All meeting material is a draft for Amir; Amir alone sends it externally.
+
+The current tree keeps the named provider only in this README. Earlier commits
+retain cross-project QA prose and an exclusion notice mentioning it; the history
+audit found no provider runtime, package, operational endpoint or key.
