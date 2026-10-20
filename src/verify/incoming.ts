@@ -23,6 +23,7 @@ import { SanctionsScreen, type ListInfo } from "../compliance/sanctions.js";
 import { FileDecisionLog } from "../governance/log.js";
 import { decodeWitness, type WitnessEvidence } from "./witness.js";
 import { ReceiverQuarantine } from "../wallet/quarantine.js";
+import { CURRENT_EXECUTION } from "../execution/types.js";
 export interface IncomingTransfer extends WitnessEvidence {
   network: Network;
   assetId: string;
@@ -36,9 +37,7 @@ export interface Check {
   scope: string;
   code: string;
 }
-export interface Attestation {
-  v: 1;
-  domain: "trust-incoming-attestation-v1";
+interface AttestationFields {
   network: Network;
   assetId: string;
   witnessTxid: string;
@@ -50,6 +49,19 @@ export interface Attestation {
   checkerPk: string;
   sig: string;
 }
+/** Historical records retain their original signed shape; no execution is inferred into it. */
+export interface LegacyAttestation extends AttestationFields {
+  v: 1;
+  domain: "trust-incoming-attestation-v1";
+  execution?: never;
+}
+/** Newly issued records explicitly describe today's software execution. */
+export interface SoftwareAttestation extends AttestationFields {
+  v: 2;
+  domain: "trust-incoming-attestation-v2";
+  execution: typeof CURRENT_EXECUTION;
+}
+export type Attestation = LegacyAttestation | SoftwareAttestation;
 export interface AttestationTrust {
   checkerPk: string;
   flaggedIssuerKeys: readonly string[];
@@ -65,8 +77,14 @@ export function attestationProblems(
   const errors: string[] = [];
   try {
     if (
-      a.v !== 1 ||
-      a.domain !== "trust-incoming-attestation-v1" ||
+      !(
+        (a.v === 1 &&
+          a.domain === "trust-incoming-attestation-v1" &&
+          !Object.hasOwn(a, "execution")) ||
+        (a.v === 2 &&
+          a.domain === "trust-incoming-attestation-v2" &&
+          a.execution === CURRENT_EXECUTION)
+      ) ||
       a.checkerPk !== trust.checkerPk ||
       !verifyObject(a, trust.checkerPk)
     )
@@ -153,7 +171,7 @@ export class VerifyService {
       options.log,
     );
   }
-  async verifyIncoming(input: IncomingTransfer): Promise<Attestation> {
+  async verifyIncoming(input: IncomingTransfer): Promise<SoftwareAttestation> {
     const o = this.options;
     const at = o.now?.() ?? Math.floor(Date.now() / 1000);
     network(input.network);
@@ -236,8 +254,9 @@ export class VerifyService {
         : "clear";
     const attestation = signObject(
       {
-        v: 1 as const,
-        domain: "trust-incoming-attestation-v1" as const,
+        v: 2 as const,
+        domain: "trust-incoming-attestation-v2" as const,
+        execution: CURRENT_EXECUTION,
         network: input.network,
         assetId: input.assetId,
         witnessTxid: input.witnessTxid,
