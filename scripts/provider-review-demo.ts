@@ -1,0 +1,26 @@
+// A real remote runtime review of a synthetic unsigned send. No wallet or broadcast.
+import { mkdirSync, writeFileSync } from "node:fs";
+import { resolve, join } from "node:path";
+import { gateFixture } from "../test/helpers.js";
+import { PolicyGate, signPolicy } from "../src/governance/gate.js";
+import { FileDecisionLog } from "../src/governance/log.js";
+import { providerFromEnvironment } from "../src/provider/remote.js";
+import { canonicalJson } from "../src/core/crypto.js";
+const dir = resolve(process.argv[2] ?? ".state/provider-review-demo");
+mkdirSync(dir, { mode: 0o700 });
+const f = gateFixture(); f.setTime(Math.floor(Date.now() / 1000));
+const at = Math.floor(Date.now() / 1000);
+const policy = signPolicy({ ...f.policy, notBefore: at - 10, expiresAt: at + 600, review: { softLimit: "40", humanThreshold: "80", providerId: "governed-checks-local", maxReviewSeconds: 120 } }, f.owner);
+const log = new FileDecisionLog(join(dir, "decision-log.jsonl"), f.gateKey);
+const provider = providerFromEnvironment(join(dir, "provider-evidence"));
+if (!provider) throw new Error("private provider environment required");
+const gate = new PolicyGate({ ...f.gateOptions, stateFile: join(dir, "gate-state.json"), now: () => Math.floor(Date.now() / 1000), log, reviewProvider: provider });
+gate.install(policy);
+const request = f.request(f.plan("50"));
+const reviewed = await gate.authorizeReviewed(request);
+f.setTime(Math.floor(Date.now() / 1000));
+const humanThreshold = await gate.authorizeReviewed(f.request(f.plan("81")));
+const wire = { mode: "synthetic-unsigned-send-real-remote-software-runtime-review", network: policy.network, newTransactionBroadcast: false, policy, request, reviewed, humanThreshold, logProblems: log.verify(), gatePk: f.gateKey.pubkey };
+writeFileSync(join(dir, "receipt.json"), canonicalJson(wire) + "\n", { flag: "wx", mode: 0o600 });
+console.log(canonicalJson({ mode: wire.mode, network: policy.network, reviewedAllowed: reviewed.allowed, reviewedWhy: reviewed.why, hardThresholdAllowed: humanThreshold.allowed, hardThresholdWhy: humanThreshold.why, logProblems: wire.logProblems }));
+if (humanThreshold.allowed || !humanThreshold.why.includes("HUMAN_APPROVAL_REQUIRED") || log.verify().length) process.exitCode = 1;
