@@ -62,3 +62,6 @@ Signed logs bind receipt action/token/plan/policy hashes; the compact public rec
 
 Architecture and demo claims match these limits. Parent README at `5381088` still has an old pending-live paragraph; the integration owner must update it to completed proof. Earlier explorer polling files are historical checkpoints superseded by final reports above.
 
+## Provider naming in the repository
+
+The current tree names the outside provider only in the README and its diagrams (`docs/img/`), as a linked provider name. Earlier commits retain cross-project QA prose and an exclusion notice mentioning it; the history audit found no provider runtime, package, operational endpoint or key.

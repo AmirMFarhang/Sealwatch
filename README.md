@@ -6,6 +6,20 @@ Private project by Amir Mohammad Farhang. All rights reserved except reused
 material identified in [NOTICE](NOTICE). Built on Utexo's RGB SDK. PassBook is a
 separate lending application; this project never lends or holds funds.
 
+## 1. What it does
+
+**Compliance and spending control that runs beside every RGB wallet, so dollars on Bitcoin can be checked where they're received, without anyone holding them.**
+
+![Verify incoming RGB payments and Authorize agent spending](docs/img/hero.svg)
+
+- **Enforce an issuer's flagged-coin list at every receiving wallet.** RGB coins can't be frozen, so checking happens where they arrive, and flagged coins are quarantined.
+- **Let agents pay, safely.** The owner signs the limits. Each payment needs a one-use approval for that exact transaction, and a stop switch ends everything.
+- **Hand auditors proof, not promises.** Every decision is signed and chained, and can be exported as an audit pack.
+
+Live on Bitcoin testnet3 (Utexo SDK setup), with our own "test USD, not USDT" asset:
+[clear transfer](https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06) ·
+[flagged transfer, quarantined](https://mempool.space/testnet/tx/8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b)
+
 ## 2. Status and evidence
 
 The addendum implementation passes **143 standard tests** locally. Independent QA passed **30 security/protocol/review probes** and checked the
@@ -47,37 +61,11 @@ remain authoritative. A provider cannot clear a local flag or override stop.
 
 ## 4. Architecture
 
-Solid paths are built. Dashed paths show optional checks or designed extensions;
-labels distinguish them. Grey components are not started. Detailed receiver
-history stays local; portable attestations carry results, asset/witness
-identifiers and list versions/hashes.
+Detailed receiver history stays local; portable attestations carry results,
+asset/witness identifiers and list versions/hashes.
 
-```mermaid
-flowchart LR
-    W["Receiver / agent wallet"] --> V["Verify<br/>built"]
-    W --> A["Authorize<br/>built"]
-    V --> R["Signed attestation"]
-    V --> Q["Local asset quarantine"]
-    V --> L["Signed hash-chained log"]
-    A --> L
-    A --> S["Governed signing adapter"]
-    S --> W
-    W -.-> E["Settle<br/>not started"]
-    W -.-> H["Remember<br/>not started"]
-    V -. "optional, built" .-> I["AttestedCheckProvider<br/>generic provider protocol"]
-    A -. "optional review, built" .-> I
-    I --> P["Compex governed checks<br/>(via provider protocol)<br/>signed software evidence"]
-    subgraph T["Trust tiers"]
-      T1["1. Local fixed rules — built"]
-      T2["2. Signed software provider — built"]
-      T3["3. Hardware execution — designed"]
-      T4["4. Device attestation — designed"]
-      T5["5. Independent provider agreement — designed"]
-    end
-    classDef future fill:#eeeeee,color:#555555,stroke:#999999
-    class E,H,T3,T4,T5 future
-    click P "https://getcompex.com" "Available provider"
-```
+The overview in section 1 shows the two built jobs. The detailed component diagram, including the optional
+provider path and the trust tiers, is in [ARCHITECTURE.md](docs/ARCHITECTURE.md#component-diagram).
 
 The optional provider path is implemented by a provider-neutral authenticated
 remote client. Operational URLs and trusted provider keys belong in private
@@ -86,9 +74,14 @@ is documented in [PROVIDER-PROTOCOL.md](docs/PROVIDER-PROTOCOL.md).
 
 ## 5. Verify flow
 
+![Verify, step by step](docs/img/verify-flow.svg)
+
 The wallet SDK validates receipt and asset membership. Verify then independently
 decodes the Bitcoin witness and previous outputs, checks local lists, signs its
 result and retains receiver evidence.
+
+<details>
+<summary>Detailed sequence (Mermaid)</summary>
 
 ```mermaid
 sequenceDiagram
@@ -116,6 +109,8 @@ sequenceDiagram
     V-->>W: Signed clear / flagged / error result
 ```
 
+</details>
+
 Missing witness evidence produces an error. Invalid list trust or hashes refuse
 verification. Enabled-provider timeout, bad evidence or unsupported execution
 produces an error and quarantine, never a clear result. Quarantine journal
@@ -124,9 +119,14 @@ recording, not before it.
 
 ## 6. Authorize flow
 
+![Authorize, step by step](docs/img/authorize-flow.svg)
+
 A signed policy is evaluated against the actual prepared transaction. A durable
 one-use approval must be consumed before the adapter signs, and current
 policy/stop/quarantine authority is rechecked at the actual signing barrier.
+
+<details>
+<summary>Detailed state diagram (Mermaid)</summary>
 
 ```mermaid
 stateDiagram-v2
@@ -151,6 +151,8 @@ stateDiagram-v2
     Escalated --> [*]
     Broadcast --> [*]
 ```
+
+</details>
 
 The optional review gate is built. Above the signed human threshold, the gate
 refuses with `HUMAN_APPROVAL_REQUIRED`; a human approval workflow is not built.
@@ -421,7 +423,26 @@ It does not establish complete RGB ancestry or a full public-chain graph.
 Outside providers keep their runtime code, packages, operational endpoints and signing keys out
 of this repository. Provider-specific implementation lives separately.
 
+### Compliance coverage
+
+What the trust layer can support if the roadmap holds. This is a mapping to confirm with counsel. The trust layer provides controls and evidence; it doesn't make anyone compliant or licensed.
+
+| Rule | What it asks | What the trust layer gives | Today | If it works out |
+| --- | --- | --- | --- | --- |
+| **OFAC, EU and UN sanctions** | Don't deal with listed parties. OFAC liability is strict. | Screening of sending addresses and counterparties against pinned lists; list version recorded in every result | **Built:** OFAC plus one OpenSanctions dataset | EU consolidated and UN lists, licensed full OpenSanctions, automatic one-hop discovery |
+| **Issuer blocklists · US GENIUS Act (2025)** | Stablecoin issuers must be able to act on lawful orders to freeze or block | Flagged-coin check plus receiver quarantine: blocking enforced at every wallet that runs it | **Built** with a local signed list; issuer API is a stub | The issuer's live list; full RGB history screening |
+| **FATF Recommendation 16 · EU Transfer of Funds Regulation 2023/1113 · US Travel Rule** | Sender and receiver data travel with transfers; self-hosted wallets over €1,000 need an ownership check | Travel Rule payload check; proof of wallet ownership | **Designed** | Payload validation, plus wallet-ownership proofs by signed message (BIP-322) |
+| **EU AMLR 2024/1624** (from 10 Jul 2027) · **AMLD** | Risk-based transaction monitoring; records kept 5 years | Flow-risk screening, signed results, tamper-evident log, audit packs | **Partial:** built in software; AI detection not yet proven | Validated pattern library, case review, report-ready exports |
+| **US Bank Secrecy Act / FinCEN** | AML programme: monitoring, sanctions screening, records | Same controls as above | **Partial** | Same as above |
+| **MiCA 2023/1114** | Conduct and record-keeping for crypto service providers | Evidence and logs for every decision | **Supports** record-keeping; no authorisation | Evidence formats agreed with a licensed provider |
+| **DORA 2022/2554** | ICT incident handling, logging, oversight of third parties | Kill switch, signed logs, provider evidence | **Partial** | Incident export, provider risk register |
+| **EU AI Act 2024/1689** | Logging and human oversight where AI assists decisions | AI can only make a result stricter; code decides; signed run records; a human threshold for agent spending | **Partial** (software evidence) | Hardware-attested runs (TEE) |
+| **GDPR** | Data minimisation and purpose limitation | Checks run at the receiver; portable results carry outcomes, not history or balances | **Built** by design | A data-protection impact assessment template for integrators |
+| **Agent payment authorisation** (no single law yet) | Prove who allowed an agent to pay, and within what limits | Owner-signed limits, one-use approvals, stop switch, reasons for every decision | **Built** | Compatibility with emerging agent-mandate standards |
+
 ## 10. Trust tiers and hardware readiness
+
+![Trust tiers](docs/img/trust-tiers.svg)
 
 | Tier | Trust model | Current status |
 | --- | --- | --- |
@@ -590,10 +611,6 @@ privacy and archive verification scope.
 
 No provider URL, signing key or private runtime dependency should be committed.
 All meeting material is a draft for Amir; Amir alone sends it externally.
-
-The current tree keeps the named provider only in this README. Earlier commits
-retain cross-project QA prose and an exclusion notice mentioning it; the history
-audit found no provider runtime, package, operational endpoint or key.
 
 The agent-action application also ran through the real remote software runtime
 using a **synthetic unsigned send**, without a wallet broadcast. Its malformed

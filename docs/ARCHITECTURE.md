@@ -68,3 +68,34 @@ of the required Verify/Authorize proof until its
 tests and transaction receipt establish otherwise. Consult `release/verification.json`
 and `release/testnet-receipt.json` for acceptance status, rather than treating this
 architecture description as a completed testnet run.
+
+## Component diagram
+
+Solid paths are built. Dashed paths show optional checks or designed extensions. Grey components are not started.
+
+```mermaid
+flowchart LR
+    W["Receiver / agent wallet"] --> V["Verify<br/>built"]
+    W --> A["Authorize<br/>built"]
+    V --> R["Signed attestation"]
+    V --> Q["Local asset quarantine"]
+    V --> L["Signed hash-chained log"]
+    A --> L
+    A --> S["Governed signing adapter"]
+    S --> W
+    W -.-> E["Settle<br/>not started"]
+    W -.-> H["Remember<br/>not started"]
+    V -. "optional, built" .-> I["AttestedCheckProvider<br/>generic provider protocol"]
+    A -. "optional review, built" .-> I
+    I --> P["Compex governed checks<br/>(via provider protocol)<br/>signed software evidence"]
+    subgraph T["Trust tiers"]
+      T1["1. Local fixed rules — built"]
+      T2["2. Signed software provider — built"]
+      T3["3. Hardware execution — designed"]
+      T4["4. Device attestation — designed"]
+      T5["5. Independent provider agreement — designed"]
+    end
+    classDef future fill:#eeeeee,color:#555555,stroke:#999999
+    class E,H,T3,T4,T5 future
+    click P "https://getcompex.com" "Available provider"
+```
