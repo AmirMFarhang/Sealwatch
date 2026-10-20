@@ -8,10 +8,12 @@ separate lending application; this project never lends or holds funds.
 
 ## 2. Status and evidence
 
-The accepted baseline passes **88 standard tests, 15 independent security
-probes and nine CLI checks**. Independent QA also passes the required live
-Verify/Authorize demonstration; see [verification](release/verification.json)
-and [QA scope](docs/QA.md). New addendum work below is not covered by that pass.
+The addendum implementation passes **121 standard tests** locally. Independent
+addendum QA is underway; its acceptance report is `release/addendum-verification.json`.
+The earlier accepted baseline passed **88 standard tests, 15 independent security
+probes and nine CLI checks**, plus the required live Verify/Authorize demonstration;
+see [baseline verification](release/verification.json) and [QA scope](docs/QA.md).
+That earlier pass does not certify the new provider/audit behavior.
 
 | Building block or application | Status | Evidence and boundary |
 | --- | --- | --- |
@@ -24,12 +26,12 @@ and [QA scope](docs/QA.md). New addendum work below is not covered by that pass.
 | RGB consignment ancestry screening | **Designed** | No reliable ancestry interface demonstrated with the pinned SDK. |
 | Settle: generic escrow | **Not started** | No trust-layer escrow implementation or testnet claim. |
 | Remember: portable history | **Not started** | No portable-history implementation. |
-| Generic attested provider interface, remote client and DSSE verifier | **Designed** | No provider result has yet been folded into this baseline's attestations. |
-| Transfer flow-risk application | **Not started** | No live provider-backed flow-risk claim. |
-| Audit evidence pack and verifier | **Not started** | Existing logs/receipts are not the proposed packaged export. |
+| Generic attested provider interface, remote client and DSSE verifier | **Built; addendum QA pending** | Optional configured remote checks, pinned Ed25519 DSSE evidence and strictest-result folding. |
+| Transfer flow-risk application | **Built; one actual testnet-backed rescreen; addendum QA pending** | Existing confirmed witness rescreened; bounded scope returned `review`. Model call ran but invalid JSON was rejected; fixed code decided. |
+| Audit evidence pack and verifier | **Built; local tests; addendum QA pending** | Private ZIP with signed manifest, attestation, signed log/checkpoint, policy binding and optional provider evidence. |
 | Agent-action second-line review | **Not started** | Current hard limits refuse; no provider recommendation or human review workflow. |
 | Travel Rule payload check | **Designed** | Documented direction only. |
-| Explicit execution labels and QuoteVerifier | **Designed** | Baseline attestations omit `execution`; no hardware quote acceptance is claimed. |
+| Explicit execution labels and QuoteVerifier | **Built; software only** | New v2 attestations sign `execution: software`; test-vendor root/measurement/replay checks pass. Real hardware verification is not built. |
 
 ## 3. Why it exists
 
@@ -39,14 +41,15 @@ on what it may spend. Those decisions belong beside the wallet, without giving
 this service custody of anyone's money.
 
 Local fixed rules check sanctions, flagged inputs and spending authority.
-Optional outside judgment checks are planned to add stricter review, while the
-local rules remain authoritative.
+Optional configured outside checks add stricter review, while the local rules
+remain authoritative. A provider cannot clear a local flag or override stop.
 
 ## 4. Architecture
 
-Solid paths are built. Dashed paths are designed extensions. Grey components
-are not started. Detailed receiver history stays local; portable attestations
-carry results, asset/witness identifiers and list versions/hashes.
+Solid paths are built. Dashed paths show optional checks or designed extensions;
+labels distinguish them. Grey components are not started. Detailed receiver
+history stays local; portable attestations carry results, asset/witness
+identifiers and list versions/hashes.
 
 ```mermaid
 flowchart LR
@@ -60,24 +63,25 @@ flowchart LR
     S --> W
     W -.-> E["Settle<br/>not started"]
     W -.-> H["Remember<br/>not started"]
-    V -. "designed" .-> I["AttestedCheckProvider<br/>generic provider protocol"]
+    V -. "optional, built" .-> I["AttestedCheckProvider<br/>generic provider protocol"]
     A -. "designed review" .-> I
-    I -.-> P["Compex governed checks<br/>(via provider protocol)<br/>not started"]
+    I --> P["Compex governed checks<br/>(via provider protocol)<br/>signed software evidence"]
     subgraph T["Trust tiers"]
       T1["1. Local fixed rules — built"]
-      T2["2. Signed software provider — designed"]
+      T2["2. Signed software provider — built"]
       T3["3. Hardware execution — designed"]
       T4["4. Device attestation — designed"]
       T5["5. Independent provider agreement — designed"]
     end
     classDef future fill:#eeeeee,color:#555555,stroke:#999999
-    class E,H,P,T2,T3,T4,T5 future
+    class E,H,T3,T4,T5 future
     click P "https://getcompex.com" "Available provider"
 ```
 
-The provider boundary is a design here, not an active external connection.
-Operational URLs and trusted provider keys belong in private configuration,
-never in this repository or its dependency graph.
+The optional provider path is implemented by a provider-neutral authenticated
+remote client. Operational URLs and trusted provider keys belong in private
+configuration, never in this repository or its dependency graph. Its protocol
+is documented in [PROVIDER-PROTOCOL.md](docs/PROVIDER-PROTOCOL.md).
 
 ## 5. Verify flow
 
@@ -90,7 +94,7 @@ sequenceDiagram
     participant W as Receiver wallet / SDK
     participant V as Verify
     participant F as Pinned local lists
-    participant P as Optional provider (designed)
+    participant P as Optional configured provider
     participant Q as Local quarantine
     participant L as Signed log
     W->>V: Incoming RGB transfer, raw witness and previous transactions
@@ -99,9 +103,10 @@ sequenceDiagram
     F-->>V: Check result and pinned list identities
     V->>F: Flagged level 1: witness input membership
     F-->>V: Clear / flagged, invalid list is refused
-    opt Designed extension, not called by current implementation
-      V->>P: Minimal authorized check request
-      P-->>V: Signed evidence, may tighten local outcome
+    opt Provider enabled in private environment
+      V->>P: Bounded chain evidence and receiver-authorized context
+      P-->>V: Pinned signed DSSE record, software execution
+      V->>V: Verify evidence binding and fold strictest outcome
     end
     V->>V: Sign canonical attestation and retain private evidence
     V->>Q: Record result, flagged/error blocks asset locally
@@ -111,8 +116,10 @@ sequenceDiagram
 ```
 
 Missing witness evidence produces an error. Invalid list trust or hashes refuse
-verification. Quarantine journal commits precede the final incoming log entry;
-the result is returned after this recording, not before it.
+verification. Enabled-provider timeout, bad evidence or unsupported execution
+produces an error and quarantine, never a clear result. Quarantine journal
+commits precede the final incoming log entry; the result is returned after this
+recording, not before it.
 
 ## 6. Authorize flow
 
@@ -150,8 +157,8 @@ token consumed and their spending reservation conservative.
 
 ## 7. Algorithms
 
-These descriptions match the accepted local implementation. Provider folding is
-explicitly a design; it does not describe a completed provider integration.
+These descriptions match the implemented local rules and optional provider
+path. Independent addendum QA is recorded separately from the accepted baseline.
 
 ### Flagged coins, level 1 — built
 
@@ -296,22 +303,29 @@ if any retained record is flagged or error: refuse asset send with reasons
 This is local spending enforcement. It cannot reverse a confirmed transfer or
 freeze coins held by a different wallet.
 
-### Provider result folding — designed, not wired into the baseline
+### Provider result folding — built; addendum QA pending
 
 An outside provider may tighten the receiver's outcome and never clear a local
 flag. Unavailable or untrusted evidence must not silently produce a clear result.
 
 ```text
 local = run mandatory local rules
-provider = verify configured provider's signed evidence and request binding
-require allowed software/hardware execution evidence for the selected trust tier
-final = stricter(local, mapProviderResultToPolicyOutcome(provider))
-retain full envelope locally; sign provider_id/evidence_sha256/result/execution
+if provider is configured:
+  request = nonce-bound, short-lived bounded evidence request
+  verify pinned DSSE signature, canonical record, scope, request and result binding
+  require execution == software; durably refuse accepted request nonce reuse
+  providerOutcome = clear for low, flagged for review or high
+  final = strictest(local, providerOutcome), ordered error > flagged > clear
+  on provider failure: final = error
+  retain full envelope privately; sign provider summary and evidence SHA256
+else: final = local
 ```
 
-The mapping from `low/review/high` or `approve/escalate` to a local action needs
-an explicit policy. Its wire protocol, DSSE trust pins and live evidence remain
-addendum work; no provider output is present in the accepted testnet receipt.
+The transfer mapping is fixed: `review` and `high` quarantine, while `low` cannot
+loosen a local flag or error. The client accepts only request-bound signed
+software records; full evidence stays in ignored private state. The current
+flow does not request `agent-action-review`; gate integration remains not
+started. See [the provider protocol](docs/PROVIDER-PROTOCOL.md).
 
 ## 8. Attestation format
 
@@ -321,25 +335,30 @@ receiver-local evidence rather than the portable attestation.
 
 | Field | Current meaning |
 | --- | --- |
-| `v`, `domain` | Version 1 and the incoming-attestation signature domain. |
+| `v`, `domain` | New records: version 2 and `trust-incoming-attestation-v2`. Preserved v1 records retain their original domain and shape. |
 | `network`, `assetId`, `witnessTxid` | Exact network, RGB asset and Bitcoin witness identity. |
 | `checks.sanctions` | Result, scope and code for pinned sanctions screening. |
 | `checks.flaggedL1` | Result, scope and code for witness-input membership. |
 | `checks.rgbAncestry` | Explicit `designed` status and missing-interface code. |
+| `checks.provider` | Optional configured-provider result, bounded scope and reason code; errors fail closed. |
 | `lists` | List ids, versions, SHA-256 hashes and test-only labels. |
 | `flaggedManifest` | Signed list issuer, identity/hash, network and validity window. |
 | `overall` | `error` if a required check errors, otherwise `flagged` on a hit, else `clear`. |
 | `time`, `checkerPk`, `sig` | Unix time, checker public identity and BIP-340 signature. |
-| `provider_id`, `evidence_sha256`, `provider_result` | **Designed extension; absent from baseline.** Full provider envelope would stay local. |
-| `execution` | **Designed extension; absent from legacy signed records.** Current execution is software, without hardware evidence. |
+| `provider` | Optional object with `provider_id`, `evidence_sha256`, `provider_result` and `execution: software`. Full provider envelope stays local. |
+| `verificationPolicy` | New v2 receiver policy id, version and SHA-256 binding for audit export. |
+| `execution` | New v2 records explicitly sign `software`. Legacy v1 records omit the field and are verified without changing them. |
 
-Redacted structural example of the existing format; these placeholders are not
-a valid signed result. The actual signed documents are in the testnet receipt.
+Redacted structural example of a new local v2 result without a remote provider;
+these placeholders are not a valid signature. Provider-enabled results also
+contain the `provider` and `checks.provider` fields described above.
 
 ```json
 {
-  "v": 1,
-  "domain": "trust-incoming-attestation-v1",
+  "v": 2,
+  "domain": "trust-incoming-attestation-v2",
+  "execution": "software",
+  "verificationPolicy": {"id": "receiver-verification", "version": 1, "sha256": "REDACTED_POLICY_HASH"},
   "network": "utexo-testnet",
   "assetId": "REDACTED_ASSET_ID",
   "witnessTxid": "REDACTED_WITNESS_TXID",
@@ -366,26 +385,36 @@ a valid signed result. The actual signed documents are in the testnet receipt.
 }
 ```
 
-Adding `execution` or provider fields changes the signed body. Existing records
-must remain byte-for-byte intact; their original signatures must not be amended
-to manufacture newer evidence.
+New records include execution and policy fields in their signed body. Existing
+v1 records remain byte-for-byte intact; verification accepts their original
+shape without inventing execution fields or changing their signatures.
 
 ## 9. Compliance applications through outside providers
 
-Available provider: [Compex](https://getcompex.com). These applications are
-proposed provider capabilities, not completed integrations in this baseline.
+Available provider: [Compex](https://getcompex.com). The transfer check has run
+through the generic protocol; other application statuses are listed separately.
 Local fixed rules remain local and always take precedence over a recommendation.
 
 | Priority | Application | Intended input and output | Current status |
 | --- | --- | --- | --- |
-| P0 | Transfer flow-risk screening | Receiver-authorized transfer context and public chain data; evidence-bound pass-through, fan-in, circular-flow and prefunding findings; `low/review/high` plus codes/evidence ids. | **Not started**; no live evidence hash in an attestation yet. |
-| P1 | Audit evidence pack | One decision's attestation, log entries, provider run record and policy; ZIP, hash manifest and verifier. | **Not started**. Intended record-keeping support is not legal compliance certification. |
+| P0 | Transfer flow-risk screening | Bounded public chain data and receiver context; evidence-linked pattern findings and `low/review/high`. | **Built; actual confirmed-testnet rescreen; addendum QA pending.** `review` for incomplete scope; no accepted model decision. |
+| P1 | Audit evidence pack | One decision's attestation, log/checkpoint, optional provider record and version-bound policy; signed manifest, ZIP and verifier. | **Built; local tests; addendum QA pending.** Record-keeping support, not statutory compliance certification. |
 | P1 | Agent-action review | Soft-threshold request context; signed `approve/escalate` recommendation. Hard-threshold review requires a human design, never an AI override. | **Not started**. |
 | P2 | Travel Rule payload check | Originator and beneficiary payload validation between service providers. | **Designed**, documentation only. |
 
-The planned rule is “AI investigates, code decides”: findings must refer to
-allowed evidence, and deterministic code confirms them. Outside providers
-keep their runtime code, packages, operational endpoints and signing keys out
+The rule is “AI investigates, code decides”: findings refer to authorized
+evidence and fixed code confirms them. In the actual rescreen, a local 1.7B
+model call ran but its proposed output was invalid JSON and was rejected.
+**No model decision was accepted.** Fixed code returned conservative `review`
+with `SCOPE_INCOMPLETE`; this tightened the local outcome to flagged and
+quarantine. That run does not prove model detection of every listed pattern.
+
+The collector cross-checks the public witness with receiver-held raw bytes and
+fetches a bounded neighborhood: up to 16 addresses, six transactions per address
+and 64 transactions total. It marks the graph incomplete and sends only a
+consignment digest if provided, never the full consignment or wallet secrets.
+It does not establish complete RGB ancestry or a full public-chain graph.
+Outside providers keep their runtime code, packages, operational endpoints and signing keys out
 of this repository. Provider-specific implementation lives separately.
 
 ## 10. Trust tiers and hardware readiness
@@ -393,24 +422,26 @@ of this repository. Provider-specific implementation lives separately.
 | Tier | Trust model | Current status |
 | --- | --- | --- |
 | 1 | Local fixed rules, pinned lists and receiver-owned signing. | **Built**, with the boundaries below. |
-| 2 | Named outside AI provider with signed software evidence; a trusted host remains in the trust boundary. | **Designed** here; no provider-backed live receipt yet. |
+| 2 | Named outside provider with signed software evidence; a trusted host remains in the trust boundary. | **Built; actual testnet-backed rescreen; addendum QA pending.** The model proposal in that run was rejected. |
 | 3 | Hardware-attested execution; AWS Nitro first, with vendor-root and approved-measurement verification. | **Designed**; no real hardware quote verified. |
 | 4 | Device-attested checks on the receiver's phone. | **Designed**. |
 | 5 | Two or more independent providers must agree under an explicit policy. | **Designed**; no quorum implementation. |
 
 Everything currently demonstrated executes in **software**. Signed software
 evidence authenticates a signer's statement; it does not prove hardware
-isolation. Explicit `execution` serialization and the `QuoteVerifier` interface
-are not yet built in this baseline.
+isolation. New v2 attestations and accepted provider records explicitly label
+software execution. `QuoteVerifier` is built with a software-only default and a
+test-vendor verifier; no real vendor parser/root-chain verification is built.
 
 The designed labels are `software`, `tee:aws-nitro`, `tee:intel-tdx`,
 `tee:amd-sev-snp`, `device:apple-app-attest` and
 `device:android-key-attestation`. A `tee:*` label may be accepted only after a
 hardware attestation verifies against a trusted vendor root, binds the request
 and freshness, and matches an approved release measurement. A test vendor
-would exercise valid, wrong-root, wrong-measurement and replay cases; such a test
-would establish interface behavior, not real hardware execution. These tests
-are not yet part of the accepted 88-test baseline.
+exercises valid, wrong-root, wrong-measurement and durable replay cases, with
+request/result-key/commitment binding. Successful fixtures remain
+`execution: software`, `testOnly: true`. Those tests establish interface
+behavior, not real hardware execution, and belong to the new 121-test suite.
 
 ## 11. Limits and threat model
 
@@ -429,8 +460,12 @@ are not yet part of the accepted 88-test baseline.
   offline recovery is not implemented.
 - Daily spending reservations remain counted after failed sends until UTC day
   rollover. There is no rolling-window spending cap.
-- Settle and Remember are not started. Provider checks, audit exports and
-  hardware execution have no baseline acceptance claim.
+- Settle, Remember and agent-action gate review are not started. New provider
+  checks and audit exports await independent addendum acceptance. Hardware
+  execution remains unverified; a passing test-vendor quote cannot enable it.
+- Provider checks disclose bounded authorized evidence to a configured remote
+  service. Full requests/envelopes and audit ZIPs are private evidence, not
+  public outputs. Signature trust still includes the provider's software host.
 - OFAC/OpenSanctions snapshots are pinned. OpenSanctions retains CC BY-NC
   terms; see [NOTICE](NOTICE) and the snapshot manifest for source/licence terms.
 
@@ -455,9 +490,21 @@ remain retained. A later clear result does not erase the earlier block.
 Independent QA recomputed public transaction IDs, checked both explorers,
 pinned signer/list identities, signed logs and actual quarantine/refusals. See
 [receipt](release/testnet-receipt.json), [verification](release/verification.json)
-and [read-only five-minute walkthrough](docs/DEMO.md). This proof covers local
-Verify/Authorize, not the proposed provider applications, TEE, escrow or history
-product. [Architecture](docs/ARCHITECTURE.md) describes the baseline in more detail.
+and [read-only five-minute walkthrough](docs/DEMO.md). The original proof covers
+local Verify/Authorize. [Architecture](docs/ARCHITECTURE.md) describes that
+baseline; the provider addendum has separate evidence.
+
+The provider addendum **rescreened that same confirmed clear witness** on the
+same network. It used fresh governance state, sent no new transaction and
+required no new funds. Its signed software evidence hash is
+`b17838512b8696566a056e8836fa9cda591b6d2d383389efbe83a3568f83626b`.
+The result was `review` with `SCOPE_INCOMPLETE`, folded into a new signed v2
+flagged attestation and quarantine. The full envelope remains ignored private
+evidence. Public-safe receipt: `release/provider-testnet-receipt.json`;
+independent addendum acceptance: `release/addendum-verification.json`.
+Those reports distinguish the completed run from its pending independent QA.
+This rescreen does not amend the original signed clear/error records or certify
+TEE, full ancestry, escrow or the history product.
 
 ## 13. Run it
 
@@ -511,13 +558,31 @@ public testnet run, follow [NETWORK.md](docs/NETWORK.md); preserve prior wallets
 and evidence. The pinned SDK requires `donation=true`, colorable UTXOs before
 the first send, and handling transfer statuses as strings.
 
-Planned provider configuration uses placeholders only; these variables are
-**not consumed by the accepted baseline**:
+Optional remote-provider configuration uses placeholders only. Supply all
+three values privately to enable it, or leave all unset for local-only checks.
+Never use real endpoint/token/key values in a committed example:
 
 ```dotenv
 TRUST_PROVIDER_URL=
 TRUST_PROVIDER_KEYS_FILE=
+TRUST_PROVIDER_TOKEN=
 ```
+
+The ignored keys file pins provider identity and Ed25519 public keys obtained
+independently. See [PROVIDER-PROTOCOL.md](docs/PROVIDER-PROTOCOL.md) for the schema,
+limits and failure behavior. Full evidence is saved privately, not in Git.
+
+Create or independently verify an audit export:
+
+```sh
+bin/trust audit export PRIVATE_SPEC_JSON NEW_OUTPUT_ZIP --config PRIVATE_RECEIVER_CONFIG
+bin/trust audit verify ZIP_FILE INDEPENDENT_TRUST_JSON
+```
+
+Export requires the receiver's configured signer; verification needs only public
+trust configuration. The export refuses an existing output path and verifies
+its contents before saving. See [AUDIT-PACK.md](docs/AUDIT-PACK.md) for formats,
+privacy and archive verification scope.
 
 No provider URL, signing key or private runtime dependency should be committed.
 All meeting material is a draft for Amir; Amir alone sends it externally.
