@@ -1,7 +1,7 @@
 {
   "version": 1,
   "independentQa": true,
-  "checkedAt": "2026-10-19T16:44:45.199Z",
+  "checkedAt": "2026-10-20T07:41:44.847Z",
   "scope": "Read only named signed decision logs/checkpoints; no wallet database, seed, key or receiver raw history opened; no log contents exported.",
   "results": [
     {
@@ -29,7 +29,23 @@
     },
     {
       "name": "receiver",
-      "status": "pending_no_log_yet"
+      "status": "pass",
+      "nodePk": "3e85071f8ffbc438b1767f777d80444861e73c346c7f6d9b4508eae4e38a5124",
+      "entryCount": 3,
+      "logSha256": "e03e5f5ab014b70dc455f82c6ca12884b26c27de224c64b0ddebf18350770387",
+      "checkpointSha256": "1fb3613e0ea01309ae4c6618100075b350f91ba4466f6727691c24f52bc4e5a5",
+      "kinds": {
+        "state-prepare": 1,
+        "state-commit": 1,
+        "incoming-verification": 1
+      },
+      "bindings": [
+        {
+          "label": "clear",
+          "attestationLogMatches": true
+        }
+      ],
+      "problems": []
     }
   ]
 }

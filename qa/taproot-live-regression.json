@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "independentQa": true,
+  "checkedAt": "2026-10-20T07:45:40.278Z",
+  "fix": "d966374",
+  "checks": [
+    {
+      "host": "https://mempool.space",
+      "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+      "confirmed": true,
+      "blockHeight": 5195546,
+      "decodedTxidMatches": true,
+      "parentTxidsValidated": true,
+      "senderAddressesMatchIndependentExplorer": true,
+      "outputAddressesMatchIndependentExplorer": true,
+      "inputCount": 1,
+      "rawEvidenceExported": false
+    },
+    {
+      "host": "https://blockstream.info",
+      "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+      "confirmed": true,
+      "blockHeight": 5195546,
+      "decodedTxidMatches": true,
+      "parentTxidsValidated": true,
+      "senderAddressesMatchIndependentExplorer": true,
+      "outputAddressesMatchIndependentExplorer": true,
+      "inputCount": 1,
+      "rawEvidenceExported": false
+    }
+  ]
+}

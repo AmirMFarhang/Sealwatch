@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "independentQa": true,
   "reviewer": "Codex /root/qa, not a runtime implementer",
-  "checkedAt": "2026-10-19T16:45:24.222544+00:00",
-  "status": "local_independent_qa_pass; actual_rgb_testnet_demo_incomplete",
-  "verdict": "LOCAL_PASS_VETO_MEETING_DONE_PENDING_PUBLIC_RGB_RECEIPT",
+  "checkedAt": "2026-10-20T07:47:15.586137+00:00",
+  "status": "local_fix_qa_pass; original_signed_error_preserved; corrected_live_run_pending",
+  "verdict": "LOCAL_PASS_VETO_MEETING_DONE_PENDING_CORRECTED_RGB_RECEIPT",
   "meetingDefinitionOfDone": false,
   "source": {
     "initialFrozenCommit": "d14a0c3254e55520e2aea20e1edd8d7f5c0dfc7f",
-    "testedQaCommit": "808c7a4f07d4f9aa4818c247dd00aa443e4b2c13",
-    "srcTree": "baa6f2dcbcf7fd87c5c91d806bc72d5cd21c67c8",
+    "testedQaCommit": "e090de8",
+    "srcTree": "e92746d4cd3ffb67c58f2aee6f22227cef139fab",
     "coreFix": "f83e1becea05eaeb6e235d36cb0aec525a28d3b3",
     "nativeFixes": [
       "9494e42",
@@ -23,8 +23,14 @@
       "8d257e7",
       "7cfee0e"
     ],
-    "testTree": "952083637f67a184c738206546376049cc98d1ab",
-    "signingBarrierCoreFix": "6dc050e25b0460a8a8e53da5825a922f64d39eb3"
+    "testTree": "9e30e0455b4319f72d4453d0c7706df86b0e995b",
+    "signingBarrierCoreFix": "6dc050e25b0460a8a8e53da5825a922f64d39eb3",
+    "liveFollowupFixes": [
+      "6dfbe8a4b8e85571cd4c737ddb81535ac7aef71f",
+      "d966374d0012ba8be187a2f070a34e0c6428ecd7",
+      "18392fa720599689eccbcdd0df906c1b32127b90",
+      "212bdf60ae2145d71b170b825e92db7385a8d57c"
+    ]
   },
   "environment": {
     "node": "22.22.2",
@@ -34,12 +40,12 @@
   "standardTests": {
     "command": "npm run check",
     "typecheck": "pass",
-    "total": 84,
-    "passed": 84,
+    "total": 88,
+    "passed": 88,
     "failed": 0,
     "skipped": 0,
     "composition": {
-      "core": 81,
+      "core": 85,
       "network": 3
     }
   },
@@ -103,6 +109,18 @@
       "original": "Owner stop, policy replacement or token expiry after token consumption but before asynchronous WDK signing policy was evaluated did not prevent signature export.",
       "fix": "Core6dc050e assertSigningAllowed validates latest retained signed gate state, current policy/hash/version, owner stop, token validity and consumed record, agent, exact plan and pinned preview. Native96265ce synchronously invokes it with private immutable approval copies inside the actual WDK policy callback; quarantine is checked there too.",
       "independentVerification": "All three original failing timing probes now pass. Ten total native probes pass; failed attempts leave token consumed. No revocation promise after a signature was already exported."
+    },
+    {
+      "id": "QA-LIVE-TAPROOT-DECODE",
+      "original": "bitcoinjs-lib Taproot payment matcher required an initialized ECC context, so a valid native P2TR prevout produced WITNESS_EVIDENCE_INVALID and conservative quarantine.",
+      "fix": "Strict length34 OP_1/PUSH32 script encoded as BIP350 witness version1 with testnet HRP; other script matching and unsupported-script refusal unchanged.",
+      "independentVerification": "88/88 standard and15/15 independent probes pass. Actual public witness/parents decoded; addresses match both explorers; malformed script regressions refuse."
+    },
+    {
+      "id": "QA-RESUME-BINDING-AND-RESULT",
+      "original": "Recovery could refresh an expired invoice with an ambiguous signing attempt, or skip an existing invalid flagged result and later report completion.",
+      "fix": "212bdf6 preserves attempted bindings and prior invalid flagged attestations; both clear and flagged exact result predicates required before continuation.18392fa preserves prior errors and signed policy version/hash history; no quarantine reset.",
+      "independentVerification": "Source review of frozen resume runner; approved live resume with final actual receipt verification still required."
     }
   ],
   "claimAudit": {
@@ -145,10 +163,10 @@
   "liveDemonstration": {
     "network": "utexo-testnet",
     "fallback": false,
-    "clearIncoming": "not yet attested: public witness unconfirmed",
+    "clearIncoming": "Original authentic error preserved; decoder/regression fix approved, corrected live attestation pending.",
     "flaggedWitnessInput": "not independently verified",
     "quarantine": "not independently verified on chain",
-    "inLimitSend": "actual broadcast independently visible on both explorers, unconfirmed; signed gate authorization and token consumption independently verified",
+    "inLimitSend": "Actual governed transaction independently confirmed by both explorers at5195546; signed gate approval and consumed token match receipt.",
     "overLimitRefusal": "synthetic/local only",
     "stopRefusal": "synthetic/local only",
     "escrow": "not built"
@@ -208,40 +226,47 @@
     "/tmp/trust-qa-probes-final.log",
     "/tmp/trust-qa-security-d14a0c3.log",
     "/tmp/trust-qa-native-9494e42.log",
-    "/tmp/trust-qa-native-all-barriers.log"
+    "/tmp/trust-qa-native-all-barriers.log",
+    "/tmp/trust-qa-check-taproot-resume.log",
+    "/tmp/trust-qa-probes-taproot-resume.log"
   ],
   "remaining": [
-    "Wait for actual RGB clear witness confirmation and receiver attestation; complete flagged/quarantine/over-limit/stop run on the same accepted source.",
-    "Independently verify all public transactions, pinned-authority attestations/list hashes and signed decision-log bindings before meeting done."
+    "Independently verify the corrected clear attestation and flagged transaction/attestation, original error preservation, permanent quarantine, real over-limit/stop decisions and signed log bindings after resumed run.",
+    "Retain meeting completion veto until every required actual demonstration item and explorer check passes."
   ],
   "localAcceptance": true,
   "liveProofCheckpoint": {
-    "asOf": "2026-10-19T16:44:46.749Z",
-    "verdict": "PENDING",
+    "asOf": "2026-10-20T07:47:15.586137+00:00",
+    "verdict": "CONFIRMED_TRANSACTION_ORIGINAL_SIGNED_ERROR; FIX_VALIDATED; CORRECTED_RETRY_PENDING",
     "receiptStatus": "running",
     "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
     "network": "utexo-testnet",
     "fallback": false,
-    "publicStatus": "Unconfirmed at latest successful dual-explorer poll, 2026-10-19T16:43:58Z. A later receipt-verification request still saw Mempool unconfirmed while Blockstream was temporarily unavailable.",
+    "publicStatus": "Both public explorers confirm exact witness in block5195546; decoded sending/output addresses independently match both explorers.",
     "publicRawTxidsIndependentlyRecomputed": true,
     "actualRgbDemonstrationTxidsSupplied": 1,
     "gateDecisionLog": "pass; signed approval, exact plan/policy hashes and token consumption match receipt",
     "gateLogEntries": 9,
-    "receiverAttestation": "not yet produced",
+    "receiverAttestation": "Original authentic signed WITNESS_EVIDENCE_INVALID error preserved; corrected live clear result not yet independently observed.",
     "attestationAuthorities": "checker and issuer public keys independently pinned before attestation arrival",
-    "sourceSrcTreeStillMatches": "baa6f2dcbcf7fd87c5c91d806bc72d5cd21c67c8",
+    "sourceSrcTreeStillMatches": "e92746d4cd3ffb67c58f2aee6f22227cef139fab",
     "evidence": [
       "qa/live-run-authorities.json",
       "qa/live-rgb-explorer-checks.json",
       "qa/live-receipt-verification.json",
-      "qa/live-decision-log-verification.json"
+      "qa/live-decision-log-verification.json",
+      "qa/preserved-live-receiver-error.json",
+      "qa/taproot-live-regression.json"
     ],
     "reproducibleChecks": [
       "node --import tsx qa/verify-live-receipt.ts RECEIPT",
       "node --import tsx qa/verify-live-logs.ts DEMO_LOG_DIRECTORY RECEIPT"
     ],
-    "currentCheckUnavailableHosts": [
-      "https://blockstream.info"
-    ]
+    "currentCheckUnavailableHosts": [],
+    "resumeSignoff": {
+      "approved": true,
+      "scope": "Resume frozen corrected runner; preserve original errors/logs/quarantine, reverify same confirmed witnesses without rebroadcast; refresh only expired unsent/unattempted invoices under hash-chained owner policy versions.",
+      "meetingAcceptance": false
+    }
   }
 }

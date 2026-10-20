@@ -1,43 +1,53 @@
 {
   "version": 1,
   "independentQa": true,
-  "checkedAt": "2026-10-19T16:44:46.749Z",
-  "receiptStatus": "running",
-  "receiptUpdatedAt": "2026-10-19T16:14:56.522Z",
-  "receiptSha256": "0fdfb6cf5323a6fc24ed1683f2f527781bae7630624773e0ade705512a57e205",
+  "checkedAt": "2026-10-20T07:41:44.623Z",
+  "receiptStatus": "incomplete",
+  "receiptUpdatedAt": "2026-10-19T16:58:41.910Z",
+  "receiptSha256": "ac9b8b7cb86263eca782856046f14083351e9d60b7eb7b61c36ca02ef5e0f2c8",
   "network": "utexo-testnet",
   "fallback": false,
-  "verdict": "PENDING",
-  "problems": [],
+  "verdict": "FAIL",
+  "problems": [
+    "clear: wrong clear/flagged result"
+  ],
   "pending": [
-    "clear: https://mempool.space unconfirmed",
-    "clear: https://blockstream.info unavailable: TypeError: fetch failed",
-    "clear: attestation not recorded",
     "flagged: transaction not recorded",
     "overLimit: refusal not recorded",
     "stopped: refusal not recorded",
     "native quarantine enforcement not recorded",
-    "receipt status is running"
+    "receipt status is incomplete"
   ],
   "checks": [
     {
       "name": "clear",
       "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
       "attestationValid": false,
-      "exactTestListHashMatches": false,
+      "exactTestListHashMatches": true,
       "publicExplorers": [
         {
           "host": "https://mempool.space",
           "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
           "status": {
-            "confirmed": false
+            "confirmed": true,
+            "block_height": 5195546,
+            "block_hash": "00000000000003b697ed4c32e59263fb42ef5c996c679a519237c2ab87a88b6e",
+            "block_time": 1792430182
           },
           "feeSats": 198,
           "decodedTxidMatches": true
         },
         {
           "host": "https://blockstream.info",
-          "error": "TypeError: fetch failed"
+          "explorerUrl": "https://blockstream.info/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+          "status": {
+            "confirmed": true,
+            "block_height": 5195546,
+            "block_hash": "00000000000003b697ed4c32e59263fb42ef5c996c679a519237c2ab87a88b6e",
+            "block_time": 1792430182
+          },
+          "feeSats": 198,
+          "decodedTxidMatches": true
         }
       ]
     }

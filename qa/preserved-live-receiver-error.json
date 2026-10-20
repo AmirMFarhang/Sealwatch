@@ -1,0 +1,80 @@
+{
+  "preservedAt": "2026-10-20T07:45:39.178Z",
+  "description": "Original portable signed error preserved before decoder/retry correction; no raw evidence or private key exported.",
+  "attestation": {
+    "v": 1,
+    "domain": "trust-incoming-attestation-v1",
+    "network": "utexo-testnet",
+    "assetId": "rgb:6b7igUgX-5c~XkMr-3g4_4Yg-eVj5~7M-dt_okW0-SJR6CI8",
+    "witnessTxid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+    "checks": {
+      "sanctions": {
+        "status": "error",
+        "scope": "decoded witness sending addresses and receiver-local counterparties",
+        "code": "WITNESS_EVIDENCE_INVALID"
+      },
+      "flaggedL1": {
+        "status": "error",
+        "scope": "decoded witness transaction input outpoints",
+        "code": "WITNESS_EVIDENCE_INVALID"
+      },
+      "rgbAncestry": {
+        "status": "designed",
+        "scope": "RGB consignment ancestry",
+        "code": "SDK_RELIABLE_ANCESTRY_API_REQUIRED"
+      }
+    },
+    "lists": [
+      {
+        "id": "ofac-sdn-xbt",
+        "version": "2026-10-01",
+        "sha256": "a72d4f30fb2c30294c0040bd2a338efc3a5ed4c3679ab30057a90c6a8a48abc6",
+        "testOnly": false
+      },
+      {
+        "id": "opensanctions-il_mod_crypto-btc",
+        "version": "2026-10-17",
+        "sha256": "0ddc4815af79ce3e16fefe968dba620100e82f0e68303c16e1a017afa8ebfbcc",
+        "testOnly": false
+      },
+      {
+        "id": "test-demo-sanctions",
+        "version": "1",
+        "sha256": "5beb32f82ca062d26ab2eafad6b64ad190457eeba9e6fd6304fb99f87b93998b",
+        "testOnly": true
+      },
+      {
+        "id": "test-demo-flagged-outpoints",
+        "version": "1",
+        "sha256": "3521b7165e9cd51851df30f7e40f53504f289525516e331b5c62818b12eeef75",
+        "testOnly": true
+      }
+    ],
+    "flaggedManifest": {
+      "v": 1,
+      "domain": "trust-flagged-manifest-v1",
+      "file": "flagged-outpoints.json",
+      "sha256": "3521b7165e9cd51851df30f7e40f53504f289525516e331b5c62818b12eeef75",
+      "listId": "test-demo-flagged-outpoints",
+      "version": "1",
+      "network": "utexo-testnet",
+      "testOnly": true,
+      "issuedAt": 1792429118,
+      "expiresAt": 1792515519,
+      "issuerPk": "53a6d15d2a7e9cca78bb13c056bf648d9768fee46dc8268e97659dfe5685daf6",
+      "sig": "7af5d7e4475d27886655ceb3830a2fb4a8deaf8aa8bdcfc2c5c89f18b87b809ce980bdef4659fc9c86435c03766527006f6529f9514c48cefab4d43c7c25284c"
+    },
+    "overall": "error",
+    "time": 1792429121,
+    "checkerPk": "3e85071f8ffbc438b1767f777d80444861e73c346c7f6d9b4508eae4e38a5124",
+    "sig": "49234e6c4a2c1409d0cdc0999f448f6ee1b9365d5ac051d69b5089621cac45dbd9d41c01d348b6206ec42091aaf65e306d925256393981a0b6f97caef65eb581"
+  },
+  "independentVerification": {
+    "checkedAt": "2026-10-20T07:47:15.553Z",
+    "attestationHash": "3fe84d0109915493794efdd2ff8e5b8b05faefc09bd95a776777422cb8d6b0fd",
+    "checkerSignatureValid": true,
+    "issuerSignatureValid": true,
+    "semanticallyValidErrorAttestation": true,
+    "problems": []
+  }
+}
