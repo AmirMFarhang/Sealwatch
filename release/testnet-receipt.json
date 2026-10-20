@@ -1,7 +1,7 @@
 {
   "version": 1,
   "status": "running",
-  "updatedAt": "2026-10-19T16:14:56.522Z",
+  "updatedAt": "2026-10-20T07:46:38.009Z",
   "network": "utexo-testnet",
   "label": "Utexo SDK documented Bitcoin testnet3",
   "fallback": false,
@@ -28,14 +28,14 @@
       "address": "tb1pxha8nramtc274shnavxshk47qfmx9j8l9spmzr9r2f05c3a6rtuquh5tw5",
       "btcBalance": {
         "vanilla": {
-          "settled": 0,
+          "settled": 22723,
           "future": 22723,
           "spendable": 22723
         },
         "colored": {
-          "settled": 0,
-          "future": 38802,
-          "spendable": 38802
+          "settled": 35000,
+          "future": 37604,
+          "spendable": 37604
         }
       }
     },
@@ -47,23 +47,177 @@
       "address": "tb1ppajmc8vgdnczrhx05659l8ncaala0nagdvlyu4dnycd7535kapsqw3kt7p",
       "btcBalance": {
         "vanilla": {
-          "settled": 0,
+          "settled": 21696,
           "future": 21696,
           "spendable": 21696
         },
         "colored": {
-          "settled": 0,
-          "future": 41000,
-          "spendable": 41000
+          "settled": 41000,
+          "future": 42000,
+          "spendable": 42000
         }
       }
     }
   ],
   "transactions": {
-    "clear": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06"
+    "clear": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+    "flagged": "8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b"
   },
-  "explorerChecks": {},
-  "attestations": {},
+  "explorerChecks": {
+    "clear": {
+      "checkedAt": "2026-10-20T07:46:28.914Z",
+      "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+      "apiUrl": "https://mempool.space/testnet/api/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+      "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+      "confirmed": true,
+      "blockHeight": 5195546,
+      "blockHash": "00000000000003b697ed4c32e59263fb42ef5c996c679a519237c2ab87a88b6e"
+    }
+  },
+  "attestations": {
+    "clear": {
+      "v": 1,
+      "domain": "trust-incoming-attestation-v1",
+      "network": "utexo-testnet",
+      "assetId": "rgb:6b7igUgX-5c~XkMr-3g4_4Yg-eVj5~7M-dt_okW0-SJR6CI8",
+      "witnessTxid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+      "checks": {
+        "sanctions": {
+          "status": "clear",
+          "scope": "decoded witness sending addresses and receiver-local counterparties",
+          "code": "NOT_ON_PINNED_LISTS"
+        },
+        "flaggedL1": {
+          "status": "clear",
+          "scope": "decoded witness transaction input outpoints",
+          "code": "NO_FLAGGED_WITNESS_INPUT"
+        },
+        "rgbAncestry": {
+          "status": "designed",
+          "scope": "RGB consignment ancestry",
+          "code": "SDK_RELIABLE_ANCESTRY_API_REQUIRED"
+        }
+      },
+      "lists": [
+        {
+          "id": "ofac-sdn-xbt",
+          "version": "2026-10-01",
+          "sha256": "a72d4f30fb2c30294c0040bd2a338efc3a5ed4c3679ab30057a90c6a8a48abc6",
+          "testOnly": false
+        },
+        {
+          "id": "opensanctions-il_mod_crypto-btc",
+          "version": "2026-10-17",
+          "sha256": "0ddc4815af79ce3e16fefe968dba620100e82f0e68303c16e1a017afa8ebfbcc",
+          "testOnly": false
+        },
+        {
+          "id": "test-demo-sanctions",
+          "version": "1",
+          "sha256": "5beb32f82ca062d26ab2eafad6b64ad190457eeba9e6fd6304fb99f87b93998b",
+          "testOnly": true
+        },
+        {
+          "id": "test-demo-flagged-outpoints",
+          "version": "1",
+          "sha256": "3521b7165e9cd51851df30f7e40f53504f289525516e331b5c62818b12eeef75",
+          "testOnly": true
+        }
+      ],
+      "flaggedManifest": {
+        "v": 1,
+        "domain": "trust-flagged-manifest-v1",
+        "file": "flagged-outpoints.json",
+        "sha256": "3521b7165e9cd51851df30f7e40f53504f289525516e331b5c62818b12eeef75",
+        "listId": "test-demo-flagged-outpoints",
+        "version": "1",
+        "network": "utexo-testnet",
+        "testOnly": true,
+        "issuedAt": 1792482390,
+        "expiresAt": 1792568791,
+        "issuerPk": "53a6d15d2a7e9cca78bb13c056bf648d9768fee46dc8268e97659dfe5685daf6",
+        "sig": "a623648c2c0de869ac2f280a6f5ce5d559ec150163ee10028ca11d2a1096b89881b375cd2b57823bb710d0ddd74ba70a9e6ec7270e2bc25feb99e4e0cd2afb04"
+      },
+      "overall": "clear",
+      "time": 1792482392,
+      "checkerPk": "3e85071f8ffbc438b1767f777d80444861e73c346c7f6d9b4508eae4e38a5124",
+      "sig": "b3d1337d8913a12389e2ac3c8cbccfb4d1b8aa7f91a853ccee714b40d3b82b119c10eeebd07834e7ac11862130398af3b42b03624df5ccb94ff47b132fe10d3c"
+    }
+  },
+  "priorAttestations": [
+    {
+      "step": "clear",
+      "reason": "Original signed verification failed; retained permanently before corrected decoding retry. Existing asset quarantine remains enforced.",
+      "attestation": {
+        "v": 1,
+        "domain": "trust-incoming-attestation-v1",
+        "network": "utexo-testnet",
+        "assetId": "rgb:6b7igUgX-5c~XkMr-3g4_4Yg-eVj5~7M-dt_okW0-SJR6CI8",
+        "witnessTxid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+        "checks": {
+          "sanctions": {
+            "status": "error",
+            "scope": "decoded witness sending addresses and receiver-local counterparties",
+            "code": "WITNESS_EVIDENCE_INVALID"
+          },
+          "flaggedL1": {
+            "status": "error",
+            "scope": "decoded witness transaction input outpoints",
+            "code": "WITNESS_EVIDENCE_INVALID"
+          },
+          "rgbAncestry": {
+            "status": "designed",
+            "scope": "RGB consignment ancestry",
+            "code": "SDK_RELIABLE_ANCESTRY_API_REQUIRED"
+          }
+        },
+        "lists": [
+          {
+            "id": "ofac-sdn-xbt",
+            "version": "2026-10-01",
+            "sha256": "a72d4f30fb2c30294c0040bd2a338efc3a5ed4c3679ab30057a90c6a8a48abc6",
+            "testOnly": false
+          },
+          {
+            "id": "opensanctions-il_mod_crypto-btc",
+            "version": "2026-10-17",
+            "sha256": "0ddc4815af79ce3e16fefe968dba620100e82f0e68303c16e1a017afa8ebfbcc",
+            "testOnly": false
+          },
+          {
+            "id": "test-demo-sanctions",
+            "version": "1",
+            "sha256": "5beb32f82ca062d26ab2eafad6b64ad190457eeba9e6fd6304fb99f87b93998b",
+            "testOnly": true
+          },
+          {
+            "id": "test-demo-flagged-outpoints",
+            "version": "1",
+            "sha256": "3521b7165e9cd51851df30f7e40f53504f289525516e331b5c62818b12eeef75",
+            "testOnly": true
+          }
+        ],
+        "flaggedManifest": {
+          "v": 1,
+          "domain": "trust-flagged-manifest-v1",
+          "file": "flagged-outpoints.json",
+          "sha256": "3521b7165e9cd51851df30f7e40f53504f289525516e331b5c62818b12eeef75",
+          "listId": "test-demo-flagged-outpoints",
+          "version": "1",
+          "network": "utexo-testnet",
+          "testOnly": true,
+          "issuedAt": 1792429118,
+          "expiresAt": 1792515519,
+          "issuerPk": "53a6d15d2a7e9cca78bb13c056bf648d9768fee46dc8268e97659dfe5685daf6",
+          "sig": "7af5d7e4475d27886655ceb3830a2fb4a8deaf8aa8bdcfc2c5c89f18b87b809ce980bdef4659fc9c86435c03766527006f6529f9514c48cefab4d43c7c25284c"
+        },
+        "overall": "error",
+        "time": 1792429121,
+        "checkerPk": "3e85071f8ffbc438b1767f777d80444861e73c346c7f6d9b4508eae4e38a5124",
+        "sig": "49234e6c4a2c1409d0cdc0999f448f6ee1b9365d5ac051d69b5089621cac45dbd9d41c01d348b6206ec42091aaf65e306d925256393981a0b6f97caef65eb581"
+      }
+    }
+  ],
   "authorization": {
     "clear": {
       "actionId": "187d88be2884eab8fb05a3842990294e",
@@ -87,6 +241,30 @@
         "issuedAt": 1792426480,
         "expiresAt": 1792426600,
         "sig": "b566fe4c36d5b1226c61cff04aaa61ef2fd4ae92665d64bd4771771f3a6528479209ed4aaee42fb84418e46be9f61239cd961a43cab85d4f9a49c4409249f752"
+      }
+    },
+    "flagged": {
+      "actionId": "376a4b04f6acc3a395f5d87a2e46fb87",
+      "allowed": true,
+      "why": [
+        "WITHIN_SIGNED_POLICY_LIMITS"
+      ],
+      "policyVersion": 2,
+      "token": {
+        "v": 1,
+        "domain": "trust-approval-token-v1",
+        "id": "e538efbc29df508208d0c6a1f27958376946b2ab69ca2e02ee7c62cc2a0a4254",
+        "actionId": "376a4b04f6acc3a395f5d87a2e46fb87",
+        "gatePk": "53e670e0bcb9ad656d2659c9a77c9ff9f7ed33bb2c32de77518cd12f06a2ead0",
+        "agentPk": "c746b8d2b3a93615b340b2ca70a6547a095353c917e0ed48f2fdab2b4dceff5f",
+        "network": "utexo-testnet",
+        "walletId": "utexo-testnet:A",
+        "planHash": "3953e6936fa8e7decb772b1b05f7e0a86b61924e5aeddbecc01d54f0eabe3f2b",
+        "policyHash": "74ac724c6dca00339c6d6b06684fc083998ac9372754d81b02e6014f593924a9",
+        "policyVersion": 2,
+        "issuedAt": 1792482393,
+        "expiresAt": 1792482513,
+        "sig": "1cd811d69682581b06e4b05bb733c9c07924b338172b14cb88a1e2fc518b46286194f232c3e548f49fbde8bece1d381a1d139fc02855e2cdb1b697c00b3cc01c"
       }
     }
   },
