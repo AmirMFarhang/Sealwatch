@@ -2,16 +2,17 @@
   "schemaVersion": 1,
   "independentQa": true,
   "reviewer": "Codex /root/qa; not a runtime implementer",
-  "checkedAt": "2026-10-20T13:52:30.169020+00:00",
-  "verdict": "LOCAL_FROZEN_CHECKPOINT_PASS_LIVE_AND_OPTIONAL_REVIEW_PENDING",
-  "sourceCommit": "e25ac86fc9497680fcef47ab6d569f463a61ffb5",
-  "sourceTree": "0a10b8df345ec5cd18542c898bf6b51f0bd159e6",
-  "testTree": "dbcf198f9d3c984f85a6e51be53136005e4bd46b",
+  "checkedAt": "2026-10-20T14:02:00.359073+00:00",
+  "verdict": "P0_LIVE_AUDIT_AND_OPTIONAL_REVIEW_GATE_PASS_PROVIDER_REVIEW_APPLICATION_PENDING",
+  "sourceCommit": "803b51b683f5eb39efc823bc75a5167a370eae28",
+  "sourceTree": "6cab77b1cc7d0b87ba2bd3a77f8a40ef340161f2",
+  "testTree": "50c0c52baa0c23c5a55795da0b9f1ac6233b21cd",
   "standardTests": {
-    "passed": 121,
+    "passed": 143,
     "failed": 0,
     "skipped": 0,
-    "typecheck": "pass"
+    "typecheck": "pass",
+    "composition": "Original core/network, execution6, quote15, provider6, audit6, agent-review22; total143 as Node reports."
   },
   "priorIndependentSecurityProbes": {
     "passed": 15,
@@ -49,9 +50,8 @@
   "executionReview": "All new attestation/provider executions remain software. Valid test-vendor fixture returns software/testOnly; real hardware/device claims refuse. Existing15quote standard tests cover pinned root/key/measurement/fresh challenge/result signature and retained-journal replay. No real vendor verifier built.",
   "hygieneReport": "qa/addendum/provider-hygiene.json",
   "remaining": [
-    "Independently verify final live provider evidence and complete exact runtime record, four-stage/model/contract/release bindings, fresh quarantine and actual audit pack.",
-    "Independently rerun optional gate-review integration once its frozen commit is supplied.",
-    "Final README claims and final source/dependency/history scan after all runtime integration."
+    "Optional agent-action-review provider application live proof and final source/documentation review if the implementation owner elects to complete it.",
+    "Final README claims must reflect143 standard+30 independent probes, model proposal rejected/software-only execution, live rescreen without new broadcast, archive scope and historical prose exception."
   ],
   "noOperationalWalletPrivateKeyDatabaseOrChainTouched": true,
   "commands": [
@@ -59,13 +59,80 @@
     "npm run check",
     "node --import tsx --test qa/security-probes.test.ts qa/native-guard-probes.test.ts",
     "node --import tsx --test qa/addendum/protocol-probes.test.ts",
-    "npm ls --all --json"
+    "npm ls --all --json",
+    "node --import tsx --test qa/addendum/review-probes.test.ts",
+    "node --import tsx qa/addendum/verify-provider-live.ts PRIVATE_RECEIVER_DIR PRIVATE_PROVIDER_PINS",
+    "node --import tsx src/cli.ts audit verify PRIVATE_PACK INDEPENDENT_PUBLIC_TRUST_JSON"
   ],
   "durableIgnoredLogs": [
     ".state/qa-addendum/npm-ci.log",
     ".state/qa-addendum/standard-check.log",
     ".state/qa-addendum/prior-security-check.log",
     ".state/qa-addendum/independent-protocol-probes.log",
-    ".state/qa-addendum/dependency-graph.json"
-  ]
+    ".state/qa-addendum/dependency-graph.json",
+    ".state/qa-addendum/final-standard-check.log",
+    ".state/qa-addendum/final-independent-check.log",
+    ".state/qa-addendum/review-probes.log",
+    ".state/qa-addendum/live-verification.log",
+    ".state/qa-addendum/live-audit-cli.log",
+    ".state/qa-addendum/final-dependency-graph.json"
+  ],
+  "testedQaIntegrationCommit": "5936e10e9e220f0597f768eb9ec9d9dd874d6053",
+  "newIndependentReviewProbes": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "file": "qa/addendum/review-probes.test.ts",
+    "cases": [
+      "Concurrent same send request produces only one reviewed token and reservation.",
+      "Concurrent distinct approvals recheck cumulative cap under final transaction.",
+      "Actual HTTP route awaits reviewed path, synchronous bypass is not invoked.",
+      "Actual CLI/config/remote DSSE fixture produces bound reviewed token."
+    ]
+  },
+  "totalIndependentTests": 30,
+  "p0LiveEvidence": {
+    "verdict": "pass",
+    "report": "qa/addendum/live-verification.json",
+    "network": "utexo-testnet",
+    "newTransactionBroadcast": false,
+    "operation": "fresh-provider-rescreen-of-existing-confirmed-receive",
+    "evidenceSha256": "a1ce4af431b1e854e12a87ea411ab84d4b21411c7fdc55b256bbc47ec0af774a",
+    "providerRisk": "review",
+    "findingCodes": [
+      "SCOPE_INCOMPLETE"
+    ],
+    "finalOutcome": "flagged",
+    "execution": "software",
+    "bothPublicExplorersRawWitnessVerified": true,
+    "freshSignedQuarantine": "pass"
+  },
+  "privateRuntimeReview": {
+    "verdict": "pass",
+    "report": "qa/addendum/runtime-verification.json",
+    "fourObservedIsolatedStages": true,
+    "actualLocalModelCall": true,
+    "modelProposalAccepted": false,
+    "detectorSyntheticTests": 12,
+    "exactFullRecordAndContractHashes": "pass",
+    "boundToolFactsAndModelRequestCommitments": "independently opened",
+    "limits": "Signed software evidence trusts provider host; raw model text not retained, no accepted model decision/hardware claim."
+  },
+  "actualAuditPack": {
+    "bytes": 21039,
+    "files": 6,
+    "genericVerifier": "pass",
+    "actualCliWithIndependentlyDerivedPublicTrust": "pass",
+    "pythonStandardZipCrc": "pass",
+    "policyLogProviderManifestAndOriginalDecisionTimeBindings": "pass"
+  },
+  "optionalReviewGate": {
+    "localStatus": "pass",
+    "providerApplicationLiveStatus": "pending",
+    "localControls": "Hard thresholds/stop/quarantine/limits before provider; immutable request; signed policy hash and current state rechecked after await; evidence/expiry in token; consume/signing barrier checks; no human-approval implementation or provider override.",
+    "entryPoints": "CLI and localhost API use awaited authorizeReviewed; config injects optional environment provider.",
+    "noApplicationLiveClaimFromUnitFixtures": true
+  },
+  "originalV1LiveReceiptSha256": "b378b52403ff485a64accc999eebc9174d11da3faf7dac3adef246939e274c35",
+  "originalV1LiveReceiptUnchanged": true
 }

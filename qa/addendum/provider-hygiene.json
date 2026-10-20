@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
   "independentQa": true,
-  "sourceCommit": "e25ac86fc9497680fcef47ab6d569f463a61ffb5",
-  "sourceTree": "0a10b8df345ec5cd18542c898bf6b51f0bd159e6",
-  "testTree": "dbcf198f9d3c984f85a6e51be53136005e4bd46b",
-  "ancestorCommitsScanned": 50,
-  "reachableBlobsScanned": 199,
+  "checkedAt": "2026-10-20T14:02:00.342786+00:00",
+  "sourceCommit": "803b51b683f5eb39efc823bc75a5167a370eae28",
+  "sourceTree": "6cab77b1cc7d0b87ba2bd3a77f8a40ef340161f2",
+  "testTree": "50c0c52baa0c23c5a55795da0b9f1ac6233b21cd",
+  "ancestorCommitsScanned": 54,
+  "reachableBlobsScanned": 213,
   "providerNamedCodePaths": [],
   "providerRuntimeOrWireFormatNamesInCodeHistory": [],
   "providerDependenciesInPackageAndLockHistory": [],
@@ -13,13 +14,13 @@
   "tipProviderNameOutsideReadme": [],
   "historyProviderMentionsTextOnly": {
     "pathsAndDistinctBlobs": {
-      "README.md": 7,
+      "README.md": 8,
       "NOTICE": 2,
       "docs/ARCHITECTURE.md": 3,
       "docs/QA.md": 7,
       "release/verification.json": 7
     },
-    "scope": "Historical cross-project QA/attribution prose only. No runtime, format, endpoint, package, dependency or configured operational provider key found. Pure historical prose retained; no history rewrite performed."
+    "scope": "Historical cross-project QA/attribution prose only; retained without history rewriting. No runtime, format, endpoint, package, dependency or configured operational provider key found."
   },
   "fullInstalledDependencyGraph": {
     "command": "npm ls --all --json",
@@ -28,7 +29,7 @@
     "errors": []
   },
   "limitations": [
-    "Scans cover frozen commit ancestry and installed own dependencies, not unrelated local branches.",
-    "No operational private key opened. Provider public pins came from independently named private configuration and were compared in memory only; no pin or endpoint exported."
+    "Frozen integration commit ancestry and own installed dependencies audited; unrelated branches are not represented.",
+    "No operational private key opened. Provider public pins compared only in memory; no endpoint or provider pin exported."
   ]
 }
