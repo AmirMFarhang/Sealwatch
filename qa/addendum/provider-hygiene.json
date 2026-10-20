@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "independentQa": true,
+  "sourceCommit": "e25ac86fc9497680fcef47ab6d569f463a61ffb5",
+  "sourceTree": "0a10b8df345ec5cd18542c898bf6b51f0bd159e6",
+  "testTree": "dbcf198f9d3c984f85a6e51be53136005e4bd46b",
+  "ancestorCommitsScanned": 50,
+  "reachableBlobsScanned": 199,
+  "providerNamedCodePaths": [],
+  "providerRuntimeOrWireFormatNamesInCodeHistory": [],
+  "providerDependenciesInPackageAndLockHistory": [],
+  "configuredOperationalProviderPublicPinsInHistory": [],
+  "tipProviderNameOutsideReadme": [],
+  "historyProviderMentionsTextOnly": {
+    "pathsAndDistinctBlobs": {
+      "README.md": 7,
+      "NOTICE": 2,
+      "docs/ARCHITECTURE.md": 3,
+      "docs/QA.md": 7,
+      "release/verification.json": 7
+    },
+    "scope": "Historical cross-project QA/attribution prose only. No runtime, format, endpoint, package, dependency or configured operational provider key found. Pure historical prose retained; no history rewrite performed."
+  },
+  "fullInstalledDependencyGraph": {
+    "command": "npm ls --all --json",
+    "sha256": "6aa2540e94d0ba5809884ab9c46bf8ce83bf5cdb680c542cffd90bed0b254319",
+    "forbiddenProviderOrganizationOrPackageNames": 0,
+    "errors": []
+  },
+  "limitations": [
+    "Scans cover frozen commit ancestry and installed own dependencies, not unrelated local branches.",
+    "No operational private key opened. Provider public pins came from independently named private configuration and were compared in memory only; no pin or endpoint exported."
+  ]
+}

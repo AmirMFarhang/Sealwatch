@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "independentQa": true,
+  "reviewer": "Codex /root/qa; not a runtime implementer",
+  "checkedAt": "2026-10-20T13:52:30.169020+00:00",
+  "verdict": "LOCAL_FROZEN_CHECKPOINT_PASS_LIVE_AND_OPTIONAL_REVIEW_PENDING",
+  "sourceCommit": "e25ac86fc9497680fcef47ab6d569f463a61ffb5",
+  "sourceTree": "0a10b8df345ec5cd18542c898bf6b51f0bd159e6",
+  "testTree": "dbcf198f9d3c984f85a6e51be53136005e4bd46b",
+  "standardTests": {
+    "passed": 121,
+    "failed": 0,
+    "skipped": 0,
+    "typecheck": "pass"
+  },
+  "priorIndependentSecurityProbes": {
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0
+  },
+  "newIndependentProtocolAndArchiveProbes": {
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "file": "qa/addendum/protocol-probes.test.ts"
+  },
+  "resolvedReviewFindings": [
+    {
+      "id": "SIGNED_OUTPUT_PRIVACY",
+      "original": "Signed undeclared result/finding fields were accepted and forwarded to portable summaries.",
+      "independentRecheck": "Exact allowed output/finding keys refuse; baseline remains accepted."
+    },
+    {
+      "id": "INPUT_SCOPE_FIELDS",
+      "original": "Signed scope field strings could name inputs absent from request.",
+      "independentRecheck": "Only actual supplied evidence/subject/context paths accepted."
+    },
+    {
+      "id": "DSSE_UTF8_BYTES",
+      "original": "Lossy UTF-8 decoding allowed raw signed bytes different from canonical parsed bytes.",
+      "independentRecheck": "Fatal UTF-8 decoding and byte-exact canonical equality refuse the original case."
+    },
+    {
+      "id": "AUDIT_PROVIDER_DECISION_TIME",
+      "original": "Archive provider validation used issuance only, permitting evidence expired before the signed decision.",
+      "independentRecheck": "Original-decision validity enforced; expired provider pack refuses; valid complete provider pack verifies."
+    }
+  ],
+  "executionReview": "All new attestation/provider executions remain software. Valid test-vendor fixture returns software/testOnly; real hardware/device claims refuse. Existing15quote standard tests cover pinned root/key/measurement/fresh challenge/result signature and retained-journal replay. No real vendor verifier built.",
+  "hygieneReport": "qa/addendum/provider-hygiene.json",
+  "remaining": [
+    "Independently verify final live provider evidence and complete exact runtime record, four-stage/model/contract/release bindings, fresh quarantine and actual audit pack.",
+    "Independently rerun optional gate-review integration once its frozen commit is supplied.",
+    "Final README claims and final source/dependency/history scan after all runtime integration."
+  ],
+  "noOperationalWalletPrivateKeyDatabaseOrChainTouched": true,
+  "commands": [
+    "npm ci",
+    "npm run check",
+    "node --import tsx --test qa/security-probes.test.ts qa/native-guard-probes.test.ts",
+    "node --import tsx --test qa/addendum/protocol-probes.test.ts",
+    "npm ls --all --json"
+  ],
+  "durableIgnoredLogs": [
+    ".state/qa-addendum/npm-ci.log",
+    ".state/qa-addendum/standard-check.log",
+    ".state/qa-addendum/prior-security-check.log",
+    ".state/qa-addendum/independent-protocol-probes.log",
+    ".state/qa-addendum/dependency-graph.json"
+  ]
+}
