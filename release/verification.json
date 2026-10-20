@@ -277,49 +277,6 @@
     ".state/qa/final-quarantine-check.log",
     ".state/qa/final-public-transactions.log"
   ],
-  "separateCompexCheckpoint": {
-    "verdict": "PASS_PRIVATE_EXTRACTION_CHECKPOINT",
-    "reportCommit": "d1d5064",
-    "sourceCommit": "62233f0",
-    "runtimeCommit": "80ab5e8",
-    "standardTests": {
-      "total": 51,
-      "passed": 51,
-      "failed": 0,
-      "skipped": 0
-    },
-    "independentAcceptanceProbes": {
-      "total": 5,
-      "passed": 5,
-      "failed": 0,
-      "skipped": 0
-    },
-    "archiveOriginalBlobMatches": 122,
-    "actualTarball": {
-      "files": 51,
-      "bytes": 43339,
-      "offlineInstall": "pass",
-      "browserBundle": "pass"
-    },
-    "fullVerifierSha256": "bf48636dc810a34c107366c7a2335bfb2477b35fbc5bbed113600854dcfd6e91",
-    "workflowReview": {
-      "commit": "4258d04",
-      "verdict": "pass",
-      "finalG2Paths": 185,
-      "pathListMatchesTree": true,
-      "manualOnly": true,
-      "exactReviewedCommitRequired": true,
-      "privateRepositoryCheck": true,
-      "uniqueSelfHostedOnly": true,
-      "permissions": [
-        "contents:read",
-        "packages:write"
-      ]
-    },
-    "advisory": "Node API unsigned wrapper references and legacy consentHash are advisory; authoritative references must come from authenticated envelope. No forged evidence/loan acceptance demonstrated.",
-    "publication": "Parent verified0.1.0 private via workflow39388161168; package repository association is null, so inherited repository access is not claimed. No QA remote writes.",
-    "pending": "New optional host bridge0.1.1 is a separate independent QA review; this prior51-test checkpoint is not its acceptance."
-  },
   "remainingForRequiredLiveProof": [],
   "localAcceptance": true
 }

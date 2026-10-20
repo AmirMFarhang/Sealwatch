@@ -2,7 +2,7 @@
 
 Private working project. Owner: Amir Mohammad Farhang. The implementation uses
 Utexo's RGB SDK; it does not claim a partnership. Lending, credit scoring and
-Compex runtime code are outside this project.
+External provider runtime code are outside this project.
 
 ## Verify: receiver-owned evidence
 

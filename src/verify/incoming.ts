@@ -23,6 +23,9 @@ import { SanctionsScreen, type ListInfo } from "../compliance/sanctions.js";
 import { FileDecisionLog } from "../governance/log.js";
 import { decodeWitness, type WitnessEvidence } from "./witness.js";
 import { ReceiverQuarantine } from "../wallet/quarantine.js";
+import { providerOutcome, strictestOutcome, type AttestedCheckProvider, type CheckResult } from "../provider/protocol.js";
+import { collectPublicTransferEvidence, transferRequest, type TransferEvidenceSource } from "../provider/transfer.js";
+import { RECEIVER_POLICY_REF } from "./policy.js";
 import { CURRENT_EXECUTION } from "../execution/types.js";
 export interface IncomingTransfer extends WitnessEvidence {
   network: Network;
@@ -31,6 +34,7 @@ export interface IncomingTransfer extends WitnessEvidence {
   receivedAt: number;
   counterpartyAddresses?: string[];
   senderAddresses?: string[];
+  consignmentSha256?: string;
 }
 export interface Check {
   status: "clear" | "flagged" | "error" | "designed";
@@ -41,7 +45,7 @@ interface AttestationFields {
   network: Network;
   assetId: string;
   witnessTxid: string;
-  checks: { sanctions: Check; flaggedL1: Check; rgbAncestry: Check };
+  checks: { sanctions: Check; flaggedL1: Check; rgbAncestry: Check; provider?: Check };
   lists: ListInfo[];
   flaggedManifest: FlaggedManifest;
   overall: "clear" | "flagged" | "error";
@@ -60,6 +64,8 @@ export interface SoftwareAttestation extends AttestationFields {
   v: 2;
   domain: "trust-incoming-attestation-v2";
   execution: typeof CURRENT_EXECUTION;
+  provider?: { provider_id: string; evidence_sha256: string; provider_result: CheckResult; execution: "software" };
+  verificationPolicy?: { id: string; version: number; sha256: string };
 }
 export type Attestation = LegacyAttestation | SoftwareAttestation;
 export interface AttestationTrust {
@@ -134,7 +140,11 @@ export function attestationProblems(
       )
     )
       errors.push("sanctions snapshot hash untrusted");
-    const required = [a.checks.sanctions, a.checks.flaggedL1];
+    const required = [a.checks.sanctions, a.checks.flaggedL1, ...(a.checks.provider ? [a.checks.provider] : [])];
+    if (a.v === 1 && Object.hasOwn(a, "provider")) errors.push("legacy attestation cannot contain provider evidence");
+    if (a.v === 2 && a.provider) {
+      if (!a.checks.provider || a.provider.execution !== "software" || !/^[0-9a-f]{64}$/.test(a.provider.evidence_sha256) || !/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/.test(a.provider.provider_id) || a.provider.provider_result.kind !== "transfer-flow-risk" || !["low", "review", "high"].includes(a.provider.provider_result.risk_band) || a.checks.provider.status !== providerOutcome(a.provider.provider_result)) errors.push("provider summary semantics invalid");
+    } else if (a.checks.provider && a.checks.provider.status !== "error") errors.push("provider evidence summary missing");
     const overall = required.some((c) => c.status === "error")
       ? "error"
       : required.some((c) => c.status === "flagged")
@@ -163,6 +173,8 @@ export class VerifyService {
       log: FileDecisionLog;
       historyDir: string;
       now?: () => number;
+      provider?: AttestedCheckProvider;
+      providerEvidence?: TransferEvidenceSource;
     },
   ) {
     this.quarantine = new ReceiverQuarantine(
@@ -172,6 +184,7 @@ export class VerifyService {
     );
   }
   async verifyIncoming(input: IncomingTransfer): Promise<SoftwareAttestation> {
+    input = JSON.parse(canonicalJson(input)) as IncomingTransfer;
     const o = this.options;
     const at = o.now?.() ?? Math.floor(Date.now() / 1000);
     network(input.network);
@@ -245,24 +258,48 @@ export class VerifyService {
     } catch (e) {
       privateDetail = { error: (e as Error).message };
     }
-    const overall: Attestation["overall"] = [sanctions, flaggedL1].some(
+    let overall: Attestation["overall"] = [sanctions, flaggedL1].some(
       (c) => c.status === "error",
     )
       ? "error"
       : [sanctions, flaggedL1].some((c) => c.status === "flagged")
         ? "flagged"
         : "clear";
+    let provider: SoftwareAttestation["provider"];
+    let providerCheck: Check | undefined;
+    if (o.provider) {
+      providerCheck = { status: "error", scope: "optional remote screening; bounded receiver-authorized evidence", code: "PROVIDER_EVIDENCE_INVALID" };
+      if (overall !== "error") {
+        try {
+          // Freeze receiver input before the asynchronous disclosure/verification step.
+          const snapshot = JSON.parse(canonicalJson(input)) as IncomingTransfer;
+          const evidence = await (o.providerEvidence ?? collectPublicTransferEvidence)(snapshot);
+          const checked = await o.provider.check(transferRequest(snapshot, evidence, at * 1000));
+          assert(checked.record.result.kind === "transfer-flow-risk", "provider returned a different check");
+          provider = { provider_id: checked.record.provider_id, evidence_sha256: checked.evidence_sha256, provider_result: checked.record.result, execution: "software" };
+          providerCheck = { ...providerCheck, status: providerOutcome(checked.record.result), code: checked.record.result.risk_band === "low" ? "PROVIDER_LOW_RISK" : "PROVIDER_REVIEW_REQUIRED" };
+        } catch {
+          // No endpoint, token, private envelope or provider error detail enters the attestation.
+        }
+      }
+      overall = strictestOutcome(overall, providerCheck.status as "clear" | "flagged" | "error");
+    }
+    const completedAt = o.now?.() ?? Math.floor(Date.now() / 1000);
+    assert(completedAt >= at && completedAt < flagged.manifest.expiresAt, "list expired or clock moved backwards during screening");
     const attestation = signObject(
       {
         v: 2 as const,
         domain: "trust-incoming-attestation-v2" as const,
         execution: CURRENT_EXECUTION,
+        verificationPolicy: RECEIVER_POLICY_REF,
+        ...(provider ? { provider } : {}),
         network: input.network,
         assetId: input.assetId,
         witnessTxid: input.witnessTxid,
         checks: {
           sanctions,
           flaggedL1,
+          ...(providerCheck ? { provider: providerCheck } : {}),
           rgbAncestry: {
             status: "designed" as const,
             scope: "RGB consignment ancestry",
@@ -272,7 +309,7 @@ export class VerifyService {
         lists: [...o.sanctions.lists, flagged.info],
         flaggedManifest: flagged.manifest,
         overall,
-        time: at,
+        time: completedAt,
         checkerPk: o.key.pubkey,
       },
       o.key.secretKey,

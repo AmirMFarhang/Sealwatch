@@ -22,8 +22,9 @@ contain native worker exits. src/testnet/wallet.ts adapts Satstride RGB-wallet
 SDK donation/createUtxos/string-status handling and the WDK PSBT signing-guard
 pattern. These testnet adapter portions keep the same Apache-2.0 provenance.
 Modified files are marked. Upstream copyright and license remain applicable
-to those portions. No Compex adapter, evidence format, runtime, scoring or
-investigator code is included.
+to those portions. No external provider runtime or investigator code is included.
+src/execution/quote.ts adapts the PassBook/Satstride src/checknode/tee.ts test-vendor
+pattern at e211b7eedfe1c63882f748b19f481f6cc304083f (Apache-2.0).
 
 Sanctions data (separate from source-code ownership)
 

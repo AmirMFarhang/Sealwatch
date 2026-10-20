@@ -7,6 +7,8 @@ import { loadConfig } from "./config.js";
 import { createTrustServer } from "./http.js";
 import { demoLocal } from "./demo-local.js";
 import { attestationProblems } from "./verify/incoming.js";
+import { createAuditPack, saveAuditPack, verifyAuditPackFile, type PackTrust } from "./audit/pack.js";
+import { RECEIVER_POLICY } from "./verify/policy.js";
 const help = `Private trust layer: Verify, Authorize, Settle, Remember.
 Node 22/24 only. Utexo testnet primary; Mutinynet is the fallback.
 Commands (JSON output; --config defaults to trust.config.json):
@@ -14,6 +16,8 @@ Commands (JSON output; --config defaults to trust.config.json):
   trust verify-incoming --input incoming.json
   trust attestation verify attestation.json --checker-pk HEX --issuer-pk HEX
   trust log verify
+  trust audit export SPEC_JSON OUTPUT_ZIP
+  trust audit verify ZIP_FILE TRUST_JSON
   trust policy install policy.json
   trust authorize request.json
   trust stop stop-command.json
@@ -66,8 +70,22 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
     output(await demoLocal(statePath));
     return;
   }
+  if (args[0] === "audit" && args[1] === "verify") {
+    const problems = verifyAuditPackFile(args[2], json(args[3]) as PackTrust);
+    output({ valid: !problems.length, problems });
+    if (problems.length) process.exitCode = 1;
+    return;
+  }
   const services = loadConfig(configPath);
   switch (args[0]) {
+    case "audit": {
+      assert(args[1] === "export", "use audit export or audit verify");
+      const spec = json(args[2]) as { attestation: string; providerEvidence?: string; trust: string; policy?: string };
+      const bytes = createAuditPack({ attestation: json(spec.attestation), entries: services.log.entries(), checkpoint: services.log.checkpoint()!, policy: spec.policy ? json(spec.policy) : RECEIVER_POLICY, ...(spec.providerEvidence ? { provider: json(spec.providerEvidence) } : {}) }, services.key, json(spec.trust));
+      assert(args[3], "audit output ZIP required");
+      saveAuditPack(args[3], bytes); output({ exported: true, bytes: bytes.length });
+      break;
+    }
     case "verify-incoming":
       output(await services.verify.verifyIncoming(json(inputPath ?? args[1])));
       break;

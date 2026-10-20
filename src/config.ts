@@ -11,6 +11,7 @@ import {
 import { FileDecisionLog } from "./governance/log.js";
 import { PolicyGate } from "./governance/gate.js";
 import { VerifyService } from "./verify/incoming.js";
+import { providerFromEnvironment } from "./provider/remote.js";
 export interface TrustConfig {
   v: 1;
   network: Network;
@@ -70,6 +71,7 @@ export function loadConfig(file: string): {
     flagged,
     log,
     historyDir: join(stateDir, "receiver-history"),
+    provider: providerFromEnvironment(join(stateDir, "provider-evidence")),
   });
   const gate = new PolicyGate({
     key,

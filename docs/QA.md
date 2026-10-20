@@ -62,8 +62,3 @@ Signed logs bind receipt action/token/plan/policy hashes; the compact public rec
 
 Architecture and demo claims match these limits. Parent README at `5381088` still has an old pending-live paragraph; the integration owner must update it to completed proof. Earlier explorer polling files are historical checkpoints superseded by final reports above.
 
-## Separate Compex checkpoint
-
-The prior independent package checkpoint (`62233f0`, runtime `80ab5e8`, QA `d1d5064`) passed 51 full-verifier tests, five extra acceptance probes, exact 122-file archive comparison, build, actual tarball offline install/browser bundle and publication guard. It verified historical fixtures, not a fresh Compex execution. The parent separately verified package 0.1.0 is private; its repository association is null, so inherited access is not claimed.
-
-The manual private publication workflow at `4258d04` was independently reviewed for exact commit, private repository, dedicated self-hosted runner, least permissions and temporary credential cleanup. Parent performed authorized source/package publication; QA performed no remote writes. The optional host bridge 0.1.1 has separate pending QA review; historical counts above do not accept that bridge.
