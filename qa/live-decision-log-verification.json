@@ -1,26 +1,31 @@
 {
   "version": 1,
   "independentQa": true,
-  "checkedAt": "2026-10-20T07:41:44.847Z",
+  "checkedAt": "2026-10-20T07:47:50.070Z",
   "scope": "Read only named signed decision logs/checkpoints; no wallet database, seed, key or receiver raw history opened; no log contents exported.",
   "results": [
     {
       "name": "authorization",
       "status": "pass",
       "nodePk": "53e670e0bcb9ad656d2659c9a77c9ff9f7ed33bb2c32de77518cd12f06a2ead0",
-      "entryCount": 9,
-      "logSha256": "719b52271e25dfae01fa00a5548d173e542f7b4f006fdd2ca6d4705002c3735d",
-      "checkpointSha256": "417c1f00456929d7a4adb9f251dee0171c540db6011776efe3802c9c845743f9",
+      "entryCount": 18,
+      "logSha256": "2f027e28b028e0871d425e375280c8eda29a852f0a6e40cdedb89176bb869090",
+      "checkpointSha256": "5087ac845a13b57bf59598a61b0577e059c33cfbc31a7b5313bcc2c31ca15eaf",
       "kinds": {
-        "state-prepare": 3,
-        "policy-install": 1,
-        "state-commit": 3,
-        "authorization": 1,
-        "signing-token": 1
+        "state-prepare": 6,
+        "policy-install": 2,
+        "state-commit": 6,
+        "authorization": 2,
+        "signing-token": 2
       },
       "bindings": [
         {
           "label": "clear",
+          "decisionMatches": true,
+          "tokenConsumptionMatches": true
+        },
+        {
+          "label": "flagged",
           "decisionMatches": true,
           "tokenConsumptionMatches": true
         }
@@ -31,13 +36,13 @@
       "name": "receiver",
       "status": "pass",
       "nodePk": "3e85071f8ffbc438b1767f777d80444861e73c346c7f6d9b4508eae4e38a5124",
-      "entryCount": 3,
-      "logSha256": "e03e5f5ab014b70dc455f82c6ca12884b26c27de224c64b0ddebf18350770387",
-      "checkpointSha256": "1fb3613e0ea01309ae4c6618100075b350f91ba4466f6727691c24f52bc4e5a5",
+      "entryCount": 6,
+      "logSha256": "237d72f61d14508376de11525aca7fa48ea45e8e26bf0d40e499671365fedb72",
+      "checkpointSha256": "a9d4c9db65aac226b75a20c419d159c340b41fde937d5a356b08a177034bb33e",
       "kinds": {
-        "state-prepare": 1,
-        "state-commit": 1,
-        "incoming-verification": 1
+        "state-prepare": 2,
+        "state-commit": 2,
+        "incoming-verification": 2
       },
       "bindings": [
         {

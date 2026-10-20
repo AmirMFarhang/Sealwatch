@@ -1,28 +1,28 @@
 {
   "version": 1,
   "independentQa": true,
-  "checkedAt": "2026-10-20T07:41:44.623Z",
-  "receiptStatus": "incomplete",
-  "receiptUpdatedAt": "2026-10-19T16:58:41.910Z",
-  "receiptSha256": "ac9b8b7cb86263eca782856046f14083351e9d60b7eb7b61c36ca02ef5e0f2c8",
+  "checkedAt": "2026-10-20T07:47:49.909Z",
+  "receiptStatus": "running",
+  "receiptUpdatedAt": "2026-10-20T07:46:38.009Z",
+  "receiptSha256": "2bbc89aafc3d78b2ef24ba03867e7315ef8deb1c917fe6273ef2e6acb6c28129",
   "network": "utexo-testnet",
   "fallback": false,
-  "verdict": "FAIL",
-  "problems": [
-    "clear: wrong clear/flagged result"
-  ],
+  "verdict": "PENDING",
+  "problems": [],
   "pending": [
-    "flagged: transaction not recorded",
+    "flagged: https://mempool.space unconfirmed",
+    "flagged: https://blockstream.info unconfirmed",
+    "flagged: attestation not recorded",
     "overLimit: refusal not recorded",
     "stopped: refusal not recorded",
     "native quarantine enforcement not recorded",
-    "receipt status is incomplete"
+    "receipt status is running"
   ],
   "checks": [
     {
       "name": "clear",
       "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
-      "attestationValid": false,
+      "attestationValid": true,
       "exactTestListHashMatches": true,
       "publicExplorers": [
         {
@@ -45,6 +45,32 @@
             "block_height": 5195546,
             "block_hash": "00000000000003b697ed4c32e59263fb42ef5c996c679a519237c2ab87a88b6e",
             "block_time": 1792430182
+          },
+          "feeSats": 198,
+          "decodedTxidMatches": true
+        }
+      ]
+    },
+    {
+      "name": "flagged",
+      "txid": "8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b",
+      "attestationValid": false,
+      "exactTestListHashMatches": false,
+      "publicExplorers": [
+        {
+          "host": "https://mempool.space",
+          "explorerUrl": "https://mempool.space/testnet/tx/8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b",
+          "status": {
+            "confirmed": false
+          },
+          "feeSats": 198,
+          "decodedTxidMatches": true
+        },
+        {
+          "host": "https://blockstream.info",
+          "explorerUrl": "https://blockstream.info/testnet/tx/8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b",
+          "status": {
+            "confirmed": false
           },
           "feeSats": 198,
           "decodedTxidMatches": true

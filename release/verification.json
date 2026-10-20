@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "independentQa": true,
   "reviewer": "Codex /root/qa, not a runtime implementer",
-  "checkedAt": "2026-10-20T07:47:15.586137+00:00",
-  "status": "local_fix_qa_pass; original_signed_error_preserved; corrected_live_run_pending",
-  "verdict": "LOCAL_PASS_VETO_MEETING_DONE_PENDING_CORRECTED_RGB_RECEIPT",
+  "checkedAt": "2026-10-20T07:48:40.390788+00:00",
+  "status": "local_fix_qa_pass; corrected_live_clear_verified; flagged_confirmation_and_remaining_proof_pending",
+  "verdict": "LOCAL_AND_CLEAR_PASS_VETO_MEETING_DONE_PENDING_FLAGGED_AND_REFUSALS",
   "meetingDefinitionOfDone": false,
   "source": {
     "initialFrozenCommit": "d14a0c3254e55520e2aea20e1edd8d7f5c0dfc7f",
@@ -163,8 +163,8 @@
   "liveDemonstration": {
     "network": "utexo-testnet",
     "fallback": false,
-    "clearIncoming": "Original authentic error preserved; decoder/regression fix approved, corrected live attestation pending.",
-    "flaggedWitnessInput": "not independently verified",
+    "clearIncoming": "PASS: corrected signed clear attestation, exact witness confirmed5195546, original signed error retained; no clear rebroadcast.",
+    "flaggedWitnessInput": "Actual flagged-test transfer broadcast independently visible on both explorers; confirmation and signed flagged attestation pending.",
     "quarantine": "not independently verified on chain",
     "inLimitSend": "Actual governed transaction independently confirmed by both explorers at5195546; signed gate approval and consumed token match receipt.",
     "overLimitRefusal": "synthetic/local only",
@@ -231,23 +231,23 @@
     "/tmp/trust-qa-probes-taproot-resume.log"
   ],
   "remaining": [
-    "Independently verify the corrected clear attestation and flagged transaction/attestation, original error preservation, permanent quarantine, real over-limit/stop decisions and signed log bindings after resumed run.",
+    "Independently verify confirmed flagged witness, exact signed test-list/attestation, retained quarantine, real over-limit/stop decisions and final signed log bindings.",
     "Retain meeting completion veto until every required actual demonstration item and explorer check passes."
   ],
   "localAcceptance": true,
   "liveProofCheckpoint": {
-    "asOf": "2026-10-20T07:47:15.586137+00:00",
-    "verdict": "CONFIRMED_TRANSACTION_ORIGINAL_SIGNED_ERROR; FIX_VALIDATED; CORRECTED_RETRY_PENDING",
+    "asOf": "2026-10-20T07:48:40.390788+00:00",
+    "verdict": "CORRECTED_CLEAR_PASS; FLAGGED_BROADCAST_UNCONFIRMED",
     "receiptStatus": "running",
     "txid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
     "network": "utexo-testnet",
     "fallback": false,
     "publicStatus": "Both public explorers confirm exact witness in block5195546; decoded sending/output addresses independently match both explorers.",
     "publicRawTxidsIndependentlyRecomputed": true,
-    "actualRgbDemonstrationTxidsSupplied": 1,
+    "actualRgbDemonstrationTxidsSupplied": 2,
     "gateDecisionLog": "pass; signed approval, exact plan/policy hashes and token consumption match receipt",
-    "gateLogEntries": 9,
-    "receiverAttestation": "Original authentic signed WITNESS_EVIDENCE_INVALID error preserved; corrected live clear result not yet independently observed.",
+    "gateLogEntries": 18,
+    "receiverAttestation": "Corrected canonical signed clear verified against yesterday pinned checker/issuer keys and reconstructed test-list hash; original authentic signed error preserved.",
     "attestationAuthorities": "checker and issuer public keys independently pinned before attestation arrival",
     "sourceSrcTreeStillMatches": "e92746d4cd3ffb67c58f2aee6f22227cef139fab",
     "evidence": [
@@ -256,7 +256,8 @@
       "qa/live-receipt-verification.json",
       "qa/live-decision-log-verification.json",
       "qa/preserved-live-receiver-error.json",
-      "qa/taproot-live-regression.json"
+      "qa/taproot-live-regression.json",
+      "qa/live-recovery-preservation.json"
     ],
     "reproducibleChecks": [
       "node --import tsx qa/verify-live-receipt.ts RECEIPT",
@@ -267,6 +268,11 @@
       "approved": true,
       "scope": "Resume frozen corrected runner; preserve original errors/logs/quarantine, reverify same confirmed witnesses without rebroadcast; refresh only expired unsent/unattempted invoices under hash-chained owner policy versions.",
       "meetingAcceptance": false
-    }
+    },
+    "receiverLogEntries": 6,
+    "flaggedTestTxid": "8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b",
+    "flaggedTestPublicStatus": "Both explorers expose exact raw transaction, unconfirmed at2026-10-20T07:47:49Z, fee198sats.",
+    "originalErrorRetained": true,
+    "originalClearWitnessUnchanged": true
   }
 }
