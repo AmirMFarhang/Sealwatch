@@ -1,0 +1,90 @@
+// Copyright 2026 Amir Mohammad Farhang; all rights reserved; private.
+// Provider-neutral independent live proof verifier. Only named public pins,
+// generic signed evidence/log/state and public chain data are read. No wallet/key opens.
+import assert from 'node:assert/strict';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { Transaction } from 'bitcoinjs-lib';
+import { canonicalJson, hashObject, sha256Hex, verifyObject } from '../../src/core/crypto.js';
+import { verifyProviderResponse } from '../../src/provider/dsse.js';
+import { attestationProblems } from '../../src/verify/incoming.js';
+import { SanctionsScreen } from '../../src/compliance/sanctions.js';
+import { verifyLog } from '../../src/governance/log.js';
+import { verifyAuditPack } from '../../src/audit/pack.js';
+import { decodeZip } from '../../src/audit/zip.js';
+import { RECEIVER_POLICY_REF } from '../../src/verify/policy.js';
+
+const root = process.argv[2], pinsFile = process.argv[3];
+assert(root && pinsFile, 'usage: verify-provider-live.ts PRIVATE_RECEIVER_DIR PRIVATE_PROVIDER_PINS');
+const originals = new Map<string, string>();
+function bytes(file: string): Buffer { const b = readFileSync(file); originals.set(file, sha256Hex(b)); return b; }
+function json(file: string): any { return JSON.parse(bytes(file).toString('utf8')); }
+// Read and pin independent configured authorities before interpreting any attestation.
+const authorityBytes = bytes(join(root, 'public-trust.json')), pinBytes = bytes(pinsFile);
+const authorities = JSON.parse(authorityBytes.toString()), pins = JSON.parse(pinBytes.toString()).providers;
+const a = json(join(root, 'attestation.json')), receipt = json(join(root, 'receipt.json'));
+assert(a.provider?.evidence_sha256 && /^[0-9a-f]{64}$/.test(a.provider.evidence_sha256));
+const evidence = json(join(root, 'provider-evidence', a.provider.evidence_sha256 + '.json'));
+const sanctions = new SanctionsScreen('fixtures/sanctions');
+const trust = { checkerPk: authorities.checkerPk, flaggedIssuerKeys: [authorities.issuerPk], network: authorities.network, sanctionsListPins: sanctions.lists.filter(l => !l.testOnly).map(l => l.sha256), now: a.time };
+assert.deepEqual(attestationProblems(a, trust), []);
+assert.equal(a.execution, 'software'); assert.equal(a.provider.execution, 'software');
+assert.deepEqual(a.verificationPolicy, RECEIVER_POLICY_REF);
+assert.deepEqual(receipt.attestation, a);
+assert.equal(receipt.newTransactionBroadcast, false);
+assert.equal(receipt.operation, 'fresh-provider-rescreen-of-existing-confirmed-receive');
+const decisionTime = Math.max(a.time * 1000, Date.parse(evidence.result.issued_at));
+const checked = verifyProviderResponse(evidence, evidence.request, pins, decisionTime);
+assert.equal(checked.evidence_sha256, a.provider.evidence_sha256);
+assert.equal(checked.record.provider_id, a.provider.provider_id);
+assert.deepEqual(checked.record.result, a.provider.provider_result);
+assert.equal(evidence.request.network, a.network);
+assert.equal(evidence.request.subject.witness_txid, a.witnessTxid);
+assert.equal(evidence.request.subject.asset_id, a.assetId);
+assert.equal(bytes(join(root, 'provider-evidence', 'request-' + evidence.request.request_id + '.used')).toString(), checked.evidence_sha256);
+const allowedItems = ['witness', 'public-neighborhood', 'receiver-context'];
+assert.deepEqual(evidence.request.evidence.map((e: any) => e.id).sort(), [...allowedItems].sort());
+const inputEvidence = json(join(root, 'input-evidence.json'));
+assert.deepEqual(inputEvidence, evidence.request.evidence);
+const item = (id: string) => evidence.request.evidence.find((e: any) => e.id === id).data;
+assert.equal(item('public-neighborhood').complete, false);
+assert.equal(item('receiver-context').asset_id, a.assetId);
+assert.equal(item('receiver-context').witness_txid, a.witnessTxid);
+assert(Object.keys(item('receiver-context')).every(k => ['witness_txid','asset_id','received_at','consignment_sha256'].includes(k)));
+assert.equal(a.provider.provider_result.risk_band, 'review');
+assert.equal(a.overall, 'flagged');
+assert(a.provider.provider_result.findings.some((f: any) => f.code === 'SCOPE_INCOMPLETE'));
+assert.equal(a.checks.sanctions.status, 'clear'); assert.equal(a.checks.flaggedL1.status, 'clear');
+const logBytes = bytes(join(root, 'decision-log.jsonl'));
+const entries = logBytes.toString().split('\n').filter(Boolean).map(x => JSON.parse(x));
+const checkpoint = json(join(root, 'decision-log.jsonl.checkpoint.json'));
+assert.deepEqual(verifyLog(entries, authorities.checkerPk, checkpoint), []);
+assert(entries.some(e => e.kind === 'incoming-verification' && e.detail.attestationHash === hashObject(a) && e.result === a.overall));
+const quarantine = json(join(root, 'history', 'quarantine-state.json'));
+assert.equal(quarantine.pubkey, authorities.checkerPk); assert(verifyObject(quarantine, authorities.checkerPk));
+const commit = entries.filter(e => e.kind === 'state-commit' && e.detail.namespace === 'receiver-quarantine').at(-1);
+assert(commit && commit.detail.stateHash === hashObject(quarantine) && commit.detail.revision === quarantine.revision);
+assert((Object.values(quarantine.state.receives).flat() as any[]).some(r => r.attestationHash === hashObject(a) && r.overall === 'flagged' && r.witnessTxid === a.witnessTxid));
+const pack = bytes(join(root, 'audit-pack.zip'));
+const packTrust = { ...trust, logPk: authorities.checkerPk, providerPins: pins };
+assert.deepEqual(verifyAuditPack(pack, packTrust), []);
+const packFiles = decodeZip(pack);
+assert.deepEqual(JSON.parse(packFiles.get('attestation.json')!.toString()), a);
+assert.deepEqual(JSON.parse(packFiles.get('provider-evidence.json')!.toString()), evidence);
+const chain = await Promise.all(['https://mempool.space','https://blockstream.info'].map(async host => {
+ const txid = a.witnessTxid;
+ const [summary, raw] = await Promise.all([fetch(`${host}/testnet/api/tx/${txid}`, { signal: AbortSignal.timeout(25000) }), fetch(`${host}/testnet/api/tx/${txid}/hex`, { signal: AbortSignal.timeout(25000) })]);
+ assert(summary.ok && raw.ok);
+ const s: any = await summary.json(), decoded = Transaction.fromHex((await raw.text()).trim());
+ assert.equal(s.txid, txid); assert.equal(decoded.getId(), txid); assert.equal(s.status.confirmed, true);
+ const supplied = item('witness'); assert.equal(supplied.txid, txid); assert.equal(supplied.status.block_hash, s.status.block_hash);
+ assert.equal(supplied.vin.length, decoded.ins.length); assert.equal(supplied.vout.length, decoded.outs.length);
+ decoded.outs.forEach((v,i) => { assert.equal(v.value, BigInt(supplied.vout[i].value)); assert.equal(Buffer.from(v.script).toString('hex'), supplied.vout[i].scriptpubkey); });
+ decoded.ins.forEach((v,i) => { assert.equal(Buffer.from(v.hash).reverse().toString('hex'), supplied.vin[i].txid); assert.equal(v.index, supplied.vin[i].vout); });
+ return { explorerUrl: `${host}/testnet/tx/${txid}`, confirmed: true, blockHeight: s.status.block_height, blockHash: s.status.block_hash, rawTxidMatches: true, providerInputWitnessMatchesPublicBytes: true };
+}));
+assert.equal(chain[0].blockHash, chain[1].blockHash);
+for (const [file, digest] of originals) assert.equal(sha256Hex(readFileSync(file)), digest, 'private evidence changed during independent read');
+const report = { schemaVersion: 1, independentQa: true, checkedAt: new Date().toISOString(), verdict: 'PASS_GENERIC_PROVIDER_LIVE_EVIDENCE_AND_AUDIT_PACK', network: a.network, witnessTxid: a.witnessTxid, assetId: a.assetId, operation: receipt.operation, newTransactionBroadcast: false, execution: 'software', attestationHash: hashObject(a), evidenceSha256: checked.evidence_sha256, checkerTrustFileSha256: sha256Hex(authorityBytes), configuredProviderPinsFileSha256: sha256Hex(pinBytes), providerSignatureRequestHashScopeAndOriginalDecisionTimeValid: true, portableSummaryMatchesVerifiedEvidence: true, publicEvidenceScope: 'Receiver context plus bounded public chain; no full consignment or wallet keys disclosed.', providerRiskBand: 'review', findingCodes: a.provider.provider_result.findings.map((f: any) => f.code), finalOutcome: 'flagged', signedDecisionLogEntries: entries.length, exactAttestationBoundToSignedLog: true, freshReceiverQuarantineSnapshotMatchesRetainedJournal: true, auditPack: { bytes: pack.length, fileCount: packFiles.size, sha256: sha256Hex(pack), manifestAndHashesAndProviderPolicyLogBindingsValid: true }, publicExplorers: chain, privateEvidenceUnchangedDuringQa: true, operationalWalletKeysOpened: false, limits: ['This re-screens the previously confirmed receive. It is not a new transfer, complete graph analysis, RGB consignment validation or real hardware proof.', 'Private runtime stage/model evidence requires its separate independent review; this provider-neutral verifier checks generic signed records and public chain facts only.', 'Configured provider pins, endpoint, full envelope/request and private evidence remain outside Git; only digests and bounded summaries are exported.'] };
+writeFileSync('qa/addendum/live-verification.json', JSON.stringify(report, null, 2) + '\n');
+console.log(canonicalJson({ verdict: report.verdict, evidenceSha256: report.evidenceSha256, auditPackBytes: pack.length, execution: 'software', finalOutcome: report.finalOutcome }));

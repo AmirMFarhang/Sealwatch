@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "independentQa": true,
+  "checkedAt": "2026-10-20T13:54:51.937Z",
+  "verdict": "PASS_GENERIC_PROVIDER_LIVE_EVIDENCE_AND_AUDIT_PACK",
+  "network": "utexo-testnet",
+  "witnessTxid": "e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+  "assetId": "rgb:6b7igUgX-5c~XkMr-3g4_4Yg-eVj5~7M-dt_okW0-SJR6CI8",
+  "operation": "fresh-provider-rescreen-of-existing-confirmed-receive",
+  "newTransactionBroadcast": false,
+  "execution": "software",
+  "attestationHash": "f62b9481ebddddbc1bf984f6bff40236ceecd27d9cfa83d955f486d902ab8b1a",
+  "evidenceSha256": "a1ce4af431b1e854e12a87ea411ab84d4b21411c7fdc55b256bbc47ec0af774a",
+  "checkerTrustFileSha256": "3f017e829793bf6bec2fda0f260711a17faec871692479f8c1ff54d43a01bb38",
+  "configuredProviderPinsFileSha256": "4235fb07de89ed5c9da093b4c3848fbb98464c72d023c97755626db1a9f56dfe",
+  "providerSignatureRequestHashScopeAndOriginalDecisionTimeValid": true,
+  "portableSummaryMatchesVerifiedEvidence": true,
+  "publicEvidenceScope": "Receiver context plus bounded public chain; no full consignment or wallet keys disclosed.",
+  "providerRiskBand": "review",
+  "findingCodes": [
+    "SCOPE_INCOMPLETE"
+  ],
+  "finalOutcome": "flagged",
+  "signedDecisionLogEntries": 3,
+  "exactAttestationBoundToSignedLog": true,
+  "freshReceiverQuarantineSnapshotMatchesRetainedJournal": true,
+  "auditPack": {
+    "bytes": 21039,
+    "fileCount": 6,
+    "sha256": "bb177429a97e598866d2791c3a16fa6b2cf4cbaca1cd86897339ba38f1fd48a4",
+    "manifestAndHashesAndProviderPolicyLogBindingsValid": true
+  },
+  "publicExplorers": [
+    {
+      "explorerUrl": "https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+      "confirmed": true,
+      "blockHeight": 5195546,
+      "blockHash": "00000000000003b697ed4c32e59263fb42ef5c996c679a519237c2ab87a88b6e",
+      "rawTxidMatches": true,
+      "providerInputWitnessMatchesPublicBytes": true
+    },
+    {
+      "explorerUrl": "https://blockstream.info/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06",
+      "confirmed": true,
+      "blockHeight": 5195546,
+      "blockHash": "00000000000003b697ed4c32e59263fb42ef5c996c679a519237c2ab87a88b6e",
+      "rawTxidMatches": true,
+      "providerInputWitnessMatchesPublicBytes": true
+    }
+  ],
+  "privateEvidenceUnchangedDuringQa": true,
+  "operationalWalletKeysOpened": false,
+  "limits": [
+    "This re-screens the previously confirmed receive. It is not a new transfer, complete graph analysis, RGB consignment validation or real hardware proof.",
+    "Private runtime stage/model evidence requires its separate independent review; this provider-neutral verifier checks generic signed records and public chain facts only.",
+    "Configured provider pins, endpoint, full envelope/request and private evidence remain outside Git; only digests and bounded summaries are exported."
+  ]
+}
