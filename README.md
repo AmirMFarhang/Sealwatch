@@ -12,12 +12,15 @@ It is built on Utexo's RGB SDK; no partnership is claimed.
 
 The local implementation passes **88 tests**. Independent QA also passes
 **15 security probes and 9 CLI checks**; see [the QA report](docs/QA.md).
-The live run uses **Utexo's documented Bitcoin testnet3**; Mutinynet fallback
-has not been used. Two fresh wallets are funded with public faucet coins and
-have issued **test USD, not USDT**. The first governed RGB transfer is confirmed
-and has a signed **clear** receiver attestation. A second transfer is broadcast
-and awaits confirmation before the flagged-input check. **The complete live
-proof remains pending.** See [the receipt](release/testnet-receipt.json).
+The required live Verify/Authorize demonstration **passes independent QA** on
+**Utexo's documented Bitcoin testnet3**. Mutinynet fallback was not used.
+Both wallets use public faucet coins and the asset is **test USD, not USDT**.
+
+- [Clear incoming RGB transfer](https://mempool.space/testnet/tx/e8113fd72c02ea54f87520e2fdcf6cc8176a739e624930fe1f6447a9c6b00e06), confirmed at block 5195546: signed clear attestation.
+- [Flagged-input RGB transfer](https://mempool.space/testnet/tx/8543f746c5a1d0a453a2c549814470ea94fc4e766049ef0b0daf35e724d7996b), confirmed at block 5195834: signed flagged attestation and enforced receiver quarantine.
+- Both governed sends were within signed limits. An over-limit send was refused
+  with `PER_SEND_LIMIT_EXCEEDED`; after stop, the next send was refused with
+  `KILL_SWITCH_STOPPED`. See [the receipt](release/testnet-receipt.json).
 
 The first receiver attempt recorded a signed error because the address decoder
 could not handle a Taproot prevout without an ECC context. The corrected decoder
@@ -27,10 +30,10 @@ force; a later clear result does not silently release it.
 
 | Building block | Status | Evidence and limits |
 | --- | --- | --- |
-| Verify: pinned sanctions snapshots, signed local flagged list, witness-input checks | Built; local tests | Raw witness and previous transactions are decoded; missing evidence errors. SDK receive validation is the native adapter's responsibility. |
-| Signed attestations and chained log | Built; local tests | Independent checker/issuer trust is required. Gate/quarantine snapshot revisions bind to the retained signed journal; restoring old state alone refuses. Complete local rollback needs external anchoring, which is not built. |
-| Receiver quarantine | Built; local tests | Flagged/error results can quarantine the whole asset. The native adapter enforces its persisted guard. It cannot undo consensus settlement. |
-| Authorize: signed limits, exact transaction tokens, replay protection, stop, why | Built; local tests | Requires the governed signing adapter. Direct access to wallet keys remains outside the gate's boundary. |
+| Verify: pinned sanctions snapshots, signed local flagged list, witness-input checks | Built; local tests and live proof | Raw witness and previous transactions are decoded; missing evidence errors. SDK receive validation is the native adapter's responsibility. |
+| Signed attestations and chained log | Built; local tests and live proof | Independent checker/issuer trust is required. Gate/quarantine snapshot revisions bind to the retained signed journal; restoring old state alone refuses. Complete local rollback needs external anchoring, which is not built. |
+| Receiver quarantine | Built; local tests and live proof | Flagged/error results can quarantine the whole asset. The native adapter enforces its persisted guard. It cannot undo consensus settlement. |
+| Authorize: signed limits, exact transaction tokens, replay protection, stop, why | Built; local tests and live proof | Requires the governed signing adapter. Direct access to wallet keys remains outside the gate's boundary. |
 | CLI and authenticated localhost API | Built; local tests | Same Verify/Authorize libraries; API binds `127.0.0.1`. |
 | RGB consignment ancestry screening, level 2 | Designed | No reliable ancestry interface has been demonstrated with the pinned SDK. |
 | Utexo flagged-list API | Stub | Explicit refusal until the real API and issuer trust are specified. |
